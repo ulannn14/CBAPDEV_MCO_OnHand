@@ -1,0 +1,54 @@
+Folder PATH listing for volume Acer
+Volume serial number is 4085-DFB7
+C:.
+¦   .gitignore
+¦   folder_structure.txt
+¦   index.js
+¦   README.md
+¦   
++---controllers
+¦       bookingController.js
+¦       homeController.js
+¦       messageController.js
+¦       profileController.js
+¦       
++---models
++---public
+¦   +---css
+¦           bookings.css
+¦           chatbox.css
+¦           homepage.css
+¦           main.css
+¦           popups.css
+¦           profile.css
+¦           signup.css
+¦           
++---routes
+¦       bookings.js
+¦       index.js
+¦       messages.js
+¦       profile.js
+¦       
++---views
+    ¦   bookings.hbs
+    ¦   chatbox.hbs
+    ¦   doneBook.hbs
+    ¦   homepage.hbs
+    ¦   index.hbs
+    ¦   login.hbs
+    ¦   main.hbs
+    ¦   ongoingBook.hbs
+    ¦   profile.hbs
+    ¦   review.hbs
+    ¦   signup.hbs
+    ¦   
+    +---partials
+    ¦       header.hbs
+    ¦       
+    +---public
+        +---css
+        ¦       style.css
+        ¦       
+        +---js
+                script.js
+                
