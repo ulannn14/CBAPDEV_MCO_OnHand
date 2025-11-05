@@ -1,0 +1,27 @@
+#header {
+  display: flex;
+  align-items: center;
+  background-color: #2563EB;
+  padding: 10px 20px;
+}
+
+#header a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+#header a:hover {
+  color: #FBBF24;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  margin-right: 15px;
+}
+
+.logo-link {
+  margin-right: auto;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+    <title>Sign Up | onHand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/signup.css">
+</head>
+<body>
+
+<div id="container">
+    <h1>Sign Up</h1>
+
+    <form id="signupForm" method="POST" action="/signup" enctype="multipart/form-data">
+        <!-- Basic Information -->
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" class="input-field" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="input-field" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" class="input-field" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="input-field" required>
+
+        <label for="confirmPassword">Re-enter Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" class="input-field" required>
+
+        <label for="birthday">Birthday</label>
+        <input type="date" id="birthday" name="birthday" class="input-field" required>
+
+        <!-- Address -->
+        <h3>Address</h3>
+        <label for="homeNumber">Home/Unit/Floor Number</label>
+        <input type="text" id="homeNumber" name="homeNumber" class="input-field" required>
+
+        <label for="street">Street Address</label>
+        <input type="text" id="street" name="street" class="input-field" required>
+
+        <label for="barangay">Barangay</label>
+        <input type="text" id="barangay" name="barangay" class="input-field" required>
+
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" class="input-field" required>
+
+        <label for="region">Region</label>
+        <input type="text" id="region" name="region" class="input-field" required>
+
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" class="input-field" required>
+
+        <label for="postal">Postal Number</label>
+        <input type="text" id="postal" name="postal" class="input-field" required>
+
+        <!-- Profile Picture -->
+        <label for="profilePicture">Upload Profile Picture</label>
+        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="input-field" required>
+
+        <!-- Service Provider Section -->
+        <h3>Register as Service Provider?</h3>
+        <label>
+            <input type="radio" name="isServiceProvider" value="yes"> Yes
+        </label>
+        <label>
+            <input type="radio" name="isServiceProvider" value="no" checked> No
+        </label>
+
+        <div id="serviceProviderFields" style="display:none;">
+            <label for="workingDays">Working Days</label>
+            <input type="text" id="workingDays" name="workingDays" class="input-field" placeholder="e.g. Monday - Friday">
+
+            <label for="workingHours">Working Hours</label>
+            <input type="text" id="workingHours" name="workingHours" class="input-field" placeholder="e.g. 9 AM - 5 PM">
+
+            <label for="workingLocation">Working Location</label>
+            <input type="text" id="workingLocation" name="workingLocation" class="input-field">
+
+            <label for="nbiClearance">Upload NBI Clearance</label>
+            <input type="file" id="nbiClearance" name="nbiClearance" accept="image/*,application/pdf" class="input-field">
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="signup-btn">Register</button>
+    </form>
+</div>
+
+<script>
+    // Show or hide service provider fields
+    const providerRadios = document.getElementsByName('isServiceProvider');
+    const providerFields = document.getElementById('serviceProviderFields');
+
+    providerRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            providerFields.style.display = (radio.value === 'yes') ? 'block' : 'none';
+        });
+    });
+</script>
+
+</body>
+</html>

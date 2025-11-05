@@ -1,1 +1,103 @@
-//should include make posts hover
+<!-- should include make posts hover -->
+
+<!DOCTYPE html>
+<head>
+    <title>Home | onHand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+</head>
+<body>
+
+{{> header}}
+
+<!-- Search Section -->
+<section id="search-section">
+    <form id="searchForm" method="GET" action="/search">
+        <input type="text" name="service" placeholder="Find a service" class="search-input">
+
+        <select name="urgency" class="search-select">
+            <option value="">Urgency</option>
+            <option value="urgent">Urgent</option>
+            <option value="normal">Normal</option>
+        </select>
+
+        <input type="text" name="minPrice" placeholder="Price min" class="search-input price">
+        <input type="text" name="maxPrice" placeholder="max" class="search-input price">
+
+        <input type="text" name="location" placeholder="Location" class="search-input">
+
+        <button type="submit" class="search-btn">
+            Search <span>🔍</span>
+        </button>
+    </form>
+</section>
+
+<!-- Categories Section -->
+<section class="categories">
+  <h2>Service Categories</h2>
+  <div class="category-list">
+
+    <div class="category">
+      <img src="images/plumbing.jpg" alt="Plumbing Emergencies">
+      <h3>Plumbing Emergencies</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/electrical.jpg" alt="Electrical Issues">
+      <h3>Electrical Issues</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/roof.jpg" alt="Roof Repairs">
+      <h3>Roof Repairs</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/structural.jpg" alt="Structural Repairs">
+      <h3>Structural Repairs</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/pest.jpg" alt="Pest Control">
+      <h3>Pest Control</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/hvac.jpg" alt="HVAC or Appliance Breakdown">
+      <h3>HVAC / Appliance Breakdown</h3>
+    </div>
+
+    <div class="category">
+      <img src="images/locksmith.jpg" alt="Locksmith Services">
+      <h3>Locksmith Services</h3>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Services Near You -->
+<section id="nearby-services">
+    <h2>Services Near You</h2>
+    <div class="services-container">
+        {{#each services}}
+        <div class="service-card">
+            <img src="{{this.image}}" alt="{{this.name}}">
+            <h3>{{this.name}}</h3>
+            <p>{{this.description}}</p>
+            <p><strong>₱{{this.price}}</strong></p>
+            <button class="book-btn">Book Now</button>
+        </div>
+        {{/each}}
+    </div>
+</section>
+
+<!-- Floating Icon -->
+<div id="floating-icon">
+    <a href="/create-service">
+        <img src="/images/add-icon.png" alt="Add Service">
+    </a>
+</div>
+
+</body>
+</html>
