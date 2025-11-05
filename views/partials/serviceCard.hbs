@@ -1,0 +1,28 @@
+<div class="service-card">
+  <div class="card-header">
+    <img src="{{image}}" alt="{{name}}" class="profile-pic">
+    <div class="worker-info">
+      <h3 class="worker-name">{{name}}</h3>
+      <span class="worker-job">{{job}}</span>
+    </div>
+  </div>
+
+  <div class="card-details">
+    <p class="location">
+      <i class="fa-solid fa-location-dot"></i> {{location}}
+    </p>
+    <p class="working-hours">
+      <i class="fa-regular fa-clock"></i> {{startTime}} - {{endTime}}
+    </p>
+
+    <p class="description">{{description}}</p>
+
+    <p class="price-range">
+      <strong>Range: ₱{{priceMin}} - ₱{{priceMax}}</strong>
+    </p>
+  </div>
+
+  <button class="message-btn">
+    Message/Make Offer <i class="fa-solid fa-arrow-right"></i>
+  </button>
+</div>

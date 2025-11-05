@@ -10,7 +10,6 @@
 
 {{> header}}
 
-<!-- Search Section -->
 <section id="search-section">
     <form id="searchForm" method="GET" action="/search">
         <input type="text" name="service" placeholder="Find a service" class="search-input">
@@ -32,7 +31,6 @@
     </form>
 </section>
 
-<!-- Categories Section -->
 <section class="categories">
   <h2>Service Categories</h2>
   <div class="category-list">
@@ -75,29 +73,14 @@
   </div>
 </section>
 
-
-<!-- Services Near You -->
-<section id="nearby-services">
-    <h2>Services Near You</h2>
-    <div class="services-container">
-        {{#each services}}
-        <div class="service-card">
-            <img src="{{this.image}}" alt="{{this.name}}">
-            <h3>{{this.name}}</h3>
-            <p>{{this.description}}</p>
-            <p><strong>₱{{this.price}}</strong></p>
-            <button class="book-btn">Book Now</button>
-        </div>
-        {{/each}}
-    </div>
+<section class="services-near-you">
+  <h2>Services Near You</h2>
+  <div class="services-grid">
+    {{#each services}}
+      {{> serviceCard this}}
+    {{/each}}
+  </div>
 </section>
-
-<!-- Floating Icon -->
-<div id="floating-icon">
-    <a href="/create-service">
-        <img src="/images/add-icon.png" alt="Add Service">
-    </a>
-</div>
 
 </body>
 </html>

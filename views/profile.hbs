@@ -1,0 +1,110 @@
+<main class="profile-page">
+  <header class="profile-top">
+    <div class="profile-left">
+      <div class="avatar-wrap">
+        <img id="avatarImg" src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/profile-default.png{{/if}}" alt="{{user.name}}" class="avatar">
+        <form id="avatarForm" class="avatar-form" enctype="multipart/form-data" method="post" action="/profile/avatar">
+          <label for="avatarFile" class="avatar-edit-btn" title="Change photo">✎</label>
+          <input id="avatarFile" name="avatar" type="file" accept="image/*" hidden>
+        </form>
+      </div>
+
+      <div class="profile-info">
+        <h1 class="name">
+          <span id="nameText">{{#if user.name}}{{user.name}}{{else}}Your name{{/if}}</span>
+          <button class="edit-btn" data-field="name" title="Edit name">✎</button>
+        </h1>
+
+        <div class="meta-row">
+          <span class="username">@<span id="usernameText">{{#if user.username}}{{user.username}}{{else}}username{{/if}}</span></span>
+          <button class="edit-btn" data-field="username" title="Edit username">✎</button>
+        </div>
+
+        <div class="meta-row">
+          <span id="emailText">{{user.email}}</span>
+          <button class="edit-btn" data-field="email" title="Edit email">✎</button>
+        </div>
+
+        <div class="meta-row">
+          <span id="cityText">{{#if user.city}}{{user.city}}{{else}}City{{/if}}</span>
+          <button class="edit-btn" data-field="city" title="Edit city">✎</button>
+        </div>
+
+        <div class="meta-row">
+          <span id="phoneText">{{#if user.phone}}{{user.phone}}{{else}}Phone No.{{/if}}</span>
+          <button class="edit-btn" data-field="phone" title="Edit phone">✎</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-right">
+      {{#if (eq user.mode 'customer')}}
+        <section class="working-hours">
+          <h3>Working Days & Hours <button id="editHoursBtn" class="small-edit">✎</button></h3>
+          {{#if user.working}}
+            <ul id="workingList">
+              {{#each user.working}}
+                <li><strong>{{this.day}}:</strong> {{this.from}} — {{this.to}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p id="workingList">Not set</p>
+          {{/if}}
+        </section>
+      {{/if}}
+    </div>
+  </header>
+
+  <section class="offers-services">
+    <h2>{{#if (eq user.mode 'customer')}}Offers / Orders / Services{{else}}Services Offered{{/if}}</h2>
+
+    <div id="itemsGrid" class="items-grid">
+      {{#if (eq user.mode 'customer')}}
+        {{#each user.offers}}
+          <div class="item-card">{{this.title}}</div>
+        {{/each}}
+      {{else}}
+        {{#each user.services}}
+          <div class="item-card">{{this.title}}</div>
+        {{/each}}
+      {{/if}}
+    </div>
+  </section>
+
+  <section class="reviews">
+    <h2>Reviews <span class="rating">{{user.avgRating}}★</span> <small>{{user.reviewsCount}} Reviews</small></h2>
+    <div id="reviewsGrid" class="items-grid">
+      {{#each user.reviews}}
+        <div class="review-card">
+          <div class="r-head"><strong>{{this.byName}}</strong> — <small>{{this.rating}}★</small></div>
+          <p>{{this.text}}</p>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <div id="editModal" class="edit-modal" hidden>
+    <div class="edit-modal-inner">
+      <h3 id="editTitle"></h3>
+      <input id="editInput" type="text">
+      <div class="modal-actions">
+        <button id="cancelEdit">Cancel</button>
+        <button id="saveEdit">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hoursModal" class="edit-modal" hidden>
+    <div class="edit-modal-inner">
+      <h3>Edit Working Days & Hours</h3>
+      <form id="hoursForm">
+        <div id="hoursRows">
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancelHours">Cancel</button>
+          <button type="submit" id="saveHours">Save Hours</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
