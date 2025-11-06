@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 // import models (optional example, not required if unused)
 const User = require('./UserModel.js');
 const Rating = require('./RatingModel.js');
-const Service = require('./ServiceModel.js');
 const Booking = require('./BookingModel.js');
 
 // database name
