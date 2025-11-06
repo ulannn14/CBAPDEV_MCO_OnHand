@@ -61,7 +61,7 @@ const postSchema = new mongoose.Schema({
   // For customers: how urgent the request is
   levelOfUrgency: {
     type: String,
-    enum: ['Low', 'Medium', 'High']
+    enum: ['Urgent', 'Non-Urgent']
   },
 
   // For providers: availability details
