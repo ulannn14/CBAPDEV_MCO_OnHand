@@ -1,0 +1,15 @@
+<div class="bookings-container">
+  <div class="booking-tabs">
+    <a href="/bookings/ongoing" class="{{#if (eq activeTab 'ongoing')}}active{{/if}}">Ongoing</a>
+    <a href="/bookings/to-rate" class="{{#if (eq activeTab 'to-rate')}}active{{/if}}">To Rate</a>
+    <a href="/bookings/completed" class="{{#if (eq activeTab 'completed')}}active{{/if}}">Completed</a>
+  </div>
+
+  <div class="booking-list">
+    {{#each bookings}}
+      {{> bookingCard this}}
+    {{else}}
+      <p class="no-bookings">No bookings found for this category.</p>
+    {{/each}}
+  </div>
+</div>
