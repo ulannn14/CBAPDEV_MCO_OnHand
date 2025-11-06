@@ -1,0 +1,26 @@
+<div class="booking-card">
+  <div class="booking-header">
+    <img src="{{profilePic}}" alt="{{name}}" class="profile-pic">
+    <div class="booking-info">
+      <h3 class="name">{{name}}</h3>
+      <p class="service">Need: <span>{{service}}</span></p>
+      <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
+    </div>
+  </div>
+
+  <div class="booking-details">
+    <p class="price"><strong>Agreed Price:</strong> ₱{{price}}</p>
+    
+    {{#if (eq ../activeTab 'to-rate')}}
+      <div class="rating">
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+      </div>
+    {{else}}
+      <p class="status">{{status}}</p>
+    {{/if}}
+  </div>
+</div>

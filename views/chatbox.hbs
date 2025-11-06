@@ -1,0 +1,89 @@
+{{!-- messages.hbs --}}
+<div class="messages-page">
+  <aside class="conversations-col">
+    <div class="convo-search">
+      <input placeholder="Search..." />
+    </div>
+    <ul id="convoList" class="convo-list">
+      {{#each conversations}}
+        <li class="convo-item" data-id="{{this._id}}">
+          <img src="{{this.peerAvatar}}" alt="{{this.peerName}}" class="convo-avatar">
+          <div class="convo-meta">
+            <div class="convo-name">{{this.peerName}}</div>
+            <div class="convo-last">{{this.lastMessagePreview}}</div>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  </aside>
+
+  <section class="thread-col">
+    <div class="thread-top">
+      <div id="threadHeader" class="thread-header">
+        <img id="threadAvatar" src="/images/profile-default.png" class="thread-avatar">
+        <div>
+          <div id="threadName" class="thread-name">Select a conversation</div>
+          <div id="threadMeta" class="thread-meta">Last seen •</div>
+        </div>
+      </div>
+
+      <div class="thread-actions">
+        <button id="makeOfferBtn" class="make-offer-btn" disabled>Make Offer</button>
+      </div>
+    </div>
+
+    <div id="messagesArea" class="messages-area">
+      <!-- messages appended here by JS -->
+    </div>
+
+    <div class="composer">
+      <label for="attachFile" class="attach-btn" title="Attach image">🖼️</label>
+      <input type="file" id="attachFile" accept="image/*" hidden>
+      <input id="messageInput" placeholder="Type message here..." autocomplete="off" />
+      <button id="sendBtn" class="send-btn">Send</button>
+    </div>
+  </section>
+</div>
+
+<div id="offerModal" class="modal" hidden>
+  <div class="modal-inner">
+    <header>
+      <h3>Make Offer</h3>
+      <button id="closeOffer" class="modal-close">✕</button>
+    </header>
+
+    <form id="offerForm" class="offer-form">
+      <label>Title
+        <input name="title" required placeholder="Short title (e.g., Fix leak)" />
+      </label>
+
+      <label>Description
+        <textarea name="description" rows="4" placeholder="Details about the offer..."></textarea>
+      </label>
+
+      <div class="row">
+        <label>Price
+          <input name="price" type="number" min="0" step="0.01" placeholder="0.00" />
+        </label>
+
+        <label>Urgency
+          <select name="urgency">
+            <option value="normal">Normal</option>
+            <option value="urgent">Urgent</option>
+            <option value="emergency">Emergency</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Attach image
+        <input id="offerImage" name="image" type="file" accept="image/*" />
+      </label>
+      <div id="offerPreview" class="offer-preview"></div>
+
+      <div class="modal-actions">
+        <button type="button" id="cancelOffer">Cancel</button>
+        <button type="submit" class="primary">Send Offer</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+.messages-page {
+    display:grid; 
+    grid-template-columns: 280px 1fr; 
+    height: calc(100vh - 80px); 
+}
+
+.conversations-col { 
+    border-right: 4px solid #111; 
+    background:#f8f8f8; 
+    padding:12px; 
+    overflow:auto; 
+}
+
+.convo-list { 
+    list-style:none; 
+    padding:0; 
+    margin:0; 
+}
+
+.convo-item { 
+    display:flex; 
+    gap:12px; 
+    align-items:center; 
+    padding:10px; 
+    border-bottom:1px solid #ddd; 
+    cursor:pointer; 
+}
+
+.convo-item:hover { 
+    background:#fff; 
+}
+
+.convo-avatar{ 
+    width:48px; 
+    height:48px; 
+    border-radius:50%; 
+    object-fit:cover; 
+}
+
+.thread-col { 
+    display:flex; 
+    flex-direction:column; 
+    background:#fbfbfb; 
+}
+
+.thread-top { 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    padding:16px; 
+    border-bottom:3px solid #111; 
+}
+
+.messages-area { 
+    flex:1; 
+    padding:40px; 
+    overflow:auto; 
+    position:relative; 
+}
+
+.message-bubble { 
+    max-width:52%; 
+    padding:16px; 
+    border-radius:12px; 
+    margin-bottom:18px; 
+    display:inline-block; 
+    word-wrap:break-word; 
+}
+
+.message-me { 
+    background:#2563EB; 
+    color:#fff; 
+    border-bottom-right-radius:4px; 
+    margin-left:auto; 
+}
+
+.message-them { 
+    background:#d1d5db; 
+    color:#111; 
+    border-bottom-left-radius:4px; 
+    margin-right:auto; 
+}
+
+.message-img { 
+    max-width:280px; 
+    display:block; 
+    margin-top:8px; 
+    border-radius:8px; 
+}
+
+.composer { 
+    display:flex; 
+    gap:12px; 
+    padding:12px; 
+    border-top:3px solid #111; 
+    align-items:center; 
+}
+
+.attach-btn { 
+    font-size:22px; 
+    cursor:pointer; 
+}
+
+#messageInput { 
+    flex:1; 
+    padding:14px; 
+    border-radius:16px; 
+    border:1px solid #ddd; 
+}
+
+.send-btn { 
+    padding:12px 22px; 
+    background:#FBBF24; 
+    color:#1f2937; 
+    border-radius:24px; 
+    border:none; 
+    font-weight:700; 
+}
+
+.modal { 
+    position:fixed; 
+    inset:0; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    background:rgba(0,0,0,0.35); 
+    z-index:2000; 
+}
+
+.modal-inner{ 
+    width:520px; 
+    background:#fff; 
+    border-radius:12px; 
+    padding:18px; 
+}
+
+.modal-actions { 
+    display:flex; 
+    justify-content:flex-end; 
+    gap:8px; 
+    margin-top:12px; 
+}

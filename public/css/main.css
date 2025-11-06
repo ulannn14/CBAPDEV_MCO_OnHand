@@ -5,13 +5,12 @@
     font-size: 16px;
 }
 
-/* Header layout */
 #header {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 10px 20px;
-  background: #1e3a8a; /* warm blue */
+  background: #1e3a8a;
   color: #f5f5f5;
   position: relative;
 }
