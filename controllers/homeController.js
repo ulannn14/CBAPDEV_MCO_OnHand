@@ -20,4 +20,4 @@ const homeController = {
     exports the object `homeController` (defined above)
     when another script exports from this file
 */
-module.exports = controller;
+module.exports = homeController;

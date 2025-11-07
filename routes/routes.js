@@ -8,8 +8,8 @@ const controller = require('../controllers/controller.js');
 // import module `homeController` from `../controllers/homeController.js`
 const homeController = require('../controllers/homeController.js');
 
-// import module `successController` from `../controllers/successController.js`
-const messageController = require('../controllers/messageController.js');
+// import module `signupController` from `../controllers/signupController.js`
+const signupController = require('../controllers/signupController.js');
 
 // import module `profileController` from `../controllers/profileController.js`
 const profileController = require('../controllers/profileController.js');
