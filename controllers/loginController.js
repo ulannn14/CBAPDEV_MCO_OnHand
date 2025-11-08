@@ -7,12 +7,12 @@ const User = require('../models/UserModel.js');
 
 /*
     defines an object which contains functions executed as callback
-    when a client requests for `signup` paths in the server
+    when a client requests for `login` paths in the server
 */
 const loginController = {
 
     /*
-        executed when the client sends an HTTP POST request `/signup`
+        executed when the client sends an HTTP POST request `/login`
         as defined in `../routes/routes.js`
     */
     postLogin: async function (req, res) {
@@ -24,24 +24,15 @@ const loginController = {
             Example: the value entered in <input type="text" name="fName">
             can be retrieved using `req.body.fName`
         */
-        var fName = req.body.fName;
-        var lName = req.body.lName;
-        var idNum = req.body.idNum;
-        var pw = req.body.pw;
-
-        var user = {
-            fName: fName,
-            lName: lName,
-            idNum: idNum,
-            pw: pw
-        }
+        var userName = req.body.userName.trim();
+        var password = req.body.password.trim();
 
         /*
             calls the function insertOne()
             defined in the `database` object in `../models/db.js`
             this function adds a document to collection `users`
         */
-        var response = await db.insertOne(User, user);
+        var userExists = await User.findOne({userName: userName, password: password});
 
         /*
             upon adding a user to the database,
@@ -52,8 +43,8 @@ const loginController = {
             defined in `./successController.js`
         */
 
-        if(response != null){
-            res.redirect('/success?fName=' + fName +'&lName=' + lName + '&idNum=' + idNum);
+        if(userExists){
+            res.redirect('/home');
         }
         else {
             res.render('error');
