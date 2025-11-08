@@ -1,264 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Home | OnHand</title>
-  <link rel="stylesheet" href="/css/homepage.css">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/popups.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="/js/popup.js"></script>
-  <script src="/js/dropdown-profile.js"></script>
-  <link rel="icon" href="/images/icon.png" type="image/png">
-</head>
-<body>
-
-<!-- Header -->
-<nav id="header">
-  <a href="/html/homepage.html" class="logo-link">
-    <img src="/images/onhand-logo.png" alt="OnHand Logo" class="logo">
-  </a>
-
-  <div class="nav-links">
-    <a href="/html/homepage.html" class="active">Home</a>
-    <a href="/html/chatbox.html">Messages</a>
-    <a href="/html/bookings.html">Bookings</a>
-  </div>
-
-  <button id="profileBtn" class="profile-btn">
-    <img src="/images/profile_picture.png" alt="Default profile" class="profile-icon">
-  </button>
-</nav>
-
-<!-- Dropdown menu from Profile Button -->
-<div class="dropdown-menu" id="profileDropdown" style="display: none;">
-  <a href="/html/profile.html">Profile</a>
- <!-- <a href="#">My Reports</a> -->
-  <a href="/html/index.html">Log Out</a>
-  <div class="toggle">
-    Service Provider Mode
-    <label class="switch">
-      <input type="checkbox" id="providerToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
-</div>
-
-
-
-<!-- Sidebar -->
-<aside id="profileSidebar" class="profile-sidebar">
-  <header class="sidebar-header">
-    <h3 id="profileTitle">Account</h3>
-    <button id="closeSidebar" class="close-btn">✕</button>
-  </header>
-
-  <div class="sidebar-body">
-    <div class="profile-summary">
-      <img src="/images/profile_picture.png" alt="Guest" class="profile-thumb">
-      <div>
-        <div class="name">Guest</div>
-        <div class="meta">Metro Manila</div>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a href="/profile">Profile</a>
-      <a href="/reports">My Reports</a>
-      <a href="/apply-provider">Apply as Service Provider</a>
-    </nav>
-
-    <div class="sidebar-actions">
-      <form method="post" action="/logout" class="logout-form">
-        <button type="submit" class="logout-btn">Logout</button>
-      </form>
-    </div>
-  </div>
-</aside>
-
-<div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+{{> header}}
 
 <!-- Search Section -->
 <section id="search-section">
-  <form id="searchForm" method="GET" action="/html/search.html">
-    <input type="text" name="service" placeholder="Find a service" class="search-input">
+  <form id="searchForm" method="GET" action="/search">
+    <input type="text" name="service" placeholder="{{#if user.isProvider}}Find a request{{else}}Find a service{{/if}}" class="search-input">
 
     <select name="urgency" class="search-select">
       <option value="">Urgency</option>
       <option value="urgent">Urgent</option>
-      <option value="normal">Normal</option>
+      <option value="non-urgent">Non-Urgent</option>
     </select>
 
     <input type="text" name="minPrice" placeholder="Min ₱" class="search-input price">
     <input type="text" name="maxPrice" placeholder="Max ₱" class="search-input price">
-
     <input type="text" name="location" placeholder="Location" class="search-input">
 
-    <button type="submit" class="search-btn">
-      Search <span></span>
-    </button>
+    <button type="submit" class="search-btn">Search</button>
   </form>
 </section>
 
-<!-- Categories Section -->
-<section class="categories">
-  <h2>Service Categories</h2>
-  <div class="category-list">
-    <div class="category"><img src="/images/1.png" alt="Plumbing Services"><h3>Plumbing Services</h3></div>
-    <div class="category"><img src="/images/6.png" alt="Electrical Issues"><h3>Electrical Issues</h3></div>
-    <div class="category"><img src="/images/7.png" alt="Roof Repairs"><h3>Roof Repairs</h3></div>
-    <div class="category"><img src="/images/2.png" alt="Structural Repairs"><h3>Structural Repairs</h3></div>
-    <div class="category"><img src="/images/5.png" alt="Pest Control"><h3>Pest Control</h3></div>
-    <div class="category"><img src="/images/4.png" alt="HVAC or Appliance Breakdown"><h3>HVAC / Appliance Breakdown</h3></div>
-    <div class="category"><img src="/images/3.png" alt="Locksmith Services"><h3>Locksmith Services</h3></div>
-  </div>
-</section>
+{{!-- Customer view --}}
+{{#unless user.isProvider}}
 
-<section class="services-near-you">
-  <h2>Services Near You</h2>
-
-  <div class="services-grid">
-
-    <!-- Service Card 1 -->
-<div class="service-card">
-  <div class="card-header">
-    <img src="/images/workers/2boy.png" alt="Juan Dela Cruz" class="profile-pic">
-    <div class="worker-info">
-      <h3 class="worker-name">Juan Dela Cruz</h3>
-      <span class="worker-job">Plumber</span>
+  <!-- Categories Section -->
+  <section class="categories">
+    <h2>Service Categories</h2>
+    <div class="category-list">
+      {{#each categories}}
+        <div class="category">
+          <img src="{{this.image}}" alt="{{this.name}}">
+          <h3>{{this.name}}</h3>
+        </div>
+      {{/each}}
     </div>
-  </div>
+  </section>
 
-  <div class="card-body">
-    <div class="card-row">
-	<div class="info-group">
-      <div class="location">
-        <i class="fa-solid fa-location-dot"></i> Pasig City
-      </div>
-      <div class="divider-vertical"></div>
-      <div class="working-hours">
-        <i class="fa-regular fa-clock"></i> 07:00 AM – 06:00 PM
-      </div>
-	  </div>
+  <!-- Services Near You -->
+  <section class="services-near-you">
+    <h2>Services Near You</h2>
+    <div class="services-grid">
+      {{#each services}}
+        {{> serviceCard this isOwner=false}}
+      {{/each}}
     </div>
+  </section>
 
-    <hr class="divider">
+{{/unless}}
 
-    <div class="description">
-      <h5 class="desc-title">Description:</h5>
-      <p>
-        Reliable plumber with years of experience in fixing leaks, pipe replacements, and bathroom installations.
-        Fast and efficient service guaranteed.
-      </p>
+{{!-- provider view --}}
+{{#if user.isProvider}}
+
+  <!-- Customers Near You -->
+  <section class="services-near-you">
+    <h2>Customers Near You</h2>
+    <div class="services-grid">
+      {{#each customers}}
+        {{> serviceCard this isOwner=false}}
+      {{/each}}
     </div>
+  </section>
 
-    <hr class="divider">
+{{/if}}
 
-    <p class="price-range">
-      <strong>Range:</strong> ₱250.00 – ₱300.00
-    </p>
-  </div>
-
-  <button class="message-btn">
-    Message / Make Offer <i class="fa-solid fa-arrow-right"></i>
-  </button>
+<!-- Floating Button for Create Post  -->
+<div class="floating-report">
+  <i class="fa-solid fa-clipboard-list"></i>
 </div>
 
-
-<!-- Service Card 2 -->
-<div class="service-card">
-  <div class="card-header">
-    <img src="/images/workers/girl.png" alt="Maria Santos" class="profile-pic">
-    <div class="worker-info">
-      <h3 class="worker-name">Maria Santos</h3>
-      <span class="worker-job">Electrician</span>
-    </div>
-  </div>
-
-  <div class="card-body">
-    <div class="card-row">
-      <div class="location">
-	  <div class="info-group">
-        <i class="fa-solid fa-location-dot"></i> Makati City
-      </div>
-      <div class="divider-vertical"></div>
-      <div class="working-hours">
-        <i class="fa-regular fa-clock"></i> 08:00 AM – 05:00 PM
-      </div>
-	  </div>
-    </div>
-
-    <hr class="divider">
-
-    <div class="description">
-      <h5 class="desc-title">Description:</h5>
-      <p>
-        Skilled in residential and commercial electrical systems. Provides safe wiring, lighting setup,
-        and circuit repair services at affordable rates.
-      </p>
-    </div>
-
-    <hr class="divider">
-
-    <p class="price-range">
-      <strong>Range:</strong> ₱400.00 – ₱550.00
-    </p>
-  </div>
-
-  <button class="message-btn">
-    Message / Make Offer <i class="fa-solid fa-arrow-right"></i>
-  </button>
-</div>
-
-
-<!-- Service Card 3 -->
-<div class="service-card">
-  <div class="card-header">
-    <img src="/images/workers/3boy.png" alt="Roberto Cruz" class="profile-pic">
-    <div class="worker-info">
-      <h3 class="worker-name">Roberto Cruz</h3>
-      <span class="worker-job">Pest Control Specialist</span>
-    </div>
-  </div>
-
-  <div class="card-body">
-    <div class="card-row">
-	<div class="info-group">
-      <div class="location">
-        <i class="fa-solid fa-location-dot"></i> Quezon City
-      </div>
-      <div class="divider-vertical"></div>
-      <div class="working-hours">
-        <i class="fa-regular fa-clock"></i> 09:00 AM – 04:00 PM 
-      </div>
-	  </div>
-    </div>
-
-    <hr class="divider">
-
-    <div class="description">
-      <h5 class="desc-title">Description:</h5>
-      <p>
-        Expert in eco-friendly pest control treatments for households and offices.
-        Specializes in removing termites, ants, and rodents with guaranteed results.
-      </p>
-    </div>
-
-    <hr class="divider">
-
-    <p class="price-range">
-      <strong>Range:</strong> ₱350.00 – ₱600.00
-    </p>
-  </div>
-
-  <button class="message-btn">
-    Message / Make Offer <i class="fa-solid fa-arrow-right"></i>
-  </button>
-</div>
-
- <div class="floating-report"><i class="fa-solid fa-clipboard-list"></i></div>
-
-<!-- Post Popup -->
+<!-- Create Post -->
 <div class="post-popup" id="postPopup" style="display: none;">
   <div class="popup-content">
     <h3>Create a Post</h3>
@@ -273,11 +82,9 @@
       <label class="popup-label">Need:</label>
       <select id="postNeed" class="popup-input" required>
         <option value="">Select Service Type</option>
-        <option value="Plumbing">Plumbing</option>
-        <option value="Electrical">Electrical</option>
-        <option value="Pest Control">Pest Control</option>
-        <option value="Roof Repair">Roof Repair</option>
-        <option value="Locksmith">Locksmith</option>
+        {{#each categories}}
+          <option value="{{this.name}}">{{this.name}}</option>
+        {{/each}}
       </select>
 
       <label class="popup-label">Location:</label>
@@ -301,7 +108,6 @@
 
       <label class="popup-label">Upload Images:</label>
       <input type="file" id="postImages" accept="image/*" multiple class="popup-input">
-
       <div class="image-preview" id="imagePreview"></div>
 
       <div class="popup-actions">
@@ -311,6 +117,3 @@
     </form>
   </div>
 </div>
-
-</body>
-</html>
