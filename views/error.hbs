@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>404 | OnHand</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/homepage.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="/js/dropdown-profile.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+  <style>
+    .error-wrap {
+      min-height: calc(100vh - 100px);
+      display: grid;
+      place-items: center;
+      padding: 40px 20px;
+      background: #f7f8fb;
+    }
+    .error-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      padding: 36px 28px;
+      width: min(720px, 92vw);
+      text-align: center;
+    }
+    .error-code {
+      font-size: clamp(64px, 10vw, 120px);
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin: 0;
+      color: #1e3a8a; 
+    }
+    .error-title {
+      font-size: 1.5rem;
+      margin: 8px 0 10px;
+      color: #111827;
+      font-weight: 700;
+    }
+    .error-msg {
+      color: #6b7280;
+      margin: 0 0 22px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+<nav id="header">
+  <a href="/html/homepage.html" class="logo-link">
+    <img src="/images/onhand-logo.png" alt="OnHand Logo" class="logo">
+  </a>
+
+  <div class="nav-links">
+    <a href="/html/homepage.html" class="active">Home</a>
+    <a href="/html/chatbox.html">Messages</a>
+    <a href="/html/bookings.html">Bookings</a>
+  </div>
+
+  <button id="profileBtn" class="profile-btn">
+    <img src="/images/profile_picture.png" alt="Default profile" class="profile-icon">
+  </button>
+</nav>
+
+<!-- Dropdown menu from Profile Button -->
+<div class="dropdown-menu" id="profileDropdown" style="display: none;">
+  <a href="/html/profile.html">Profile</a>
+ <!-- <a href="#">My Reports</a> -->
+  <a href="/html/index.html">Log Out</a>
+  <div class="toggle">
+    Service Provider Mode
+    <label class="switch">
+      <input type="checkbox" id="providerToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+
+
+<!-- Sidebar -->
+<aside id="profileSidebar" class="profile-sidebar">
+  <header class="sidebar-header">
+    <h3 id="profileTitle">Account</h3>
+    <button id="closeSidebar" class="close-btn">✕</button>
+  </header>
+
+  <div class="sidebar-body">
+    <div class="profile-summary">
+      <img src="/images/profile_picture.png" alt="Guest" class="profile-thumb">
+      <div>
+        <div class="name">Guest</div>
+        <div class="meta">Metro Manila</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/profile">Profile</a>
+      <a href="/reports">My Reports</a>
+      <a href="/apply-provider">Apply as Service Provider</a>
+    </nav>
+
+    <div class="sidebar-actions">
+      <form method="post" action="/logout" class="logout-form">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
+  </div>
+</aside>
+
+<div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+
+
+  <!-- 404 Content -->
+  <main class="error-wrap">
+    <section class="error-card" role="alert">
+      <p class="error-code">404</p>
+      <h1 class="error-title">Page not found</h1>
+      <p class="error-msg">
+        The page you're looking for doesn't exist or may have been moved.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

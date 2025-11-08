@@ -20,20 +20,20 @@
 
             <div class="login-register">
                 <div id="form-container">
-                    <form id="loginForm" method="POST" action="#">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" class="input-field" required value="demo_user">
+                    <form id="loginForm" method="POST" action="/login">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="userName" class="input-field" required>
 
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="input-field" required value="demo1234">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="input-field" required>
 
-                    <button type="button" class="login-btn" onclick="window.location.href='/home'">Log In</button>
+                        <button type="submit" class="login-btn">Log In</button>
                     </form>
                 </div>
 
                 <div class="signup-text">
                 Don't have an account yet?
-                <a href="signup.html">Register Here</a>
+                <a href="/signup">Register Here</a>
                 </div>
             </div>
         </div>
