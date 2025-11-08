@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home | OnHand</title>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/homepage.css">
+  <link rel="stylesheet" href="/css/popups.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
 {{> header}}
 
 <!-- Search Section -->
@@ -47,7 +61,7 @@
 
 {{/unless}}
 
-{{!-- provider view --}}
+{{!-- Provider view --}}
 {{#if user.isProvider}}
 
   <!-- Customers Near You -->
@@ -117,3 +131,8 @@
     </form>
   </div>
 </div>
+
+ <!-- Scripts -->
+  <script src="/js/popup.js"></script>
+</body>
+</html>
