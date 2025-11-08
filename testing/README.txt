@@ -1,0 +1,1 @@
+npm initialize then 'npm install mutler express' then node index.js
