@@ -5,6 +5,9 @@ const express = require('express');
 // import module `controller` from `../controllers/controller.js`
 const controller = require('../controllers/controller.js');
 
+// import module `loginController` from `../controllers/loginController.js`
+const loginController = require('../controllers/loginController.js');
+
 // import module `homeController` from `../controllers/homeController.js`
 const homeController = require('../controllers/homeController.js');
 
@@ -22,6 +25,13 @@ const app = express();
     when a client sends an HTTP GET request for `/`
 */
 app.get('/', controller.getIndex);
+
+/*
+    execute function getSuccess()
+    defined in object `successController` in `../controllers/homeController.js`
+    when a client sends an HTTP GET request for `/home`
+*/
+app.post('/login', loginController.postLogin);
 
 /*
     execute function getSuccess()

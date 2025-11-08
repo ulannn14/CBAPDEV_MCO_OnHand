@@ -1,0 +1,115 @@
+:root {
+  --main-font: 'Poppins', sans-serif;
+}
+
+.post-popup {
+  display: none;
+}
+
+.post-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: white;
+  border-radius: 12px;
+  padding: 25px 30px;
+  width: 400px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.popup-content h3 {
+  margin-top: 0;
+  color: var(--main-color);
+}
+
+.post-text {
+  width: 100%;
+  height: 100px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  font-family: var(--main-font);
+  resize: none;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancel, .btn-post {
+  font: var(--main-font);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.btn-post {
+  background: var(--main-color);
+  color: white;
+}
+
+.btn-post:hover {
+  background: #122f7b;
+}
+
+.popup-label {
+  display: block;
+  font-weight: 600;
+  margin: 10px 0 4px;
+  color: var(--main-color);
+}
+
+.popup-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: var(--main-font);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.price-range {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.price-range input {
+  width: 100%;
+}
+
+.image-preview {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.image-preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}

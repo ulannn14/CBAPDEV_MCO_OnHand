@@ -1,0 +1,195 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--main-font);
+}
+
+body {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+#signup-container {
+  background-color: #F4F4F4;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 30px;
+  width: 60%;
+  max-width: 700px;
+  padding: 40px 60px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+#signup-logo img {
+  width: 250px;
+  max-width: 45vw;
+  height: auto;
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+label {
+  color: var(--main-color);
+  font-weight: 600;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  outline: none;
+  background-color: #FFFFFF;
+  transition: border-color 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: var(--main-color);
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--main-color);
+  margin-top: 16px;
+}
+
+input[type="radio"] {
+  margin-right: 8px;
+  accent-color: var(--main-color);
+}
+
+#serviceProviderFields {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  display: none;
+}
+
+.days-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 14px;
+  margin-bottom: 10px;
+}
+
+.days-checklist label {
+  font-weight: 500;
+  font-size: 15px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.days-checklist input[type="checkbox"] {
+  accent-color: var(--main-color);
+  transform: scale(1.2);
+}
+
+.time-inputs { 
+  display:flex; 
+  gap:16px; 
+  align-items:center; 
+  flex-wrap:wrap; 
+}
+
+.time-picker { 
+  display:flex; 
+  gap:8px; 
+  align-items:center; 
+}
+
+.time-picker select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #C4C4C4);
+  background: #fff;
+  font-size: 14px;
+  height: 44px;
+  min-width: 64px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.time-picker .tp-ampm { 
+  min-width:60px; 
+}
+
+.time-picker select::-ms-expand { 
+  display: none; 
+}
+
+.signup-btn {
+  margin-top: 18px;
+  padding: 14px;
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.signup-btn:hover {
+  background-color: #FFD44F;
+  transform: translateY(-2px);
+}
+
+h1 {
+  text-align: center;
+  color: var(--main-color);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 800px) {
+  #signup-container {
+    width: 90%;
+    padding: 30px 25px;
+  }
+
+  #signup-logo img {
+    width: 180px;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  .input-field {
+    font-size: 13px;
+  }
+
+  .signup-btn {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
