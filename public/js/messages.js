@@ -1,6 +1,8 @@
 (() => {
   window.APP_ROLE = window.APP_ROLE || 'customer';
 
+  //wala me masyado alam how to handle client server side for this....
+  // needed elements or data in database, convo id, name, avatar, last message, messages (from, text, time, type, price, accepted, declined)
   // ---------- Sample Conversations ----------
   const customerConversations = [
     {
@@ -77,16 +79,16 @@
 
   // ---------- Convos Sidebar ----------
   function renderConvos() {
-    const list = document.getElementById('convoList');
-    if (!list) return;
+    const list = document.getElementById('convoList'); //retrieve list of conversations from database
+    if (!list) return; 
     list.innerHTML = '';
     conversations.forEach(c => {
       const div = document.createElement('div');
       div.className = 'convo-item';
-      div.dataset.id = c.id;
+      div.dataset.id = c.id; //set id
 
       const avatarDiv = document.createElement('div');
-      avatarDiv.className = 'convo-avatar';
+      avatarDiv.className = 'convo-avatar'; //set avatar
       if (c.avatar && c.avatar.endsWith('.png')) {
         const img = document.createElement('img');
         img.src = c.avatar;
@@ -105,7 +107,7 @@
 
       div.appendChild(avatarDiv);
       div.appendChild(metaDiv);
-      div.addEventListener('click', () => openConvo(c.id));
+      div.addEventListener('click', () => openConvo(c.id)); //open convo by using id
       list.appendChild(div);
     });
   }
@@ -124,8 +126,8 @@
     if (tt) {
       tt.querySelectorAll('.thread-title').forEach(n => n.remove());
       const title = document.createElement('div');
-      title.className = 'thread-title';
-      title.textContent = convo.name || '';
+      title.className = 'thread-title'; 
+      title.textContent = convo.name || ''; //need ang name sa taas ng message box
       tt.insertBefore(title, tt.firstChild);
     }
 
