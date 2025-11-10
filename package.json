@@ -21,7 +21,9 @@
   "homepage": "https://github.com/ulannn14/CBAPDEV_MCO_OnHand#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "express-handlebars": "^8.0.3",
     "hbs": "^4.2.0",
+    "mongodb": "^7.0.0",
     "mongoose": "^8.19.3"
   },
   "devDependencies": {
