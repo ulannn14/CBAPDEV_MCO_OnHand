@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookings | OnHand</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/bookings.css">
+  <link rel="stylesheet" href="/css/rating.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="/js/dropdown-profile.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+
+  <style>
+    .rating-stars {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .rating-stars i {
+      font-size: 1.5rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .rating-stars i:hover {
+      color: #facc15;
+      transform: scale(1.2);
+    }
+
+    .status {
+      font-style: italic;
+      color: #444;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  {{> header}}
+
+  <div class="bookings-container">
+    <div class="booking-tabs">
+      <a href="/bookings" class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
+      <a href="/bookings-to-rate" class="{{#if (eq currentTab 'toRate')}}active{{/if}}">To Rate</a>
+      <a href="/bookings-completed" class="{{#if (eq currentTab 'completed')}}active{{/if}}">Completed</a>
+    </div>
+
+    <div class="booking-list">
+      {{#each bookings}}
+      <div class="booking-card">
+        <div class="booking-left">
+          <div class="profile-row">
+            <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
+            <div class="booking-info">
+              <h3 class="client-name">{{clientName}}</h3>
+              <div class="need-wrapper">
+                <p class="need-label">Need:</p>
+                <span class="service-type">{{serviceType}}</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+          <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
+        </div>
+
+        <div class="divider-vertical"></div>
+
+        <div class="booking-right">
+          <div class="agreed-price">
+            <strong>Agreed Price:</strong>
+            <p class="price">₱{{price}}</p>
+          </div>
+
+          <div class="stars rating-stars">
+            {{#times 5}}
+              <i class="fa-regular fa-star" data-value="{{this}}"></i>
+            {{/times}}
+          </div>
+
+          <p class="status">Click to rate this service</p>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.rating-stars').forEach(container => {
+      const stars = container.querySelectorAll('i');
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          const value = parseInt(star.getAttribute('data-value'));
+          stars.forEach((s, index) => {
+            if (index < value) {
+              s.classList.add('fa-solid');
+              s.classList.remove('fa-regular');
+              s.style.color = '#fbbf24';
+            } else {
+              s.classList.add('fa-regular');
+              s.classList.remove('fa-solid');
+              s.style.color = '#ccc';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
