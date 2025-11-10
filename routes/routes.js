@@ -2,6 +2,15 @@
 // import module `express`
 const express = require('express');
 
+// import module 'mutler'
+const multer = require('multer');
+
+// import module 'path'
+const path = require('path');
+
+// import module 'fs'
+const fs = require('fs');
+
 // import module `controller` from `../controllers/controller.js`
 const controller = require('../controllers/controller.js');
 
@@ -19,6 +28,45 @@ const profileController = require('../controllers/profileController.js');
 
 const app = express();
 
+// Configure multer storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const username = req.body.username || 'guest';
+    let basePath;
+
+    // Decide folder based on field name
+    switch (file.fieldname) {
+      case 'profilePicture':
+        basePath = path.join(__dirname, '../public/uploads/profile_pics');
+        break;
+      case 'validID':
+        basePath = path.join(__dirname, '../private/uploads/ids');
+        break;
+      case 'nbiClearance':
+        basePath = path.join(__dirname, '../private/uploads/nbi');
+        break;
+      default:
+        basePath = path.join(__dirname, '../private/uploads/other');
+        break;
+    }
+
+    // Create the folder if it doesn't exist
+    fs.mkdirSync(basePath, { recursive: true });
+
+    cb(null, basePath);
+  },
+
+  filename: function (req, file, cb) {
+    const username = req.body.username || 'guest';
+    const ext = path.extname(file.originalname);
+    const safeField = file.fieldname.replace(/\s+/g, '_');
+    const filename = `${username}.${safeField}${ext}`;
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage });
+
 /*
     execute function getIndex()
     defined in object `controller` in `../controllers/controller.js`
@@ -28,17 +76,47 @@ app.get('/', controller.getIndex);
 
 /*
     execute function getSuccess()
-    defined in object `successController` in `../controllers/homeController.js`
-    when a client sends an HTTP GET request for `/home`
+    defined in object `loginController` in `../controllers/loginController.js`
+    when a client sends an HTTP POST request for `/login`
 */
 app.post('/login', loginController.postLogin);
 
 /*
     execute function getSuccess()
-    defined in object `successController` in `../controllers/homeController.js`
+    defined in object `homeController` in `../controllers/homeController.js`
     when a client sends an HTTP GET request for `/home`
 */
 app.get('/home', homeController.getHome);
+
+/*
+    execute function getSuccess()
+    defined in object `signupController` in `../controllers/signupController.js`
+    when a client sends an HTTP GET request for `/signup`
+*/
+app.get('/signup', signupController.getSignup);
+
+/*
+    execute function getSuccess()
+    defined in object `signupController` in `../controllers/signupController.js`
+    when a client sends an HTTP POST request for `/signup`
+    uses multer upload fields
+*/
+app.post(
+  '/signup',
+  upload.fields([
+    { name: 'profilePicture', maxCount: 1 },
+    { name: 'validID', maxCount: 1 },
+    { name: 'nbiClearance', maxCount: 1 },
+  ]),
+  signupController.postSignup
+);
+
+
+
+
+
+
+
 
 /*
     execute function getProfile()
