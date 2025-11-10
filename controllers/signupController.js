@@ -1,88 +1,114 @@
 
-// import database and model
+const fs = require('fs');
+const path = require('path');
 const db = require('../models/db.js');
 const User = require('../models/UserModel.js');
 
 const signupController = {
 
-    getSignup: function (req, res) {
-
-        // render `../views/signup.hbs`
-        res.render('signup');
+    getSignup: (req, res) => {
+        res.render('signup', { weekdays: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] });
     },
 
-    postSignup: async function (req, res) {
+    postSignup: async (req, res) => {
         try {
-        // Text fields
-        const {
-            name,
-            email,
-            phone,
-            password,
-            birthday,
-            homeNumber,
-            street,
-            barangay,
-            city,
-            region,
-            country,
-            postal,
-            isServiceProvider,
-            workingDays,
-            workingHours,
-            workingLocation
-        } = req.body;
+            const {
+                firstName,
+                middleName,
+                lastName,
+                username,
+                email,
+                phone,
+                password,
+                birthday,
+                homeNumber,
+                street,
+                barangay,
+                city,
+                region,
+                country,
+                postal,
+                isServiceProvider,
+                workingLocation,
+                startTime,
+                endTime
+            } = req.body;
 
-        // Split name if needed
-        const nameParts = name.split(' ');
-        const firstName = nameParts[0];
-        const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : '';
-        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
+            // Working days (checkboxes)
+            const workingDays = req.body.workingDays 
+                ? Array.isArray(req.body.workingDays) 
+                    ? req.body.workingDays 
+                    : [req.body.workingDays] 
+                : [];
 
-        // Get uploaded file paths (if they exist)
-        const profilePicturePath = req.files?.profilePicture?.[0]?.path || '/images/default_profile.png';
-        const validIdPath = req.files?.validID?.[0]?.path || null;
-        const nbiClearancePath = req.files?.nbiClearance?.[0]?.path || null;
+            // Directories
+            const profileDir = path.join(__dirname, '../public/uploads/profile_pics');
+            const idDir = path.join(__dirname, '../private/uploads/ids');
+            const nbiDir = path.join(__dirname, '../private/uploads/nbi');
 
-        // Construct the new user object
-        const newUser = {
-            firstName,
-            middleName,
-            lastName,
-            userName,
-            email,
-            phoneNumber: phone,
-            password,
-            birthday,
-            address: {
-            houseNumber: homeNumber,
-            street,
-            barangay,
-            city,
-            region,
-            country,
-            postalCode: postal
-            },
-            validId: validIdPath,
-            type: isServiceProvider === 'yes' ? 'provider' : 'customer',
-            nbiClearance: nbiClearancePath,
-            workingDays: workingDays ? workingDays.split(',').map(day => day.trim()) : [],
-            workingHours,
-            WorkingArea: workingLocation,
-            profilePicture: profilePicturePath
-        };
+            // Ensure directories exist
+            [profileDir, idDir, nbiDir].forEach(dir => { if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true }); });
 
-        // Insert user into the database using db.js helper
-        await db.insertOne(User, newUser);
+            // Helper function to save file with custom name
+            const saveFile = (file, folder, filename) => {
+                if(!file) return null;
+                const ext = path.extname(file.originalname);
+                const filepath = path.join(folder, `${filename}${ext}`);
+                fs.renameSync(file.path, filepath); // move file
+                return filepath;
+            }
 
-        // Redirect or render a success page
-        res.redirect('/home');
+            // Files
+            const profilePicturePath = req.files?.profilePicture?.[0] 
+                ? saveFile(req.files.profilePicture[0], profileDir, username)
+                : '/images/default_profile.png';
 
-        } catch (error) {
-        console.error('Signup error:', error);
-        res.status(500).render('error', { message: 'Signup failed.' });
+            const validIdPath = req.files?.validID?.[0] 
+                ? saveFile(req.files.validID[0], idDir, `${username}_id`)
+                : null;
+
+            const nbiClearancePath = (isServiceProvider === 'yes' && req.files?.nbiClearance?.[0]) 
+                ? saveFile(req.files.nbiClearance[0], nbiDir, `${username}_nbi`)
+                : null;
+
+            // Construct user object
+            const newUser = {
+                firstName,
+                middleName,
+                lastName,
+                userName: username,
+                email,
+                phoneNumber: phone,
+                password,
+                birthday,
+                address: {
+                    houseNumber: homeNumber,
+                    street,
+                    barangay,
+                    city,
+                    region,
+                    country,
+                    postalCode: postal
+                },
+                validId: validIdPath,
+                type: isServiceProvider === 'yes' ? 'provider' : 'customer',
+                nbiClearance: nbiClearancePath,
+                workingDays,
+                workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
+                WorkingArea: workingLocation,
+                profilePicture: profilePicturePath
+            };
+
+            // Insert into database
+            await db.insertOne(User, newUser);
+
+            res.redirect('/home');
+
+        } catch (err) {
+            console.error('Signup error:', err);
+            res.status(500).render('error', { message: 'Signup failed.' });
         }
     }
-    };
+};
 
 module.exports = signupController;
