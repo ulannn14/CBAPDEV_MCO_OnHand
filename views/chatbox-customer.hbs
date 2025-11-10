@@ -1,41 +1,53 @@
-{{! Extends layout }}
-{{! The title variable can be set in res.render }}
-{{! Use handlebars "sections" to inject scripts/head content }}
-{{#> layout title="Messages"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Messages | OnHand</title>
+  <link rel="stylesheet" href="/css/chatbox.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/popups.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="/js/messages.js"></script>
+  <script src="/js/popup.js"></script>
+  <script src="/js/dropdown-profile.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+</head>
+<body>
+  {{> header}}
 
-  {{#*inline "headScripts"}}
-    <script src="/js/messages.js" defer></script>
-    <script src="/js/popup.js"></script>
-    <script src="/js/dropdown-profile.js"></script>
-  {{/inline}}
+  <!-- Left: conversations, right: message thread -->
+  <main class="messages-page">
+    <aside class="conversations-col">
+      <div class="convo-list" id="convoList"></div>
+    </aside>
 
-  <aside class="conversations-col">
-    <div class="convo-list" id="convoList"></div>
-  </aside>
+    <section class="thread-col">
+      <div class="thread-top">
+        <button id="makeOfferBtn" class="make-offer-btn">Make Offer</button>
+      </div>
 
-  <section class="thread-col">
-    <div class="thread-top">
-      <button id="makeOfferBtn" class="make-offer-btn">Make Offer</button>
-    </div>
+      <div id="messagesArea" class="messages-area">
+        <div class="placeholder">Select a conversation to start</div>
+      </div>
 
-    <div id="messagesArea" class="messages-area">
-      <div class="placeholder">Select a conversation to start</div>
-    </div>
+      <!-- messaging will be handled in js -->
+      <div class="composer">
+        <label class="attach-label" title="Attach image">
+          <input type="file" id="attachFile" accept="image/*" multiple hidden>
+          <i class="fa-solid fa-image attach-icon"></i>
+        </label>
 
-    <div class="composer">
-      <label class="attach-label" title="Attach image">
-        <input type="file" id="attachFile" accept="image/*" multiple hidden>
-        <i class="fa-solid fa-image attach-icon"></i>
-      </label>
+        <div id="imagePreview" class="image-preview" aria-live="polite"></div>
 
-      <div id="imagePreview" class="image-preview" aria-live="polite"></div>
+        <input id="messageInput" class="message-input" placeholder="Type message here..." autocomplete="off">
 
-      <input id="messageInput" class="message-input" placeholder="Type message here..." autocomplete="off">
-      <button id="sendBtn" class="send-btn">Send</button>
-    </div>
-  </section>
+        <button id="sendBtn" class="send-btn">Send</button>
+      </div>
 
-  {{! Offer modal }}
+    </section>
+  </main>
+
+  <!-- Offer Modal -->
   <div id="offerModal" class="modal" aria-hidden="true">
     <div class="modal-inner" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
       <header class="modal-header">
@@ -57,4 +69,5 @@
     </div>
   </div>
 
-{{/layout}}
+</body>
+</html>
