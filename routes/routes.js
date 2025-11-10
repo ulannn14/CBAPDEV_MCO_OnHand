@@ -65,7 +65,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({ dest: 'tmp/' });
 
 /*
     execute function getIndex()
@@ -111,6 +111,19 @@ app.post(
   signupController.postSignup
 );
 
+// Check if username exists
+app.get('/checkUsername', signupController.getCheckUsername);
+
+// Check if email exists
+app.get('/checkEmail', signupController.getCheckEmail);
+
+// Logging out
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if(err) console.error(err);
+        res.redirect('/login'); // redirect after logout
+    });
+});
 
 
 

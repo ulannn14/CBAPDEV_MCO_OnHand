@@ -12,7 +12,11 @@ const homeController = {
     getHome: function (req, res) {
 
         // render `../views/homepage.hbs`
-        res.render('homepage');
+        res.render('homepage', {
+            currentPage: 'home',
+            user: req.session.user
+        });
+
     }
 }
 

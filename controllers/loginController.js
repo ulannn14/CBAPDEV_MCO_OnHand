@@ -43,7 +43,13 @@ const loginController = {
             defined in `./successController.js`
         */
 
-        if(userExists){
+        if (userExists) {
+            req.session.user = {
+                _id: userExists._id,
+                userName: userExists.userName,
+                profilePicture: userExists.profilePicture || '/images/default_profile.png',
+                isProvider: userExists.type === 'provider'
+            };
             res.redirect('/home');
         }
         else {

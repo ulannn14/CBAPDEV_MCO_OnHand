@@ -192,4 +192,10 @@ h1 {
     font-size: 15px;
     padding: 12px;
   }
+
+  .error-msg {
+    color: red;
+    font-size: 0.9em;
+  }
+
 }

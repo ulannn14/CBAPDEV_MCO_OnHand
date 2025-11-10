@@ -5,6 +5,7 @@
     <title>Sign Up | OnHand</title>
     <link rel="stylesheet" type="text/css" href="/css/signup.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/signup.js"></script>
     <link rel="icon" href="/images/icon.png" type="image/png">
 </head>
@@ -27,9 +28,11 @@
 
         <label for="username">Username</label>
         <input type="text" id="username" name="username" class="input-field" required>
+        <span id="usernameError" class="error-msg"></span>
 
         <label for="email">Email</label>
         <input type="email" id="email" name="email" class="input-field" required>
+        <span id="emailError" class="error-msg"></span>
 
         <label for="phone">Phone Number</label>
         <input type="tel" id="phone" name="phone" class="input-field" required>
@@ -39,6 +42,7 @@
 
         <label for="confirmPassword">Re-enter Password</label>
         <input type="password" id="confirmPassword" name="confirmPassword" class="input-field" required>
+        <span id="passwordError" class="error-msg"></span>
 
         <label for="birthday">Birthday</label>
         <input type="date" id="birthday" name="birthday" class="input-field" required>
@@ -55,6 +59,9 @@
 
         <label for="city">City</label>
         <input type="text" id="city" name="city" class="input-field" required>
+        
+        <label for="country">Province</label>
+        <input type="text" id="province" name="province" class="input-field" required>
 
         <label for="region">Region</label>
         <input type="text" id="region" name="region" class="input-field" required>
@@ -66,7 +73,7 @@
         <input type="text" id="postal" name="postal" class="input-field" required>
 
         <label for="profilePicture">Upload Profile Picture</label>
-        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="input-field" required>
+        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="input-field">
         
         <label for="validID">Upload a Valid Identification Card</label>
         <input 

@@ -1,203 +1,112 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('signupForm');
 
-  if (!form) {
-    console.warn('signup.js: #signupForm not found on this page — script detached.');
-    return;
-  }
+$(document).ready(function () {
 
-  const providerFields = document.getElementById('serviceProviderFields');
-
-  function setProviderVisibility(show) {
-    if (!providerFields) return;
-    providerFields.style.display = show ? 'block' : 'none';
-
-    const providerRequiredSelectors = ['#workingLocation', '#nbiClearance'];
-    providerRequiredSelectors.forEach(sel => {
-      const el = document.querySelector(sel);
-      if (!el) return;
-      if (show) el.setAttribute('required', '');
-      else el.removeAttribute('required');
-    });
-  }
-
-  const initialProviderYes = document.querySelector('input[name="isServiceProvider"][value="yes"]');
-  setProviderVisibility(!!initialProviderYes?.checked);
-
-  function forEachNodeList(nodeList, cb) {
-    Array.prototype.forEach.call(nodeList, cb);
-  }
-
-  const radios = document.querySelectorAll('input[name="isServiceProvider"]');
-  forEachNodeList(radios, radio => {
-    radio.addEventListener('change', () => {
-      setProviderVisibility(radio.value === 'yes');
-      if (radio.value === 'yes' && typeof initTimePickers === 'function') {
-        try { initTimePickers(); } catch (err) { console.warn('initTimePickers failed', err); }
-      }
-    });
-  });
-
-  form.addEventListener('submit', function (ev) {
-    try {
-      if (!form.reportValidity()) {
-        ev.preventDefault();
-        return;
-      }
-
-      const pw = document.getElementById('password');
-      const pw2 = document.getElementById('confirmPassword');
-      if (pw && pw2 && pw.value !== pw2.value) {
-        ev.preventDefault();
-        alert('Passwords do not match. Please re-enter.');
-        pw2.focus();
-        return;
-      }
-
-      const providerYes = document.querySelector('input[name="isServiceProvider"][value="yes"]');
-      const isProvider = !!(providerYes && providerYes.checked);
-
-      if (isProvider) {
-        const days = Array.from(document.querySelectorAll('input[name="workingDays"]'));
-        const anyDay = days.length ? days.some(cb => cb.checked) : true;
-        if (!anyDay) {
-          ev.preventDefault();
-          alert('Please select at least one working day.');
-          if (days.length) days[0].focus();
-          return;
-        }
-
-        const startHidden = document.querySelector('.startTimeHidden');
-        const endHidden = document.querySelector('.endTimeHidden');
-        if (startHidden && !startHidden.value) {
-          ev.preventDefault();
-          alert('Please set a start time for working hours.');
-          const h = document.querySelector('.time-picker .tp-hour');
-          if (h) h.focus();
-          return;
-        }
-        if (endHidden && !endHidden.value) {
-          ev.preventDefault();
-          alert('Please set an end time for working hours.');
-          const h2 = document.querySelectorAll('.time-picker .tp-hour')[1];
-          if (h2) h2.focus();
-          return;
-        }
-
-        const nbi = document.getElementById('nbiClearance');
-        if (nbi) {
-          if (nbi.type === 'file') {
-            if (!nbi.files || nbi.files.length === 0) {
-              ev.preventDefault();
-              alert('Please upload your NBI Clearance (required for service providers).');
-              nbi.focus();
-              return;
-            }
-          } else if (!nbi.value) {
-            ev.preventDefault();
-            alert('Please provide your NBI Clearance information (required for service providers).');
-            nbi.focus();
-            return;
-          }
-        }
-      }
-
-      ev.preventDefault();
-      window.location.href = 'homepage.html';
-    } catch (err) {
-      console.error('Error during signup form submit handler:', err);
-      ev.preventDefault();
-      alert('An unexpected error occurred. See console for details.');
-    }
-  });
-
-  (function () {
-    const pad = n => (n < 10 ? '0' + n : String(n));
-
-    function buildOptions(list, placeholder) {
-      const frag = document.createDocumentFragment();
-      if (placeholder) {
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = placeholder;
-        opt.disabled = true;
-        opt.selected = true;
-        frag.appendChild(opt);
-      }
-      list.forEach(v => {
-        const o = document.createElement('option');
-        o.value = v;
-        o.textContent = v;
-        frag.appendChild(o);
-      });
-      return frag;
-    }
-
-    function initSingleTimePicker(tpRoot) {
-      if (!tpRoot) return;
-      const hourSelect = tpRoot.querySelector('.tp-hour');
-      const minuteSelect = tpRoot.querySelector('.tp-minute');
-      const ampmSelect = tpRoot.querySelector('.tp-ampm');
-      const hidden = tpRoot.querySelector('input.startTimeHidden, input.endTimeHidden');
-
-      if (hourSelect && hourSelect.children.length <= 1) { // <=1 handles a possible placeholder already present
-        const hours = [];
-        for (let h = 1; h <= 12; h++) hours.push(String(h));
-        hourSelect.appendChild(buildOptions(hours, 'Hour'));
-      }
-
-      if (minuteSelect && minuteSelect.children.length <= 1) {
-        const mins = [];
-        for (let m = 0; m < 60; m += 1) mins.push(pad(m));
-        minuteSelect.appendChild(buildOptions(mins, 'Min'));
-      }
-
-      if (ampmSelect && ampmSelect.children.length === 0) {
-        const ap = ['AM', 'PM'];
-        ampmSelect.appendChild(buildOptions(ap, 'AM/PM'));
-      }
-
-      function writeHidden() {
-        if (!hidden) return;
-        const h = hourSelect?.value || '';
-        const m = minuteSelect?.value || '';
-        const ap = ampmSelect?.value || '';
-        if (!h || !m || !ap) {
-          hidden.value = '';
+    // ---------- SERVICE PROVIDER TOGGLE ----------
+    function toggleProviderFields(show) {
+        const providerFields = $('#serviceProviderFields');
+        if (show) {
+            providerFields.show();
+            $('#workingLocation, #nbiClearance').attr('required', true);
+            initTimePickers(providerFields); // initialize time pickers inside provider fields
         } else {
-          hidden.value = `${h.padStart(2, '0')}:${m}:${ap}`; // e.g. "09:05:AM"
+            providerFields.hide();
+            $('#workingLocation, #nbiClearance').removeAttr('required');
         }
-      }
-
-      [hourSelect, minuteSelect, ampmSelect].forEach(el => {
-        if (!el) return;
-        el.addEventListener('change', writeHidden);
-        el.addEventListener('input', writeHidden);
-      });
-
-      if (hidden && hidden.value) {
-        const parts = hidden.value.split(':');
-        if (parts.length === 3) {
-          const [hh, mm, ap] = parts;
-          if (hourSelect) hourSelect.value = String(parseInt(hh, 10));
-          if (minuteSelect) minuteSelect.value = mm;
-          if (ampmSelect) ampmSelect.value = ap;
-        }
-      }
-
-      writeHidden();
     }
 
-    window.initTimePickers = function initTimePickers(root) {
-      const scope = root instanceof Element ? root : document;
-      const pickers = scope.querySelectorAll('.time-picker');
-      pickers.forEach(initSingleTimePicker);
-    };
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('signupForm')) {
-        try { window.initTimePickers(); } catch (e) { console.warn('initTimePickers failed on DOMContentLoaded', e); }
-      }
+    $('input[name="isServiceProvider"]').change(function () {
+        toggleProviderFields($(this).val() === 'yes');
     });
-  })();
+
+    toggleProviderFields($('input[name="isServiceProvider"]:checked').val() === 'yes');
+
+    // ---------- PASSWORD MATCH LIVE ----------
+    function validatePasswordMatch() {
+        const pw = $('#password').val();
+        const pw2 = $('#confirmPassword').val();
+        if (pw2 && pw !== pw2) {
+            $('#confirmPassword').css('background-color', '#f8d7da');
+            $('#passwordError').text('Passwords do not match');
+            $('#signupBtn').prop('disabled', true);
+        } else {
+            $('#confirmPassword').css('background-color', '');
+            $('#passwordError').text('');
+            $('#signupBtn').prop('disabled', false);
+        }
+    }
+    $('#password, #confirmPassword').on('input', validatePasswordMatch);
+
+    // ---------- AJAX LIVE VALIDATION ----------
+    function liveValidate(inputSelector, errorSelector, route) {
+      $(inputSelector).on('keyup', function () {
+          const value = $(this).val().trim();
+          if (!value) {
+              $(errorSelector).text('');
+              $(inputSelector).css('background-color', '');
+              $('#signupBtn').prop('disabled', false);
+              return;
+          }
+          $.get(route, { value }, function (res) {
+              const fieldName = $(inputSelector).attr('name');
+              const capitalized = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+              if (res.exists) {
+                  $(inputSelector).css('background-color', '#f8d7da');
+                  $(errorSelector).text(`${capitalized} already taken`);
+                  $('#signupBtn').prop('disabled', true);
+              } else {
+                  $(inputSelector).css('background-color', '');
+                  $(errorSelector).text('');
+                  $('#signupBtn').prop('disabled', false);
+              }
+          });
+      });
+    }
+
+    liveValidate('#username', '#usernameError', '/checkUsername');
+    liveValidate('#email', '#emailError', '/checkEmail');
+
+    // ---------- TIME PICKER INITIALIZATION ----------
+    function initTimePickers(scope) {
+        const root = scope || document;
+        $(root).find('.time-picker').each(function () {
+            const hourSelect = $(this).find('.tp-hour');
+            const minuteSelect = $(this).find('.tp-minute');
+            const ampmSelect = $(this).find('.tp-ampm');
+            const hidden = $(this).find('input.startTimeHidden, input.endTimeHidden');
+
+            if (hourSelect.children().length <= 1) {
+                hourSelect.empty().append('<option value="" disabled selected>Hour</option>');
+                for (let h = 1; h <= 12; h++) hourSelect.append(`<option value="${h}">${h}</option>`);
+            }
+
+            if (minuteSelect.children().length <= 1) {
+                minuteSelect.empty().append('<option value="" disabled selected>Min</option>');
+                for (let m = 0; m < 60; m++) {
+                    const mm = m < 10 ? '0' + m : m;
+                    minuteSelect.append(`<option value="${mm}">${mm}</option>`);
+                }
+            }
+
+            if (ampmSelect.children().length === 0) {
+                ampmSelect.empty().append('<option value="" disabled selected>AM/PM</option>');
+                ampmSelect.append('<option>AM</option><option>PM</option>');
+            }
+
+            function updateHidden() {
+                const h = hourSelect.val() || '';
+                const m = minuteSelect.val() || '';
+                const ap = ampmSelect.val() || '';
+                hidden.val(h && m && ap ? `${h.padStart(2,'0')}:${m}:${ap}` : '');
+            }
+
+            hourSelect.add(minuteSelect).add(ampmSelect).change(updateHidden);
+            updateHidden();
+        });
+    }
+
+    // initialize time pickers on page load if provider
+    if ($('input[name="isServiceProvider"]:checked').val() === 'yes') {
+        initTimePickers();
+    }
+
 });

@@ -29,10 +29,13 @@ const userSchema = new mongoose.Schema({
     street: { type: String, trim: true },
     barangay: { type: String, trim: true },
     city: { type: String, trim: true },
+    province: { type: String, trim: true },
     region: { type: String, trim: true },
     country: { type: String, trim: true },
     postalCode: { type: String, trim: true }
   },
+
+  profilePicture: { type: String, trim: true, default: '/images/default_profile.png' },
 
   // Verification and provider-specific fields
   validId: { type: String, trim: true }, // path or filename of uploaded ID

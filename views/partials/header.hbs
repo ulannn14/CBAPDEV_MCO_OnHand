@@ -12,8 +12,8 @@
   </div>
 
   <button id="profileBtn" class="profile-btn" title="Account menu">
-    {{#if user.avatar}}
-      <img src="{{user.avatar}}" alt="{{user.name}}'s profile" class="profile-icon">
+    {{#if user.profilePicture}}
+      <img src="{{user.profilePicture}}" alt="{{user.userName}}'s profile" class="profile-icon">
     {{else}}
       <img src="/images/default_profile.png" alt="Default profile" class="profile-icon">
     {{/if}}

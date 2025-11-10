@@ -5,6 +5,9 @@ const express = require('express');
 // import module `hbs`
 const hbs = require('hbs');
 
+// import module 'express-session'
+const session = require('express-session');
+
 // import module `routes` from `./routes/routes.js`
 const routes = require('./routes/routes.js');
 
@@ -24,6 +27,13 @@ hbs.registerHelper('eq', function (a, b) {
 
 // sets `/views/partials` as folder containing partial hbs files
 hbs.registerPartials(__dirname + '/views/partials');
+
+app.use(session({
+    secret: 'onhand-secretkey',      // replace with a strong secret
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+}));
 
 // parses incoming requests with urlencoded payloads
 app.use(express.urlencoded({extended: true}));
