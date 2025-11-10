@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookings | OnHand</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/bookings.css">
+  <link rel="stylesheet" href="/css/completed.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="/js/dropdown-profile.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+
+  <style>
+    .static-stars {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .static-stars i {
+      font-size: 1.5rem;
+      color: #facc15;
+    }
+
+    .status.completed {
+      color: #10b981;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    .static-stars i.fa-solid {
+      text-shadow: 0 0 4px rgba(251, 191, 36, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+  {{> header}}
+
+  <div class="bookings-container">
+    <div class="booking-tabs">
+      <a href="/bookings" class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
+      <a href="/bookings-to-rate" class="{{#if (eq currentTab 'toRate')}}active{{/if}}">To Rate</a>
+      <a href="/bookings-completed" class="{{#if (eq currentTab 'completed')}}active{{/if}}">Completed</a>
+    </div>
+
+    <div class="booking-list">
+      {{#each bookings}}
+      <div class="booking-card">
+        <div class="booking-left">
+          <div class="profile-row">
+            <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
+            <div class="booking-info">
+              <h3 class="client-name">{{clientName}}</h3>
+              <div class="need-wrapper">
+                <p class="need-label">Need:</p>
+                <span class="service-type">{{serviceType}}</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+          <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
+        </div>
+
+        <div class="divider-vertical"></div>
+
+        <div class="booking-right">
+          <div class="agreed-price">
+            <strong>Agreed Price:</strong>
+            <p class="price">₱{{price}}</p>
+          </div>
+
+          <div class="stars static-stars">
+            {{#times rating}}<i class="fa-solid fa-star"></i>{{/times}}
+            {{#times remainingStars}}<i class="fa-regular fa-star"></i>{{/times}}
+          </div>
+
+          <p class="status completed">Booking completed successfully</p>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</body>
+</html>

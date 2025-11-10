@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}} | OnHand</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/popups.css">
+  <link rel="stylesheet" href="/css/chatbox.css">
+  <link rel="icon" href="/images/icon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  {{{headScripts}}}
+</head>
+<body>
+  {{> header}}
+  {{> dropdown-menu}}
+  {{> sidebar}}
+
+  <main class="messages-page">
+    {{{body}}}
+  </main>
+
+  {{{footerScripts}}}
+</body>
+</html>

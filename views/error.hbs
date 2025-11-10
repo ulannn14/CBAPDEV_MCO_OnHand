@@ -46,71 +46,7 @@
 </head>
 <body>
 
-  <!-- Header -->
-<nav id="header">
-  <a href="/html/homepage.html" class="logo-link">
-    <img src="/images/onhand-logo.png" alt="OnHand Logo" class="logo">
-  </a>
-
-  <div class="nav-links">
-    <a href="/html/homepage.html" class="active">Home</a>
-    <a href="/html/chatbox.html">Messages</a>
-    <a href="/html/bookings.html">Bookings</a>
-  </div>
-
-  <button id="profileBtn" class="profile-btn">
-    <img src="/images/profile_picture.png" alt="Default profile" class="profile-icon">
-  </button>
-</nav>
-
-<!-- Dropdown menu from Profile Button -->
-<div class="dropdown-menu" id="profileDropdown" style="display: none;">
-  <a href="/html/profile.html">Profile</a>
- <!-- <a href="#">My Reports</a> -->
-  <a href="/html/index.html">Log Out</a>
-  <div class="toggle">
-    Service Provider Mode
-    <label class="switch">
-      <input type="checkbox" id="providerToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
-</div>
-
-
-
-<!-- Sidebar -->
-<aside id="profileSidebar" class="profile-sidebar">
-  <header class="sidebar-header">
-    <h3 id="profileTitle">Account</h3>
-    <button id="closeSidebar" class="close-btn">✕</button>
-  </header>
-
-  <div class="sidebar-body">
-    <div class="profile-summary">
-      <img src="/images/profile_picture.png" alt="Guest" class="profile-thumb">
-      <div>
-        <div class="name">Guest</div>
-        <div class="meta">Metro Manila</div>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a href="/profile">Profile</a>
-      <a href="/reports">My Reports</a>
-      <a href="/apply-provider">Apply as Service Provider</a>
-    </nav>
-
-    <div class="sidebar-actions">
-      <form method="post" action="/logout" class="logout-form">
-        <button type="submit" class="logout-btn">Logout</button>
-      </form>
-    </div>
-  </div>
-</aside>
-
-<div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
-
+  {{> header}} 
 
   <!-- 404 Content -->
   <main class="error-wrap">

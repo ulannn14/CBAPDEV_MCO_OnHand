@@ -224,50 +224,48 @@ body {
   background: #122f7b;
 }
 
-.dropdown-menu {
+/* sidebar */
+.profile-sidebar {
   position: absolute;
-  top: 70px; 
-  right: 40px; 
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 8px;
-  padding: 10px 0;
-  display: none;
+  top: 75px;
+  right: 40px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 12px 0;
+  width: 200px;
+  z-index: 1000;
+  display: flex;
   flex-direction: column;
-  min-width: 200px;
-  z-index: 1500;
 }
 
-.dropdown-menu a {
-  display: block;
-  padding: 10px 20px;
-  color: #333;
-  font-weight: 500;
+.profile-sidebar a {
+  padding: 10px 16px;
   text-decoration: none;
-  transition: background 0.2s;
+  color: #1f2937;
+  font-weight: 500;
+  transition: background 0.2s ease;
 }
 
-.dropdown-menu a:hover {
+.profile-sidebar a:hover {
   background: #f3f4f6;
 }
 
-.dropdown-menu .toggle {
+.toggle {
   display: flex;
-  gap: 10px;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  font-weight: 500;
-  color: #333;
+  padding: 10px 16px;
   border-top: 1px solid #e5e7eb;
-  margin-top: 5px;
+  font-weight: 500;
+  color: #1f2937;
 }
 
 .switch {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 22px;
+  width: 36px;
+  height: 18px;
 }
 
 .switch input {
@@ -291,21 +289,21 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 16px;
-  width: 16px;
+  height: 14px;
+  width: 14px;
   left: 3px;
-  bottom: 3px;
+  bottom: 2px;
   background-color: white;
   border-radius: 50%;
   transition: 0.3s;
 }
 
 input:checked + .slider {
-  background-color: #153E90;
+  background-color: #1e3a8a;
 }
 
 input:checked + .slider:before {
-  transform: translateX(18px);
+  transform: translateX(16px);
 }
 
 .post-images {

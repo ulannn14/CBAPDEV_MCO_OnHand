@@ -3,136 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <title>Home | OnHand</title>
-  <link rel="icon" href="/images/icon.png" type="image/png">
 
-  <!-- Global Styles -->
-  <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/homepage.css">
+  <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/popups.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <script src="/js/popup.js"></script>
+  <script src="/js/dropdown-profile.js"></script>
+  
+  <link rel="icon" href="/images/icon.png" type="image/png">
 </head>
+<body>
 
-{{> header}}
+  {{> header}}
 
-<!-- Search Section -->
-<section id="search-section">
-  <form id="searchForm" method="GET" action="/search">
-    <input type="text" name="service" placeholder="{{#if user.isProvider}}Find a request{{else}}Find a service{{/if}}" class="search-input">
+  <!-- Search Section -->
+  <section id="search-section">
+    <form id="searchForm" method="GET" action="/search">
+      <input type="text" name="service" placeholder="Find a service" class="search-input">
 
-    <select name="urgency" class="search-select">
-      <option value="">Urgency</option>
-      <option value="urgent">Urgent</option>
-      <option value="non-urgent">Non-Urgent</option>
-    </select>
+      <select name="urgency" class="search-select">
+        <option value="">Urgency</option>
+        <option value="urgent">Urgent</option>
+        <option value="normal">Normal</option>
+      </select>
 
-    <input type="text" name="minPrice" placeholder="Min ₱" class="search-input price">
-    <input type="text" name="maxPrice" placeholder="Max ₱" class="search-input price">
-    <input type="text" name="location" placeholder="Location" class="search-input">
+      <input type="text" name="minPrice" placeholder="Min ₱" class="search-input price">
+      <input type="text" name="maxPrice" placeholder="Max ₱" class="search-input price">
 
-    <button type="submit" class="search-btn">Search</button>
-  </form>
-</section>
+      <input type="text" name="location" placeholder="Location" class="search-input">
 
-{{!-- Customer view --}}
-{{#unless user.isProvider}}
+      <button type="submit" class="search-btn">
+        Search <span></span>
+      </button>
+    </form>
+  </section>
 
-  <!-- Categories Section -->
+  <!-- Categories Section (only show for customers) -->
+  {{#unless user.isProvider}}
   <section class="categories">
     <h2>Service Categories</h2>
     <div class="category-list">
-      {{#each categories}}
-        <div class="category">
-          <img src="{{this.image}}" alt="{{this.name}}">
-          <h3>{{this.name}}</h3>
-        </div>
-      {{/each}}
+      <div class="category"><img src="/images/1.png" alt="Plumbing Services"><h3>Plumbing Services</h3></div>
+      <div class="category"><img src="/images/6.png" alt="Electrical Issues"><h3>Electrical Issues</h3></div>
+      <div class="category"><img src="/images/7.png" alt="Roof Repairs"><h3>Roof Repairs</h3></div>
+      <div class="category"><img src="/images/2.png" alt="Structural Repairs"><h3>Structural Repairs</h3></div>
+      <div class="category"><img src="/images/5.png" alt="Pest Control"><h3>Pest Control</h3></div>
+      <div class="category"><img src="/images/4.png" alt="HVAC or Appliance Breakdown"><h3>HVAC / Appliance Breakdown</h3></div>
+      <div class="category"><img src="/images/3.png" alt="Locksmith Services"><h3>Locksmith Services</h3></div>
     </div>
   </section>
+  {{/unless}}
 
-  <!-- Services Near You -->
+  <!-- Services or Customer Posts Section -->
   <section class="services-near-you">
-    <h2>Services Near You</h2>
+    <h2>{{#if user.isProvider}}Customers Near You{{else}}Services Near You{{/if}}</h2>
+
     <div class="services-grid">
-      {{#each services}}
-        {{> serviceCard this isOwner=false}}
-      {{/each}}
-    </div>
-  </section>
-
-{{/unless}}
-
-{{!-- Provider view --}}
-{{#if user.isProvider}}
-
-  <!-- Customers Near You -->
-  <section class="services-near-you">
-    <h2>Customers Near You</h2>
-    <div class="services-grid">
-      {{#each customers}}
-        {{> serviceCard this isOwner=false}}
-      {{/each}}
-    </div>
-  </section>
-
-{{/if}}
-
-<!-- Floating Button for Create Post  -->
-<div class="floating-report">
-  <i class="fa-solid fa-clipboard-list"></i>
-</div>
-
-<!-- Create Post -->
-<div class="post-popup" id="postPopup" style="display: none;">
-  <div class="popup-content">
-    <h3>Create a Post</h3>
-
-    <form id="createPostForm" enctype="multipart/form-data">
-      <textarea 
-        placeholder="What do you need help with?" 
-        class="post-text" 
-        id="postText"
-        required></textarea>
-
-      <label class="popup-label">Need:</label>
-      <select id="postNeed" class="popup-input" required>
-        <option value="">Select Service Type</option>
-        {{#each categories}}
-          <option value="{{this.name}}">{{this.name}}</option>
+      {{#if posts.length}}
+        {{#each posts}}
+          {{> service-card this}}
         {{/each}}
-      </select>
+      {{else}}
+        <p class="no-posts">No available {{#if user.isProvider}}customer requests{{else}}services{{/if}} near you yet.</p>
+      {{/if}}
+    </div>
+  </section>
 
-      <label class="popup-label">Location:</label>
-      <input 
-        type="text" 
-        id="postLocation" 
-        class="popup-input" 
-        placeholder="Enter your city or area" 
-        required>
-
-      <div class="price-range">
-        <div>
-          <label class="popup-label">Min Price (₱):</label>
-          <input type="number" id="minPrice" class="popup-input" required>
-        </div>
-        <div>
-          <label class="popup-label">Max Price (₱):</label>
-          <input type="number" id="maxPrice" class="popup-input" required>
-        </div>
-      </div>
-
-      <label class="popup-label">Upload Images:</label>
-      <input type="file" id="postImages" accept="image/*" multiple class="popup-input">
-      <div class="image-preview" id="imagePreview"></div>
-
-      <div class="popup-actions">
-        <button type="button" class="btn-cancel" id="cancelPost">Cancel</button>
-        <button type="submit" class="btn-post">Post</button>
-      </div>
-    </form>
+  <!-- Floating Button -->
+  <div class="floating-report">
+    <i class="fa-solid fa-clipboard-list"></i>
   </div>
-</div>
 
- <!-- Scripts -->
-  <script src="/js/popup.js"></script>
+  <!-- Post Popup -->
+  <div class="post-popup" id="postPopup" style="display: none;">
+    <div class="popup-content">
+      <h3>Create a Post</h3>
+
+      <form id="createPostForm" enctype="multipart/form-data">
+        <textarea 
+          placeholder="What do you need help with?" 
+          class="post-text" 
+          id="postText"
+          required></textarea>
+
+        <label class="popup-label">Need:</label>
+        <select id="postNeed" class="popup-input" required>
+          <option value="">Select Service Type</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Pest Control">Pest Control</option>
+          <option value="Roof Repair">Roof Repair</option>
+          <option value="Locksmith">Locksmith</option>
+        </select>
+
+        <label class="popup-label">Location:</label>
+        <input 
+          type="text" 
+          id="postLocation" 
+          class="popup-input" 
+          placeholder="Enter your city or area" 
+          required>
+
+        <div class="price-range">
+          <div>
+            <label class="popup-label">Min Price (₱):</label>
+            <input type="number" id="minPrice" class="popup-input" required>
+          </div>
+          <div>
+            <label class="popup-label">Max Price (₱):</label>
+            <input type="number" id="maxPrice" class="popup-input" required>
+          </div>
+        </div>
+
+        <label class="popup-label">Upload Images:</label>
+        <input type="file" id="postImages" accept="image/*" multiple class="popup-input">
+
+        <div class="image-preview" id="imagePreview"></div>
+
+        <div class="popup-actions">
+          <button type="button" class="btn-cancel" id="cancelPost">Cancel</button>
+          <button type="submit" class="btn-post">Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>
