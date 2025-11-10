@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ulannn14/CBAPDEV_MCO_OnHand#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "hbs": "^4.2.0",
     "mongoose": "^8.19.3",

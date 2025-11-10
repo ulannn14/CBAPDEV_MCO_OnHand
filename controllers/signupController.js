@@ -1,102 +1,88 @@
 
-// import module `database` from `../models/db.js`
+// import database and model
 const db = require('../models/db.js');
-
-// import module `User` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
 
-/*
-    defines an object which contains functions executed as callback
-    when a client requests for `signup` paths in the server
-*/
 const signupController = {
 
-    /*
-        executed when the client sends an HTTP GET request `/signup`
-        as defined in `../routes/routes.js`
-    */
-    getSignUp: function (req, res) {
+    getSignup: function (req, res) {
+
+        // render `../views/signup.hbs`
         res.render('signup');
     },
 
-    /*
-        executed when the client sends an HTTP POST request `/signup`
-        as defined in `../routes/routes.js`
-    */
-    postSignUp: async function (req, res) {
+    postSignup: async function (req, res) {
+        try {
+        // Text fields
+        const {
+            name,
+            email,
+            phone,
+            password,
+            birthday,
+            homeNumber,
+            street,
+            barangay,
+            city,
+            region,
+            country,
+            postal,
+            isServiceProvider,
+            workingDays,
+            workingHours,
+            workingLocation
+        } = req.body;
 
-        /*
-            when submitting forms using HTTP POST method
-            the values in the input fields are stored in `req.body` object
-            each <input> element is identified using its `name` attribute
-            Example: the value entered in <input type="text" name="fName">
-            can be retrieved using `req.body.fName`
-        */
-        var fName = req.body.fName;
-        var lName = req.body.lName;
-        var idNum = req.body.idNum;
-        var pw = req.body.pw;
+        // Split name if needed
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0];
+        const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : '';
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
 
-        var user = {
-            fName: fName,
-            lName: lName,
-            idNum: idNum,
-            pw: pw
+        // Get uploaded file paths (if they exist)
+        const profilePicturePath = req.files?.profilePicture?.[0]?.path || null;
+        const validIdPath = req.files?.validID?.[0]?.path || null;
+        const nbiClearancePath = req.files?.nbiClearance?.[0]?.path || null;
+
+        // Construct the new user object
+        const newUser = {
+            firstName,
+            middleName,
+            lastName,
+            userName,
+            email,
+            phoneNumber: phone,
+            password,
+            birthday,
+            address: {
+            houseNumber: homeNumber,
+            street,
+            barangay,
+            city,
+            region,
+            country,
+            postalCode: postal
+            },
+            validId: validIdPath,
+            type: isServiceProvider === 'yes' ? 'provider' : 'customer',
+            nbiClearance: nbiClearancePath,
+            workingDays: workingDays ? workingDays.split(',').map(day => day.trim()) : [],
+            workingHours,
+            WorkingArea: workingLocation,
+            profilePicture: profilePicturePath
+        };
+
+        // Insert user into the database using db.js helper
+        await db.insertOne(User, newUser);
+
+        // Redirect or render a success page
+        res.redirect('/home');
+
+        } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).render('error', { message: 'Signup failed.' });
         }
-
-        /*
-            calls the function insertOne()
-            defined in the `database` object in `../models/db.js`
-            this function adds a document to collection `users`
-        */
-        var response = await db.insertOne(User, user);
-
-        /*
-            upon adding a user to the database,
-            redirects the client to `/success` using HTTP GET,
-            defined in `../routes/routes.js`
-            passing values using URL
-            which calls getSuccess() method
-            defined in `./successController.js`
-        */
-
-        if(response != null){
-            res.redirect('/success?fName=' + fName +'&lName=' + lName + '&idNum=' + idNum);
-        }
-        else {
-            res.render('error');
-        }
-    },
-
-    /*
-        executed when the client sends an HTTP GET request `/getCheckID`
-        as defined in `../routes/routes.js`
-    */
-    getCheckID: async function (req, res) {
-
-        /*
-            when passing values using HTTP GET method
-            the values are stored in `req.query` object
-            Example url: `http://localhost/getCheckID?idNum=11312345`
-            To retrieve the value of parameter `idNum`: `req.query.idNum`
-        */
-        var idNum = req.query.idNum;
-
-        /*
-            calls the function findOne()
-            defined in the `database` object in `../models/db.js`
-            searches for a single document based on the model `User`
-            sends an empty string to the user if there are no match
-            otherwise, sends an object containing the `idNum`
-        */
-        var result = await db.findOne(User, {idNum: idNum}, 'idNum');
-        res.send(result);
     }
+    };
 
-}
-
-/*
-    exports the object `signupController` (defined above)
-    when another script exports from this file
-*/
 module.exports = signupController;
