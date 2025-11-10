@@ -1,89 +1,115 @@
-{{!-- messages.hbs --}}
-<div class="messages-page">
-  <aside class="conversations-col">
-    <div class="convo-search">
-      <input placeholder="Search..." />
-    </div>
-    <ul id="convoList" class="convo-list">
-      {{#each conversations}}
-        <li class="convo-item" data-id="{{this._id}}">
-          <img src="{{this.peerAvatar}}" alt="{{this.peerName}}" class="convo-avatar">
-          <div class="convo-meta">
-            <div class="convo-name">{{this.peerName}}</div>
-            <div class="convo-last">{{this.lastMessagePreview}}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Messages | OnHand</title>
+
+  <link rel="stylesheet" href="/css/chatbox.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/popups.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  {{#if isProvider}}
+    <script>window.APP_ROLE = 'provider';</script>
+  {{else}}
+    <script>window.APP_ROLE = 'customer';</script>
+  {{/if}}
+
+  <script src="/js/messages.js" defer></script>
+  <script src="/js/popup.js"></script>
+  <script src="/js/dropdown-profile.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+</head>
+
+<body>
+  {{> header}}
+
+  <!-- views/chatbox.hbs -->
+  <main class="messages-page">
+    <aside class="conversations-col">
+      {{!-- Render conversation list dynamically from server --}}
+      <div id="convoList">
+        {{#each conversations}}
+          <div class="convo-item" data-id="{{this.id}}">
+            <div class="convo-avatar">
+              <img src="{{this.avatar}}" alt="{{this.name}}">
+            </div>
+            <div class="convo-meta">
+              <div class="name">{{this.name}}</div>
+              <div class="last">{{this.last}}</div>
+            </div>
           </div>
-        </li>
-      {{/each}}
-    </ul>
-  </aside>
+        {{/each}}
+      </div>
+    </aside>
 
-  <section class="thread-col">
-    <div class="thread-top">
-      <div id="threadHeader" class="thread-header">
-        <img id="threadAvatar" src="/images/profile-default.png" class="thread-avatar">
-        <div>
-          <div id="threadName" class="thread-name">Select a conversation</div>
-          <div id="threadMeta" class="thread-meta">Last seen •</div>
-        </div>
+    <section class="thread-col">
+      <div class="thread-top">
+        <button id="makeOfferBtn" class="make-offer-btn">
+          {{#if isProvider}}Check Offer{{else}}Make Offer{{/if}}
+        </button>
       </div>
 
-      <div class="thread-actions">
-        <button id="makeOfferBtn" class="make-offer-btn" disabled>Make Offer</button>
+      <div id="messagesArea" class="messages-area">
+        {{#if activeConvo}}
+          {{#each activeConvo.messages}}
+            <div class="msg-row {{#if (eq this.from 'me')}}msg-me{{else}}msg-them{{/if}}">
+              <div class="msg-bubble">{{this.text}}</div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="placeholder">Select a conversation to start</div>
+        {{/if}}
       </div>
+    </section>
+  </main>
+
+
+  <!-- Offer Modal -->
+  <div id="offerModal" class="modal" aria-hidden="true">
+    <div class="modal-inner" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
+      <header class="modal-header">
+        <h3 id="offerTitle">
+          {{#if isProvider}}Check Offer{{else}}Make Offer{{/if}}
+        </h3>
+        <button id="closeOffer" class="modal-close" aria-label="Close">✕</button>
+      </header>
+
+      <form id="offerForm" class="offer-form">
+
+        {{#if isProvider}}
+          <!-- Provider view -->
+          <label style="display:block; margin-bottom:6px;">
+            Price
+            <div id="offerPriceDisplay"
+                class="offer-price-display"
+                role="status"
+                aria-live="polite"
+                data-value="0"
+                style="font-size:20px; font-weight:700; margin-top:6px;">
+              ₱0.00
+            </div>
+          </label>
+
+          <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
+            <button type="button" id="offerDecline" class="btn-secondary">Decline</button>
+            <button type="submit" id="offerAccept" class="btn-primary">Accept</button>
+          </div>
+
+        {{else}}
+          <!-- Customer view -->
+          <label>
+            Price
+            <input id="offerPrice" name="price" type="number" min="0" step="0.01" placeholder="0.00" required />
+          </label>
+
+          <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
+            <button type="button" id="offerNew" class="btn-secondary">Make New Offer</button>
+            <button type="submit" id="offerSend" class="btn-primary">Send Offer</button>
+          </div>
+        {{/if}}
+      </form>
     </div>
-
-    <div id="messagesArea" class="messages-area">
-      <!-- messages appended here by JS -->
-    </div>
-
-    <div class="composer">
-      <label for="attachFile" class="attach-btn" title="Attach image">🖼️</label>
-      <input type="file" id="attachFile" accept="image/*" hidden>
-      <input id="messageInput" placeholder="Type message here..." autocomplete="off" />
-      <button id="sendBtn" class="send-btn">Send</button>
-    </div>
-  </section>
-</div>
-
-<div id="offerModal" class="modal" hidden>
-  <div class="modal-inner">
-    <header>
-      <h3>Make Offer</h3>
-      <button id="closeOffer" class="modal-close">✕</button>
-    </header>
-
-    <form id="offerForm" class="offer-form">
-      <label>Title
-        <input name="title" required placeholder="Short title (e.g., Fix leak)" />
-      </label>
-
-      <label>Description
-        <textarea name="description" rows="4" placeholder="Details about the offer..."></textarea>
-      </label>
-
-      <div class="row">
-        <label>Price
-          <input name="price" type="number" min="0" step="0.01" placeholder="0.00" />
-        </label>
-
-        <label>Urgency
-          <select name="urgency">
-            <option value="normal">Normal</option>
-            <option value="urgent">Urgent</option>
-            <option value="emergency">Emergency</option>
-          </select>
-        </label>
-      </div>
-
-      <label>Attach image
-        <input id="offerImage" name="image" type="file" accept="image/*" />
-      </label>
-      <div id="offerPreview" class="offer-preview"></div>
-
-      <div class="modal-actions">
-        <button type="button" id="cancelOffer">Cancel</button>
-        <button type="submit" class="primary">Send Offer</button>
-      </div>
-    </form>
   </div>
-</div>
+</body>
+</html>
