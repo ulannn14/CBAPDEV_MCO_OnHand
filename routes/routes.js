@@ -32,16 +32,27 @@ const app = express();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const username = req.body.username || 'guest';
-
     let basePath;
-    if (file.fieldname === 'profilePicture') {
-      basePath = path.join(__dirname, '../public/uploads/profile_pics', username);
-    } else {
-      basePath = path.join(__dirname, '../private/uploads/docs', username);
+
+    // Decide folder based on field name
+    switch (file.fieldname) {
+      case 'profilePicture':
+        basePath = path.join(__dirname, '../public/uploads/profile_pics');
+        break;
+      case 'validID':
+        basePath = path.join(__dirname, '../private/uploads/ids');
+        break;
+      case 'nbiClearance':
+        basePath = path.join(__dirname, '../private/uploads/nbi');
+        break;
+      default:
+        basePath = path.join(__dirname, '../private/uploads/other');
+        break;
     }
 
     // Create the folder if it doesn't exist
     fs.mkdirSync(basePath, { recursive: true });
+
     cb(null, basePath);
   },
 
@@ -88,8 +99,8 @@ app.get('/signup', signupController.getSignup);
     execute function getSuccess()
     defined in object `signupController` in `../controllers/signupController.js`
     when a client sends an HTTP POST request for `/signup`
+    uses multer upload fields
 */
-// Use multer upload fields
 app.post(
   '/signup',
   upload.fields([
