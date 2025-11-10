@@ -40,7 +40,7 @@ const signupController = {
         const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
 
         // Get uploaded file paths (if they exist)
-        const profilePicturePath = req.files?.profilePicture?.[0]?.path || null;
+        const profilePicturePath = req.files?.profilePicture?.[0]?.path || '/images/default_profile.png';
         const validIdPath = req.files?.validID?.[0]?.path || null;
         const nbiClearancePath = req.files?.nbiClearance?.[0]?.path || null;
 
