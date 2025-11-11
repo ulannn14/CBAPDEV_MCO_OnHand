@@ -1,138 +1,167 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <title>Profile | OnHand</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-      <link rel="stylesheet" href="/css/profile.css">
-      <link rel="stylesheet" href="/css/main.css">
-      <link rel="stylesheet" href="/css/popups.css">
-      <link rel="stylesheet" href="/css/homepage.css">
-      <script src="/js/script.js"></script>
-      <script src="/js/popup.js"></script>
-      <script src="/js/dropdown-profile.js"></script>
-      <script src="/js/profile-edit.js"></script>
-      <link rel="icon" href="/images/icon.png" type="image/png">
-  </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile | OnHand</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/popups.css">
+  <link rel="stylesheet" href="/css/homepage.css">
+  <script src="/js/script.js"></script>
+  <script src="/js/popup.js"></script>
+  <script src="/js/dropdown-profile.js"></script>
+  <script src="/js/profile-edit.js"></script>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+</head>
 
-  {{> header}}
+<body>
+  {{> header currentPage="profile"}}
 
-  <body>
-    <main class="profile-page">
-      <header class="profile-top">
-        <div class="profile-left">
-          <div class="avatar-wrap">
-            <img 
-              id="avatarImg" 
-              src="{{#if user.profilePicture}}{{user.profilePicture}}{{else}}/images/default_profile.png{{/if}}" 
-              alt="{{user.firstName}} {{user.lastName}}" 
-              class="avatar"
-            >
+  <main class="profile-page">
+    <header class="profile-top">
+      <div class="profile-left">
+        <div class="avatar-wrap">
+          <img 
+            id="avatarImg" 
+            src="{{#if user.profilePicture}}{{user.profilePicture}}{{else}}/images/default_profile.png{{/if}}" 
+            alt="{{user.firstName}} {{user.lastName}}" 
+            class="avatar"
+          >
 
+          {{#if isOwnProfile}}
+            <form id="avatarForm" class="avatar-form" enctype="multipart/form-data" method="post" action="/profile/avatar">
+              <label for="avatarFile" class="avatar-edit-btn" title="Change photo">✎</label>
+              <input id="avatarFile" name="avatar" type="file" accept="image/*" hidden>
+            </form>
+          {{/if}}
+        </div>
+
+        <div class="profile-info">
+          <h1 class="name">
+            <span id="nameText">
+              {{user.firstName}} {{#if user.middleName}}{{user.middleName}} {{/if}}{{user.lastName}}
+            </span>
             {{#if isOwnProfile}}
-              <form id="avatarForm" class="avatar-form" enctype="multipart/form-data" method="post" action="/profile/avatar">
-                <label for="avatarFile" class="avatar-edit-btn" title="Change photo">✎</label>
-                <input id="avatarFile" name="avatar" type="file" accept="image/*" hidden>
-              </form>
+              <button class="edit-btn" data-field="name" title="Edit name">✎</button>
+            {{/if}}
+          </h1>
+
+          <div class="meta-row">
+            <span class="username">@<span id="usernameText">{{user.userName}}</span></span>
+            {{#if isOwnProfile}}
+              <button class="edit-btn" data-field="userName" title="Edit username">✎</button>
             {{/if}}
           </div>
 
-          <div class="profile-info">
-            <h1 class="name">
-              <span id="nameText">
-                {{user.firstName}} {{#if user.middleName}}{{user.middleName}} {{/if}}{{user.lastName}}
-              </span>
-              {{#if isOwnProfile}}
-                <button class="edit-btn" data-field="name" title="Edit name">✎</button>
-              {{/if}}
-            </h1>
+          <div class="meta-row">
+            <span id="emailText">{{user.email}}</span>
+            {{#if isOwnProfile}}
+              <button class="edit-btn" data-field="email" title="Edit email">✎</button>
+            {{/if}}
+          </div>
 
-            <div class="meta-row">
-              <span class="username">@<span id="usernameText">{{user.userName}}</span></span>
-              {{#if isOwnProfile}}
-                <button class="edit-btn" data-field="userName" title="Edit username">✎</button>
+          <div class="meta-row">
+            <span id="cityText">
+              {{#if user.address.city}}
+                {{user.address.city}}
+              {{else}}
+                City not set
               {{/if}}
-            </div>
+            </span>
+            {{#if isOwnProfile}}
+              <button class="edit-btn" data-field="address.city" title="Edit city">✎</button>
+            {{/if}}
+          </div>
 
-            <div class="meta-row">
-              <span id="emailText">{{user.email}}</span>
-              {{#if isOwnProfile}}
-                <button class="edit-btn" data-field="email" title="Edit email">✎</button>
-              {{/if}}
-            </div>
-
-            <div class="meta-row">
-              <span id="cityText">{{#if user.address.city}}{{user.address.city}}{{else}}City not set{{/if}}</span>
-              {{#if isOwnProfile}}
-                <button class="edit-btn" data-field="address.city" title="Edit city">✎</button>
-              {{/if}}
-            </div>
-
-            <div class="meta-row">
-              <span id="phoneText">{{user.phoneNumber}}</span>
-              {{#if isOwnProfile}}
-                <button class="edit-btn" data-field="phoneNumber" title="Edit phone">✎</button>
-              {{/if}}
-            </div>
+          <div class="meta-row">
+            <span id="phoneText">{{user.phoneNumber}}</span>
+            {{#if isOwnProfile}}
+              <button class="edit-btn" data-field="phoneNumber" title="Edit phone">✎</button>
+            {{/if}}
           </div>
         </div>
+      </div>
 
-        <div class="profile-right">
-          {{#if (eq user.type 'provider')}}
-            <section class="working-hours">
-              <h3>
-                Working Days & Hours
-                {{#if isOwnProfile}}
-                  <button id="editHoursBtn" class="small-edit">✎</button>
-                {{/if}}
-              </h3>
-
-              {{#if user.workingDays}}
-                <ul id="workingList">
-                  <li><strong>Days:</strong> {{user.workingDays}}</li>
-                  <li><strong>Hours:</strong> {{#if user.workingHours}}{{user.workingHours}}{{else}}Not set{{/if}}</li>
-                  <li><strong>Area:</strong> {{#if user.WorkingArea}}{{user.WorkingArea}}{{else}}Not set{{/if}}</li>
-                </ul>
-              {{else}}
-                <p id="workingList">Not set</p>
+      <div class="profile-right">
+        {{#if (eq user.type 'provider')}}
+          <section class="working-hours">
+            <h3>
+              Working Days & Hours
+              {{#if isOwnProfile}}
+                <button id="editHoursBtn" class="small-edit">✎</button>
               {{/if}}
-            </section>
-          {{/if}}
-        </div>
-      </header>
+            </h3>
 
-      <section class="offers-services">
-        <h2>
-          {{#if (eq user.type 'customer')}}Offers / Orders / Services{{else}}Services Offered{{/if}}
-        </h2>
+            {{#if user.workingDays}}
+              <ul id="workingList">
+                <li><strong>Days:</strong> {{user.workingDays}}</li>
+                <li><strong>Hours:</strong> {{#if user.workingHours}}{{user.workingHours}}{{else}}Not set{{/if}}</li>
+                <li><strong>Area:</strong> {{#if user.WorkingArea}}{{user.WorkingArea}}{{else}}Not set{{/if}}</li>
+              </ul>
+            {{else}}
+              <p id="workingList">Not set</p>
+            {{/if}}
+          </section>
+        {{/if}}
+      </div>
+    </header>
 
-        <div id="itemsGrid" class="items-grid">
-          {{#if (eq user.type 'customer')}}
-            {{#each user.offers}}
-              <div class="item-card">{{this.title}}</div>
-            {{/each}}
-          {{else}}
-            {{#each user.services}}
-              <div class="item-card">{{this.title}}</div>
-            {{/each}}
-          {{/if}}
-        </div>
-      </section>
+    <section class="offers-services">
+      <h2>
+        {{#if (eq user.type 'customer')}}Offers / Orders / Services{{else}}Services Offered{{/if}}
+      </h2>
 
-      <section class="reviews">
-        <h2>
-          Reviews <span class="rating">{{user.ratingAverage}}★</span>
-        </h2>
-        <div id="reviewsGrid" class="items-grid">
-          {{#each user.reviews}}
-            <div class="review-card">
-              <div class="r-head"><strong>{{this.byName}}</strong> — <small>{{this.rating}}★</small></div>
-              <p>{{this.text}}</p>
-            </div>
+      <div id="itemsGrid" class="items-grid">
+        {{#if (eq user.type 'customer')}}
+          {{#each user.offers}}
+            {{> service-card
+              image=this.image
+              workerName=../user.firstName
+              jobTitle=this.serviceType
+              location=this.location
+              urgency=this.urgency
+              description=this.description
+              minPrice=this.minPrice
+              maxPrice=this.maxPrice
+              isOwner=../isOwnProfile
+            }}
           {{/each}}
-        </div>
-      </section>
+        {{else}}
+          {{#each user.services}}
+            {{> service-card
+              image=this.image
+              workerName=../user.firstName
+              jobTitle=this.serviceType
+              location=this.location
+              hours=this.hours
+              description=this.description
+              minPrice=this.minPrice
+              maxPrice=this.maxPrice
+              isOwner=../isOwnProfile
+            }}
+          {{/each}}
+        {{/if}}
+      </div>
+    </section>
 
-      {{#if isOwnProfile}}
+    <section class="reviews">
+      <h2>
+        Reviews <span class="rating">{{user.ratingAverage}}★</span>
+      </h2>
+      <div id="reviewsGrid" class="items-grid">
+        {{#each user.reviews}}
+          <div class="review-card">
+            <div class="r-head">
+              <strong>{{this.byName}}</strong> — <small>{{this.rating}}★</small>
+            </div>
+            <p>{{this.text}}</p>
+          </div>
+        {{/each}}
+      </div>
+    </section>
+
+    {{#if isOwnProfile}}
       <div id="editModal" class="edit-modal" hidden>
         <div class="edit-modal-inner">
           <h3 id="editTitle"></h3>
@@ -156,7 +185,7 @@
           </form>
         </div>
       </div>
-      {{/if}}
-    </main>
-  </body>
+    {{/if}}
+  </main>
+</body>
 </html>
