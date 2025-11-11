@@ -18,18 +18,18 @@
       <img src="/images/default_profile.png" alt="Default profile" class="profile-icon">
     {{/if}}
   </button>
-</nav>
 
-<!-- Profile Sidebar (dropdown-style) -->
-<div class="profile-sidebar" id="profileSidebar" style="display: none;">
-  <a href="/profile">Profile</a>
-  <a href="/logout">Log Out</a>
+  <!-- Profile Dropdown -->
+  <div class="profile-sidebar" id="profileSidebar" style="display: none;">
+    <a href="/profile">Profile</a>
+    <a href="/logout">Log Out</a>
 
-  <div class="toggle">
-    Service Provider Mode
-    <label class="switch">
-      <input type="checkbox" id="providerToggle" {{#if user.isProvider}}checked{{/if}}>
-      <span class="slider"></span>
-    </label>
+    <div class="toggle">
+      Service Provider Mode
+      <label class="switch">
+        <input type="checkbox" id="providerToggle" {{#if user.isProvider}}checked{{/if}}>
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
-</div>
+</nav>
