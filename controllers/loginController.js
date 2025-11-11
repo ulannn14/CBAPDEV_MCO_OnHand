@@ -48,7 +48,7 @@ const loginController = {
                 _id: userExists._id,
                 userName: userExists.userName,
                 profilePicture: userExists.profilePicture || '/images/default_profile.png',
-                isProvider: userExists.type === 'provider'
+                type: userExists.type
             };
             res.redirect('/home');
         }

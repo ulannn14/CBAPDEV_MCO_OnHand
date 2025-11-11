@@ -125,6 +125,14 @@ app.get('/checkEmail', signupController.getCheckEmail);
 */
 app.get('/profile/:username', profileController.getProfile);
 
+/*
+    execute function getProfile()
+    defined in object `profileController` in `../controllers/profileController.js`
+    when a client sends an HTTP GET request for `/profile/:username`
+    where `username` is a parameter
+*/
+//app.post('/post', homeController.postPost);
+
 // Logging out
 app.get('/logout', controller.getLogout);
 

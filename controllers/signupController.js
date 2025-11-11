@@ -127,7 +127,7 @@ const signupController = {
           _id: result._id,
           userName: result.userName,
           profilePicture: result.profilePicture || '/images/default_profile.png',
-          isProvider: result.type === 'provider'
+          type: result.type
         };
         res.redirect('/home');
       } else {
