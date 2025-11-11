@@ -89,31 +89,34 @@ const signupController = {
 
       // Construct user object
       const newUser = {
-        firstName,
-        middleName,
-        lastName,
-        userName: username,
-        email,
-        phoneNumber: phone,
-        password,
-        birthday,
-        address: {
-          houseNumber: homeNumber,
-          street,
-          barangay,
-          city,
-          province,
-          region,
-          country,
-          postalCode: postal
-        },
-        validId: validIdPath,
-        type: isServiceProvider === 'yes' ? 'provider' : 'customer',
-        nbiClearance: nbiClearancePath,
-        workingDays,
-        workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
-        WorkingArea: workingLocation,
-        profilePicture: profilePicturePath
+          firstName,
+          middleName,
+          lastName,
+          userName: username,
+          email,
+          phoneNumber: phone,
+          password,
+          birthday,
+          address: {
+              houseNumber: homeNumber,
+              street,
+              barangay,
+              city,
+              province,
+              region,
+              country,
+              postalCode: postal
+          },
+          validId: validIdPath,
+          type: isServiceProvider === 'yes' ? 'provider' : 'customer',
+          profilePicture: profilePicturePath,
+          // Only include service provider fields if applicable
+          ...(isServiceProvider === 'yes' && {
+              nbiClearance: nbiClearancePath,
+              workingDays,
+              workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
+              WorkingArea: workingLocation
+          })
       };
 
       const result = await db.insertOne(User, newUser);

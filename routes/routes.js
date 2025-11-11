@@ -121,15 +121,9 @@ app.get('/checkEmail', signupController.getCheckEmail);
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if(err) console.error(err);
-        res.redirect('/login'); // redirect after logout
+        res.redirect('/'); // redirect after logout
     });
 });
-
-
-
-
-
-
 
 /*
     execute function getProfile()
@@ -137,7 +131,7 @@ app.get('/logout', (req, res) => {
     when a client sends an HTTP GET request for `/profile/:idNum`
     where `idNum` is a parameter
 */
-app.get('/profile/:idNum', profileController.getProfile);
+app.get('/myProfile', profileController.getMyProfile);
 
 /*
     exports the object `app` (defined above)
