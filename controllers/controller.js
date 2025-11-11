@@ -6,14 +6,6 @@
 const controller = {
 
     /*
-        executed when the client sends an HTTP GET request `/favicon.ico`
-        as defined in `../routes/routes.js`
-    */
-    getFavicon: function (req, res) {
-        res.status(204);
-    },
-
-    /*
         executed when the client sends an HTTP GET request `/`
         as defined in `../routes/routes.js`
     */
@@ -21,7 +13,22 @@ const controller = {
 
         // render `../views/index.hbs`
         res.render('index');
+    },
+
+    /*
+        executed when the client sends an HTTP GET request `/`
+        as defined in `../routes/routes.js`
+    */
+    getLogout: function (req, res) {
+        req.session.destroy(err => {
+            if (err) {
+                console.error("Error destroying session:", err);
+            }
+            res.redirect('/'); // redirect to index after logout
+        });
+        
     }
+
 }
 
 /*

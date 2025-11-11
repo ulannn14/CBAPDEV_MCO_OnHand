@@ -1,64 +1,39 @@
-
-// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
-
-// import module `User` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
 
-/*
-    defines an object which contains functions executed as callback
-    when a client requests for `profile` paths in the server
-*/
 const profileController = {
 
-    /*
-        executed when the client sends an HTTP GET request `/profile/:idNum`
-        as defined in `../routes/routes.js`
-    */
-    getProfile: async function (req, res) {
+  getProfile: async function (req, res) {
+    try {
+      const loggedInUser = req.session.user;
+      const requestedUsername = req.params.username;
 
-        // query where `idNum` is equal to URL parameter `idNum`
-        var query = {idNum: req.params.username};
+      if (!loggedInUser) {
+        return res.redirect('/'); // must be logged in to view profiles
+      }
 
-        // fields to be returned
-        var projection = 'fName lName mName username';
+      // fetch the requested user's data
+      const user = await db.findOne(User, { userName: requestedUsername });
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
 
-        /*
-            calls the function findOne()
-            defined in the `database` object in `../models/db.js`
-            this function searches the collection `users`
-            based on the value set in object `query`
-            the third parameter is a string containing fields to be returned
-        */
-        var result = await db.findOne(User, query, projection);
+      // determine if it’s the logged-in user’s own profile
+      const isOwnProfile = loggedInUser.userName === requestedUsername;
 
-        /*
-            if the user exists in the database
-            render the profile page with their details
-        */
-        if(result != null) {
-            var details = {
-                fName: result.fName,
-                lName: result.lName,
-                idNum: result.idNum
-            };
+      // render the profile
+      res.render('profile', {
+        user,
+        isOwnProfile, // <-- send this flag to the template
+        currentPage: 'profile'
+      });
 
-            // render `../views/profile.hbs`
-            res.render('profile', details);
-        }
-
-        /*
-            if the user does not exist in the database
-            render the error page
-        */
-        else {
-            res.render('error');
-        }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      res.status(500).send('Internal Server Error');
     }
-}
+  }
 
-/*
-    exports the object `profileController` (defined above)
-    when another script exports from this file
-*/
+};
+
 module.exports = profileController;

@@ -32,7 +32,7 @@ const loginController = {
             defined in the `database` object in `../models/db.js`
             this function adds a document to collection `users`
         */
-        var userExists = await User.findOne({userName: userName, password: password});
+        var userExists = await db.findOne(User, {userName: userName, password: password});
 
         /*
             upon adding a user to the database,
