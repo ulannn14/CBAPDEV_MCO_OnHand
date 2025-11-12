@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.getElementById("profileSidebar");
   const toggle = document.getElementById("providerToggle");
 
-  // === Dropdown open/close ===
   if (profileBtn && dropdown) {
     profileBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -21,35 +20,44 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleRow) toggleRow.addEventListener("click", (e) => e.stopPropagation());
   }
 
-  // === Provider Mode Toggle ===
   if (toggle) {
-    // 1️⃣ Load saved mode from localStorage
     const savedMode = localStorage.getItem("isProvider") === "true";
     toggle.checked = savedMode;
-    applyMode(savedMode); // apply immediately on load
 
-    // 2️⃣ When user changes the toggle
+    applyMode(savedMode);
+
     toggle.addEventListener("change", () => {
       const newMode = toggle.checked;
-      localStorage.setItem("isProvider", newMode); // save to browser
-      applyMode(newMode); // update homepage instantly
+      localStorage.setItem("isProvider", newMode);
+      applyMode(newMode);
     });
   }
 
-  // === Mode Applier Function ===
+  // no refresh
   function applyMode(isProvider) {
     const categories = document.querySelector(".categories");
     const heading = document.querySelector(".services-near-you h2");
-    const postText = document.querySelector(".no-posts");
+    const noPosts = document.querySelector(".no-posts");
+    const workingHours = document.getElementById("workingHours");
 
-    if (isProvider) {
-      if (categories) categories.style.display = "none";
-      if (heading) heading.textContent = "Customers Near You";
-      if (postText) postText.textContent = "No available customer requests near you yet.";
-    } else {
-      if (categories) categories.style.display = "block";
-      if (heading) heading.textContent = "Services Near You";
-      if (postText) postText.textContent = "No available services near you yet.";
+    // Home Page
+    if (categories) {
+      categories.style.display = isProvider ? "none" : "block";
+    }
+    if (heading) {
+      heading.textContent = isProvider
+        ? "Customers Near You"
+        : "Services Near You";
+    }
+    if (noPosts) {
+      noPosts.textContent = isProvider
+        ? "No available customer requests near you yet."
+        : "No available services near you yet.";
+    }
+
+    // Profile Page
+    if (workingHours) {
+      workingHours.style.display = isProvider ? "block" : "none";
     }
   }
 });

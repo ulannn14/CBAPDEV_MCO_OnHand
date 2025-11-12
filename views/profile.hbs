@@ -16,10 +16,8 @@
 </head>
 
 <body>
-  <!-- Header -->
   {{> header}}
 
-  <!-- Main Content -->
   <main class="profile-page">
     <div class="profile-left">
       <div class="profile-header">
@@ -57,6 +55,15 @@
               <button class="edit-btn" title="Edit phone"><i class="fa-solid fa-pen-to-square"></i></button>
             </div>
           </div>
+        </div>
+
+        <!-- Working Hours (hidden by default, shown only in provider mode) -->
+        <div class="working-hours" id="workingHours" style="display: none;">
+          <h3><i class="fa-regular fa-clock"></i> Working Hours:</h3>
+          <ul>
+            <li>Mon–Fri: 9 AM – 6 PM</li>
+            <li>Sat: 9 AM – 12 NN</li>
+          </ul>
         </div>
       </div>
 
@@ -101,5 +108,19 @@
       </div>
     </div>
   </main>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const workingHours = document.getElementById("workingHours");
+    const isProvider = localStorage.getItem("isProvider") === "true";
+
+    // Show working hours only when provider mode is active
+    if (isProvider && workingHours) {
+      workingHours.style.display = "block";
+    } else if (workingHours) {
+      workingHours.style.display = "none";
+    }
+  });
+  </script>
 </body>
 </html>
