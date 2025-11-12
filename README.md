@@ -77,13 +77,13 @@ npm install
 To preload the database with sample data for testing, run:
 
 ```
-node seedData.js
+node seed.js
 ```
 
 or to clear existing data and reinsert everything:
 
 ```
-node seedData.js --reset
+node seed.js --reset
 ```
 
 ---
