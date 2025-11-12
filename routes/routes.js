@@ -26,6 +26,12 @@ const signupController = require('../controllers/signupController.js');
 // import module `profileController` from `../controllers/profileController.js`
 const profileController = require('../controllers/profileController.js');
 
+// import module `messageController` from `../controllers/messageController.js`
+const messageController = require('../controllers/messageController.js');
+
+// import module `bookingController` from `../controllers/bookingController.js`
+const bookingController = require('../controllers/bookingController.js');
+
 const app = express();
 
 // Configure multer storage
@@ -139,6 +145,10 @@ app.post('/profile/update', profileController.postUpdate);
     where `username` is a parameter
 */
 //app.post('/post', homeController.postPost);
+
+app.get('/messages', messageController.getMessages);
+
+app.get('/bookings', bookingController.getBookings);
 
 // Logging out
 app.get('/logout', controller.getLogout);
