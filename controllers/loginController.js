@@ -48,7 +48,8 @@ const loginController = {
                 _id: userExists._id,
                 userName: userExists.userName,
                 profilePicture: userExists.profilePicture || '/images/default_profile.png',
-                type: userExists.type
+                type: userExists.type,
+                mode: userExists.type
             };
             res.redirect('/home');
         }

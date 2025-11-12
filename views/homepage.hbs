@@ -41,7 +41,7 @@
   </section>
 
   <!-- Categories Section (only show for customers) -->
-  {{#unless user.isProvider}}
+  {{#unless (eq user.mode 'provider')}}
   <section class="categories">
     <h2>Service Categories</h2>
     <div class="category-list">
@@ -58,7 +58,7 @@
 
   <!-- Services or Customer Posts Section -->
   <section class="services-near-you">
-    <h2>{{#if user.isProvider}}Customers Near You{{else}}Services Near You{{/if}}</h2>
+    <h2>{{#if (eq user.mode 'provider')}}Customers Near You{{else}}Services Near You{{/if}}</h2>
 
     <div class="services-grid">
       {{#if posts.length}}
@@ -66,7 +66,7 @@
           {{> serviceCard this}}
         {{/each}}
       {{else}}
-        <p class="no-posts">No available {{#if user.isProvider}}customer requests{{else}}services{{/if}} near you yet.</p>
+        <p class="no-posts">No available {{#if (eq user.mode 'provider')}}customer requests{{else}}services{{/if}} near you yet.</p>
       {{/if}}
     </div>
   </section>

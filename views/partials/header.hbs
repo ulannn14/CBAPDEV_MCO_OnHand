@@ -25,11 +25,13 @@
   <a href="/profile/{{user.userName}}">Profile</a>
   <a href="/logout">Log Out</a>
 
+  {{#if (eq user.type 'provider')}}
   <div class="toggle">
     Service Provider Mode
     <label class="switch">
-      <input type="checkbox" id="providerToggle" {{#if user.isProvider}}checked{{/if}}>
+      <input type="checkbox" id="providerToggle" {{#if (eq user.mode 'provider')}}checked{{/if}}>
       <span class="slider"></span>
     </label>
   </div>
+  {{/if}}
 </div>

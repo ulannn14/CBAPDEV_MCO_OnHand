@@ -3,11 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.getElementById("profileSidebar");
   const toggle = document.getElementById("providerToggle");
 
+  // Profile dropdown toggle
   if (profileBtn && dropdown) {
     profileBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      dropdown.style.display =
-        dropdown.style.display === "block" ? "none" : "block";
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     });
 
     document.addEventListener("click", (e) => {
@@ -20,41 +20,36 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleRow) toggleRow.addEventListener("click", (e) => e.stopPropagation());
   }
 
+  // Service provider mode toggle
   if (toggle) {
+    // Initialize toggle from localStorage
     const savedMode = localStorage.getItem("isProvider") === "true";
     toggle.checked = savedMode;
 
-    applyMode(savedMode);
-
-    toggle.addEventListener("change", () => {
+    toggle.addEventListener("change", async () => {
       const newMode = toggle.checked;
       localStorage.setItem("isProvider", newMode);
-      applyMode(newMode);
+
+      try {
+        // Update session mode on server
+        const response = await fetch("/mode", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isProvider: newMode }),
+        });
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Failed to update mode");
+
+        // Reload the **current page** to reflect new mode
+        window.location.reload();
+
+      } catch (err) {
+        console.error(err);
+        // Revert toggle if update fails
+        toggle.checked = !newMode;
+        localStorage.setItem("isProvider", !newMode);
+      }
     });
-  }
-
-  function applyMode(isProvider) {
-    const categories = document.querySelector(".categories");
-    const heading = document.querySelector(".services-near-you h2");
-    const noPosts = document.querySelector(".no-posts");
-    const workingHours = document.getElementById("workingHours");
-    const floatingBtn = document.querySelector(".floating-report");
-
-    // Homepage
-    if (categories) categories.style.display = isProvider ? "none" : "block";
-    if (heading)
-      heading.textContent = isProvider
-        ? "Customers Near You"
-        : "Services Near You";
-    if (noPosts)
-      noPosts.textContent = isProvider
-        ? "No available customer requests near you yet."
-        : "No available services near you yet.";
-    if (floatingBtn) {
-      floatingBtn.style.display = isProvider ? "none" : "flex";
-    }
-
-    // Profile
-    if (workingHours) workingHours.style.display = isProvider ? "block" : "none";
   }
 });

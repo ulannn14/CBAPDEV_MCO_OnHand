@@ -27,6 +27,21 @@ const controller = {
             res.redirect('/'); // redirect to index after logout
         });
         
+    },
+
+    postMode: function (req, res) {
+        
+        if (!req.session.user) {
+            return res.status(401).json({ success: false, message: "Not logged in" });
+        }
+
+        const { isProvider } = req.body;
+
+        // Update session mode
+        req.session.user.mode = isProvider ? "provider" : "customer";
+
+        res.json({ success: true, mode: req.session.user.mode });
+
     }
 
 }

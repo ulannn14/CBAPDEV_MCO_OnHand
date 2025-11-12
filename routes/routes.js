@@ -140,6 +140,13 @@ app.post('/profile/update', profileController.postUpdate);
 
 /*
     execute function getProfile()
+    defined in object `controller` in `../controllers/controller.js`
+    when a client sends an HTTP POST request for `/mode`
+*/
+app.post('/mode', controller.postMode);
+
+/*
+    execute function getProfile()
     defined in object `profileController` in `../controllers/profileController.js`
     when a client sends an HTTP GET request for `/profile/:username`
     where `username` is a parameter

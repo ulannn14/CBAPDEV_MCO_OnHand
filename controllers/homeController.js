@@ -1,57 +1,15 @@
-// controllers/homeController.js
-const User = require('../models/UserModel.js');
 const db = require('../models/db.js');
+const User = require('../models/UserModel.js');
+const Post = require('../models/PostModel.js');
 
 const homeController = {
 
   getHome: async function (req, res) {
     try {
-      const loggedInUser = await User.findById(req.session.user._id).lean();
+      const loggedInUser = req.session.user;
+      if (!loggedInUser) return res.redirect('/');
 
-      console.log('Logged-in user:', loggedInUser);
-
-      if (!loggedInUser) {
-        console.log('No logged-in user, redirecting to /');
-        return res.redirect('/');
-      }
-
-      let posts = [];
-
-      if (loggedInUser.type === 'customer') {
-        const customerCity = loggedInUser.address?.city?.trim();
-        console.log('Customer city:', customerCity);
-
-        if (customerCity) {
-          const cityRegex = new RegExp(customerCity, 'i');
-          console.log('City regex:', cityRegex);
-
-          const providers = await db.findMany(User, { type: 'provider', WorkingArea: { $regex: cityRegex } });
-          console.log('Providers found:', providers.length);
-
-          posts = providers.map(p => {
-            const mapped = {
-              image: p.profilePicture,
-              workerName: `${p.firstName} ${p.lastName}`,
-              jobTitle: 'Provider',
-              location: p.WorkingArea,
-              hours: p.workingHours || 'Not set',
-              description: p.bio || '',
-              minPrice: p.minPrice || 0,
-              maxPrice: p.maxPrice || 0,
-              isOwner: false,
-              urgency: null
-            };
-            console.log('Mapped provider:', mapped);
-            return mapped;
-          });
-        } else {
-          console.log('Customer city not found, no providers will be fetched.');
-        }
-      } else {
-        console.log('Logged-in user is a provider, currently no posts fetched.');
-      }
-
-      console.log('Final posts array:', posts);
+      const posts = await homeController.getPosts(loggedInUser);
 
       res.render('homepage', {
         user: loggedInUser,
@@ -62,7 +20,57 @@ const homeController = {
       console.error('Error in getHome:', err);
       res.status(500).send('Internal Server Error');
     }
+  },
+
+  getPosts: async function (user) {
+    try {
+      let query = { userId: { $ne: user._id } }; // exclude own posts
+
+      if (user.address?.city) {
+        const cityRegex = new RegExp(user.address.city.trim(), 'i');
+        query.location = { $regex: cityRegex };
+      }
+
+      // Determine post type based on mode
+      query.postType = user.mode === 'customer' ? 'Offering' : 'LookingFor';
+
+      // Fetch posts using your db helper
+      let postsRaw = await db.findMany(Post, query);
+
+      // Manually populate user info for each post
+      const userIds = postsRaw.map(p => p.userId);
+      const users = await db.findMany(User, { _id: { $in: userIds } });
+
+      const usersMap = {};
+      users.forEach(u => {
+        usersMap[u._id.toString()] = u;
+      });
+
+      // Map posts to format for serviceCard
+      const posts = postsRaw.map(p => {
+        const postUser = usersMap[p.userId.toString()] || {};
+        return {
+          image: postUser.profilePicture || '/images/default_profile.png',
+          workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
+          jobTitle: p.serviceType,
+          location: p.location,
+          hours: p.workingHours || 'Not set',
+          description: p.description,
+          minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
+          maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
+          isOwner: false,
+          urgency: p.levelOfUrgency || null
+        };
+      });
+
+      return posts;
+
+    } catch (err) {
+      console.error('Error in getPosts:', err);
+      return [];
+    }
   }
-}
+
+};
 
 module.exports = homeController;
