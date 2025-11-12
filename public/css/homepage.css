@@ -238,6 +238,40 @@ body {
   margin-bottom: 10px;
 }
 
+.post-image {
+  margin: 10px 0;
+  display: block;
+  width: 100%;
+}
+
+.post-image .customerpost-image {
+  display: block;
+  width: 100%;        
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.post-image .gallery {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.post-image .gallery img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  flex: 0 0 auto;
+}
+
 .price-range {
   font-weight: 600;
   color: var(--success-color);
@@ -292,5 +326,14 @@ body {
 
   .category {
     width: 100px;
+  }
+
+  .post-image .customerpost-image {
+    max-height: 140px;
+    border-radius: 6px;
+  }
+  .post-image .gallery img {
+    width: 120px;
+    height: 90px;
   }
 }

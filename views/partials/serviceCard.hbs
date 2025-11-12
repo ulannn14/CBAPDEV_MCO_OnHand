@@ -30,10 +30,32 @@
 
     <hr class="divider">
 
+    <div class = "title">
+      <h5 class="title-text">Title:</h5>
+      <p>{{title}}</p>
+    </div>
+
     <div class="description">
       <h5 class="desc-title">Description:</h5>
       <p>{{description}}</p>
     </div>
+
+    <div class="post-image">
+      {{#if imagePost}}
+        <!-- single image -->
+        <img src="{{imagePost}}" alt="Post Image" class="customerpost-image" loading="lazy">
+      {{/if}}
+
+      {{#if imageGallery}}
+        <!-- multiple images -->
+        <div class="gallery" aria-label="Post images">
+          {{#each imageGallery}}
+            <img src="{{this}}" alt="Post image {{@index}}" loading="lazy">
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
 
     <hr class="divider">
 
