@@ -200,11 +200,10 @@ body {
   background: #122f7b;
 }
 
-/* sidebar */
 .profile-sidebar {
   position: absolute;
-  top: 75px;
-  right: 40px;
+  top: 70px;           /* Adjust to sit just below header */
+  right: 40px;         /* Aligns neatly under the profile icon */
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -213,10 +212,19 @@ body {
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform-origin: top right;
 }
 
 .profile-sidebar.open {
-  transform: translateX(0);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.profile-sidebar:not(.open) {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
 }
 
 .profile-sidebar a {
@@ -322,29 +330,4 @@ input:checked + .slider:before {
   position: relative; /* Ensures dropdown is positioned relative to the header */
 }
 
-.profile-sidebar {
-  position: absolute;
-  top: 70px;           /* Adjust to sit just below header */
-  right: 40px;         /* Aligns neatly under the profile icon */
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  padding: 12px 0;
-  width: 200px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  transform-origin: top right;
-}
 
-.profile-sidebar.open {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.profile-sidebar:not(.open) {
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-}
