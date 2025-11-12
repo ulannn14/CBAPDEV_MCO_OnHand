@@ -200,35 +200,30 @@ body {
   background: #122f7b;
 }
 
+/* === Profile Dropdown: Floats on Right === */
 .profile-sidebar {
-  position: absolute;
-  top: 70px;           /* Adjust to sit just below header */
-  right: 40px;         /* Aligns neatly under the profile icon */
+  position: fixed;              /* keep it floating */
+  top: 80px;                    /* slightly below header */
+  right: 40px;                  /* align to the right edge */
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   padding: 12px 0;
-  width: 200px;
-  z-index: 1000;
-  display: flex;
+  width: 220px;
+  z-index: 1500;
+  display: none;                /* controlled by JS */
   flex-direction: column;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  transform-origin: top right;
+  animation: fadeSlide 0.25s ease;
 }
 
-.profile-sidebar.open {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.profile-sidebar:not(.open) {
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .profile-sidebar a {
-  padding: 10px 16px;
+  display: block;
+  padding: 10px 20px;
   text-decoration: none;
   color: #1f2937;
   font-weight: 500;
@@ -243,12 +238,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 10px 20px;
   border-top: 1px solid #e5e7eb;
   font-weight: 500;
   color: #1f2937;
+  margin-top: 5px;
 }
 
+/* Toggle switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -280,7 +277,7 @@ body {
   height: 16px;
   width: 16px;
   left: 2px;
-  top: 2px; /* center vertically */
+  top: 2px;
   background-color: white;
   border-radius: 50%;
   transition: transform 0.3s;
@@ -291,7 +288,7 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  transform: translateX(100%); /* move full width minus knob automatically */
+  transform: translateX(20px);
 }
 
 .post-images {
@@ -324,10 +321,3 @@ input:checked + .slider:before {
 .post-images:has(img:only-child) img {
   width: 70%;
 }
-
-/* === Dropdown alignment fix === */
-#header {
-  position: relative; /* Ensures dropdown is positioned relative to the header */
-}
-
-
