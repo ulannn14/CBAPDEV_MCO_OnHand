@@ -23,7 +23,10 @@
   background: white;
   border-radius: 12px;
   padding: 25px 30px;
-  width: 400px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 90vh; /* prevents popup from overflowing vertically */
+  overflow-y: auto; /* allows scroll if it gets too long */
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
@@ -112,4 +115,15 @@
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #ddd;
+}
+
+@media (max-height: 700px) {
+  .popup-content {
+    max-height: 80vh;
+    padding: 20px;
+  }
+
+  .post-text {
+    height: 80px;
+  }
 }
