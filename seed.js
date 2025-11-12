@@ -178,7 +178,7 @@ async function seed() {
       priceRange: '₱500 - ₱1,500',
       location: 'Cabuyao, Laguna',
       workingHours: '8AM - 6PM',
-      sampleWorkImages: [],
+      sampleWorkImages: ['/uploads/posts/lncrlsbrt-post-plumbing1.jpg', '/uploads/posts/lncrlsbrt-post-plumbing2.jpg'],
       levelOfUrgency: 'Non-Urgent'
     },
     {
