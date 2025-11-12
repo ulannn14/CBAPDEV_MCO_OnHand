@@ -128,6 +128,13 @@ app.get('/profile/:username', profileController.getProfile);
 /*
     execute function getProfile()
     defined in object `profileController` in `../controllers/profileController.js`
+    when a client sends an HTTP POST request for `/profile/update`
+*/
+app.post('/profile/update', profileController.postUpdate);
+
+/*
+    execute function getProfile()
+    defined in object `profileController` in `../controllers/profileController.js`
     when a client sends an HTTP GET request for `/profile/:username`
     where `username` is a parameter
 */

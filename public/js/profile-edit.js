@@ -1,5 +1,5 @@
 (function () {
-  const API_ENDPOINT = '/api/profile/update'; 
+  const API_ENDPOINT = '/profile/update'; // backend endpoint
 
   function buildControls() {
     const wrap = document.createElement('span');
@@ -24,14 +24,14 @@
     const originalText = el.textContent.trim();
     const field = el.dataset.field || '';
     const id = el.dataset.id || '';
-    const isMulti = (el.tagName.toLowerCase() === 'p' || el.classList.contains('multiline'));
+    const isMulti = el.tagName.toLowerCase() === 'p' || el.classList.contains('multiline');
     const input = isMulti ? document.createElement('textarea') : document.createElement('input');
     if (!isMulti) input.type = 'text';
     input.className = 'inline-editor';
     input.value = originalText;
     input.setAttribute('aria-label', 'Edit ' + field);
 
-    if (!isMulti) input.size = Math.max( Math.min(originalText.length + 5, 60), 10 );
+    if (!isMulti) input.size = Math.max(Math.min(originalText.length + 5, 60), 10);
 
     const controls = buildControls();
 
@@ -83,33 +83,37 @@
     cancelBtn.disabled = true;
     saveBtn.textContent = 'Saving...';
 
-    const payload = {
-      id,
-      field,
-      value: newValue
-    };
+    // Parse city/province if editing the location
+    let payload = { id, field, value: newValue };
+    if (field === 'location') {
+      const [city, province] = newValue.split(',').map(s => s.trim());
+      payload = {
+        id,
+        field: 'location',
+        value: { city: city || '', province: province || '' }
+      };
+    }
 
     try {
-      // to use for phase 2
-      /*
       const resp = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'include'
       });
+
       if (!resp.ok) throw new Error('Network response not ok: ' + resp.status);
+
       const data = await resp.json();
       if (!data.success) throw new Error(data.error || 'Server error');
-      */
 
+      // Update UI text
       const newTextNode = document.createElement(originalTag === 'p' ? 'p' : 'span');
       newTextNode.className = 'editable';
       newTextNode.dataset.field = field;
       newTextNode.dataset.id = id;
       newTextNode.textContent = newValue;
       newTextNode.dataset.editing = 'false';
-
       container.parentNode.replaceChild(newTextNode, container);
 
     } catch (err) {
@@ -120,6 +124,7 @@
       saveBtn.textContent = 'Save';
     }
   }
+
   document.addEventListener('click', (ev) => {
     const btn = ev.target.closest('.edit-btn');
     if (!btn) return;
@@ -129,9 +134,10 @@
 
     const editable = container.querySelector('.editable');
     if (!editable) {
-      const nextEditable = btn.previousElementSibling && btn.previousElementSibling.classList.contains('editable')
-        ? btn.previousElementSibling
-        : null;
+      const nextEditable =
+        btn.previousElementSibling && btn.previousElementSibling.classList.contains('editable')
+          ? btn.previousElementSibling
+          : null;
       if (nextEditable) return enterInlineEdit(nextEditable);
       return;
     }

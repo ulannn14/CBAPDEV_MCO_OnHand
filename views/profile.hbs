@@ -36,23 +36,29 @@
             <div class="meta-row">
               <i class="fa-solid fa-envelope"></i>
               <span class="editable" data-field="email" data-id="{{user.id}}">{{user.email}}</span>
-              <button class="edit-btn" aria-label="Edit email"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{#if isOwner}}
+                <button class="edit-btn" aria-label="Edit email"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{/if}}
             </div>
 
             <div class="meta-row">
               <i class="fa-solid fa-location-dot"></i>
               <span class="editable" data-field="location" data-id="{{user.id}}">
-                {{#if user.city}}{{user.city}}{{else}}Location not set{{/if}}
+                {{#if user.address.city}}{{user.address.city}}, {{user.address.province}}{{else}}Location not set{{/if}}
               </span>
-              <button class="edit-btn" aria-label="Edit location"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{#if isOwner}}
+                <button class="edit-btn" aria-label="Edit location"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{/if}}
             </div>
 
             <div class="meta-row">
               <i class="fa-solid fa-phone"></i>
-              <span class="editable" data-field="phone" data-id="{{user.id}}">
-                {{#if user.phone}}{{user.phone}}{{else}}No phone set{{/if}}
+              <span class="editable" data-field="phoneNumber" data-id="{{user.id}}">
+                {{#if user.phoneNumber}}{{user.phoneNumber}}{{else}}No phone set{{/if}}
               </span>
-              <button class="edit-btn" title="Edit phone"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{#if isOwner}}
+                <button class="edit-btn" title="Edit phone"><i class="fa-solid fa-pen-to-square"></i></button>
+              {{/if}}
             </div>
           </div>
         </div>
@@ -114,7 +120,6 @@
     const workingHours = document.getElementById("workingHours");
     const isProvider = localStorage.getItem("isProvider") === "true";
 
-    // Show working hours only when provider mode is active
     if (isProvider && workingHours) {
       workingHours.style.display = "block";
     } else if (workingHours) {
