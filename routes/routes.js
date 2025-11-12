@@ -145,13 +145,24 @@ app.post('/profile/update', profileController.postUpdate);
 */
 app.post('/mode', controller.postMode);
 
-/*
-    execute function getProfile()
-    defined in object `profileController` in `../controllers/profileController.js`
-    when a client sends an HTTP GET request for `/profile/:username`
-    where `username` is a parameter
-*/
-//app.post('/post', homeController.postPost);
+const postStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const basePath = path.join(__dirname, '../public/uploads/posts');
+    fs.mkdirSync(basePath, { recursive: true });
+    cb(null, basePath);
+  },
+  filename: function (req, file, cb) {
+    const username = req.session.user.userName.replace(/\s+/g, '_'); // get username from session
+    const randomNum = Math.floor(Math.random() * 1e6); // random number 0–999999
+    const ext = path.extname(file.originalname);
+    const filename = `${username}-post-${randomNum}${ext}`;
+    cb(null, filename);
+  }
+});
+
+const postUpload = multer({ storage: postStorage });
+
+app.post('/create-post', postUpload.array('images'), homeController.postCreatePost);
 
 app.get('/messages', messageController.getMessages);
 

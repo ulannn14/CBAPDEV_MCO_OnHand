@@ -42,12 +42,10 @@
 
     <div class="post-image">
       {{#if imagePost}}
-        <!-- single image -->
         <img src="{{imagePost}}" alt="Post Image" class="customerpost-image" loading="lazy">
       {{/if}}
 
       {{#if imageGallery}}
-        <!-- multiple images -->
         <div class="gallery" aria-label="Post images">
           {{#each imageGallery}}
             <img src="{{this}}" alt="Post image {{@index}}" loading="lazy">

@@ -22,9 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Service provider mode toggle
   if (toggle) {
-    // Initialize toggle from localStorage
-    const savedMode = localStorage.getItem("isProvider") === "true";
-    toggle.checked = savedMode;
+    // Initialize toggle: use localStorage if exists, otherwise use user type
+    const savedMode = localStorage.getItem("isProvider");
+    if (savedMode !== null) {
+      toggle.checked = savedMode === "true";
+    } else {
+      // Use session user type: if provider, toggle is ON by default
+      toggle.checked = toggle.dataset.userType === "provider";
+      localStorage.setItem("isProvider", toggle.checked);
+    }
 
     toggle.addEventListener("change", async () => {
       const newMode = toggle.checked;
@@ -41,9 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
         if (!data.success) throw new Error("Failed to update mode");
 
-        // Reload the **current page** to reflect new mode
+        // Reload the current page to reflect new mode
         window.location.reload();
-
       } catch (err) {
         console.error(err);
         // Revert toggle if update fails
