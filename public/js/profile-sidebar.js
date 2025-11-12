@@ -33,31 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // no refresh
   function applyMode(isProvider) {
     const categories = document.querySelector(".categories");
     const heading = document.querySelector(".services-near-you h2");
     const noPosts = document.querySelector(".no-posts");
     const workingHours = document.getElementById("workingHours");
+    const floatingBtn = document.querySelector(".floating-report");
 
-    // Home Page
-    if (categories) {
-      categories.style.display = isProvider ? "none" : "block";
-    }
-    if (heading) {
+    // Homepage
+    if (categories) categories.style.display = isProvider ? "none" : "block";
+    if (heading)
       heading.textContent = isProvider
         ? "Customers Near You"
         : "Services Near You";
-    }
-    if (noPosts) {
+    if (noPosts)
       noPosts.textContent = isProvider
         ? "No available customer requests near you yet."
         : "No available services near you yet.";
+    if (floatingBtn) {
+      floatingBtn.style.display = isProvider ? "none" : "flex";
     }
 
-    // Profile Page
-    if (workingHours) {
-      workingHours.style.display = isProvider ? "block" : "none";
-    }
+    // Profile
+    if (workingHours) workingHours.style.display = isProvider ? "block" : "none";
   }
 });
