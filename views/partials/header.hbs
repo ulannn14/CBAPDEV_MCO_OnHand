@@ -1,3 +1,4 @@
+
 <script src="/js/profile-sidebar.js"></script>
 
 <nav id="header">
@@ -15,21 +16,21 @@
     {{#if user.profilePicture}}
       <img src="{{user.profilePicture}}" alt="{{user.userName}}'s profile" class="profile-icon">
     {{else}}
-      <img src="/images/default_profile.png" alt="Default profile" class="profile-icon">
+      <img src="/images/profile_picture.png" alt="Default profile" class="profile-icon">
     {{/if}}
   </button>
+</nav>
 
-<!-- Profile Sidebar (dropdown-style) -->
-<div class="profile-sidebar" id="profileSidebar" style="display: none;">
-  <a href="/profile/{{user.userName}}">Profile</a>  
+<!-- Profile Dropdown -->
+<div class="dropdown-menu" id="profileSidebar" style="display: none;">
+  <a href="/profile/{{user.userName}}">Profile</a>
   <a href="/logout">Log Out</a>
 
-    <div class="toggle">
-      Service Provider Mode
-      <label class="switch">
-        <input type="checkbox" id="providerToggle" {{#if user.isProvider}}checked{{/if}}>
-        <span class="slider"></span>
-      </label>
-    </div>
+  <div class="toggle">
+    Service Provider Mode
+    <label class="switch">
+      <input type="checkbox" id="providerToggle" {{#if user.isProvider}}checked{{/if}}>
+      <span class="slider"></span>
+    </label>
   </div>
-</nav>
+</div>
