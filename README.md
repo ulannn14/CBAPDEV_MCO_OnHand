@@ -111,28 +111,3 @@ app listening at port 9090
 
 Then open your browser and go to:
 **[http://localhost:9090/](http://localhost:9090/)**
-
----
-
-## Notes
-
-* The default port is **9090**.
-* MongoDB runs locally at `mongodb://localhost:27017/onhand`.
-* Seed data includes 5 sample users, posts, messages, bookings, ratings, and reports.
-
----
-
-## Credits
-
-Developed by **Group #1 — CBAPDEV**
-as part of the **OnHand Web Application Project**.
-
----
-
-✅ **Instructions:**
-
-1. Copy all the text above.
-2. Paste it into your project root.
-3. Save as `README.md`.
-
-GitHub and VS Code will render it perfectly — walang extra formatting, walang emojis.
