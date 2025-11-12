@@ -16,6 +16,22 @@ const Report = require('./models/ReportModel');
 async function seed() {
   await db.connect();
 
+  const shouldReset = process.argv.includes('--reset');
+  if (shouldReset) {
+    console.log('Reset flag detected , will delete existing data...');
+    await Promise.all([
+      User.deleteMany({}),
+      Post.deleteMany({}),
+      Message.deleteMany({}),
+      Booking.deleteMany({}),
+      Rating.deleteMany({}),
+      Report.deleteMany({})
+    ]);
+    console.log('All collections cleared.\n');
+  } else {
+    console.log('Skipping deletion, existing data will remain.\n');
+  }
+
   // ------------------------------------------------------------
   // USERS
   // ------------------------------------------------------------
@@ -23,7 +39,7 @@ async function seed() {
     {
       firstName: 'Lian',
       lastName: 'Barte',
-      userName: 'lianb',
+      userName: 'lncrlsbrt',
       email: 'lian@example.com',
       phoneNumber: '09171234567',
       password: '1234',
@@ -31,12 +47,15 @@ async function seed() {
       type: 'provider',
       workingDays: ['Monday', 'Tuesday', 'Friday'],
       workingHours: '8AM - 6PM',
-      WorkingArea: 'Laguna'
+      WorkingArea: 'Laguna',
+      profilePicture: 'public/uploads/profile_pics/lncrlsbrt_profile.png',
+      validID: 'private/uploads/ids/lncrlsbrt_id.png',
+      nbiClearance: 'private/uploads/nbi/lncrlsbrt_nbi.png'
     },
     {
       firstName: 'Leigh',
       lastName: 'Albo',
-      userName: 'leigha',
+      userName: 'gwyeigh',
       email: 'leigh@example.com',
       phoneNumber: '09181234567',
       password: '1234',
@@ -44,32 +63,39 @@ async function seed() {
       type: 'provider',
       workingDays: ['Wednesday', 'Thursday'],
       workingHours: '10AM - 4PM',
-      WorkingArea: 'Manila'
+      WorkingArea: 'Manila',
+      profilePicture: 'public/uploads/profile_pics/gwyeigh_profile.png',
+      validID: 'private/uploads/ids/gwyeigh_id.png',
+      nbiClearance: 'private/uploads/nbi/gwyeigh_nbi.png'
     },
     {
       firstName: 'Allysa',
       lastName: 'Villamor',
-      userName: 'allysav',
+      userName: 'aloisuh',
       email: 'allysa@example.com',
       phoneNumber: '09191234567',
       password: '1234',
       birthday: new Date('2001-01-22'),
-      type: 'customer'
+      type: 'customer',
+      profilePicture: 'public/uploads/profile_pics/aloisuh_profile.png',
+      validID: 'private/uploads/ids/aloisuh_id.png'
     },
     {
-      firstName: 'Rain',
-      lastName: 'Orcullo',
-      userName: 'raino',
+      firstName: 'Rlsrain',
+      lastName: 'Gonzales',
+      userName: 'rlsrain',
       email: 'rain@example.com',
       phoneNumber: '09991234567',
       password: '1234',
       birthday: new Date('1999-07-30'),
-      type: 'customer'
+      type: 'customer',
+      profilePicture: 'public/uploads/profile_pics/rlsrain_profile.png',
+      validID: 'private/uploads/ids/rlsrain_id.png'
     },
     {
       firstName: 'Mac',
-      lastName: 'Villanueva',
-      userName: 'macv',
+      lastName: 'Orcullo',
+      userName: 'mackenlhy',
       email: 'mac@example.com',
       phoneNumber: '09091234567',
       password: '1234',
@@ -77,7 +103,10 @@ async function seed() {
       type: 'provider',
       workingDays: ['Monday', 'Saturday'],
       workingHours: '7AM - 7PM',
-      WorkingArea: 'Cavite'
+      WorkingArea: 'Cavite',
+      profilePicture: 'public/uploads/profile_pics/mackenlhy_profile.png',
+      validID: 'private/uploads/ids/mackenlhy_id.png',
+      nbiClearance: 'private/uploads/nbi/mackenlhy_nbi.png'
     }
   ]);
 
@@ -127,7 +156,7 @@ async function seed() {
   console.log('Posts inserted.');
 
   // ------------------------------------------------------------
-  // 3️⃣ MESSAGES
+  // MESSAGES
   // ------------------------------------------------------------
   const messages = await Message.insertMany([
     {
@@ -157,7 +186,7 @@ async function seed() {
   console.log('Messages inserted.');
 
   // ------------------------------------------------------------
-  // 4️⃣ BOOKINGS
+  // BOOKINGS
   // ------------------------------------------------------------
   const bookings = await Booking.insertMany([
     {
@@ -189,7 +218,7 @@ async function seed() {
   console.log('Bookings inserted.');
 
   // ------------------------------------------------------------
-  // 5️⃣ RATINGS
+  // RATINGS
   // ------------------------------------------------------------
   const ratings = await Rating.insertMany([
     {
@@ -211,7 +240,7 @@ async function seed() {
   console.log('Ratings inserted.');
 
   // ------------------------------------------------------------
-  // 6️⃣ REPORTS
+  // REPORTS
   // ------------------------------------------------------------
   await Report.insertMany([
     {
@@ -229,7 +258,7 @@ async function seed() {
   ]);
 
   console.log('Reports inserted.');
-  console.log('\n🎉 SEEDING COMPLETE!');
+  console.log('\n\nSeeding Completed!');
   process.exit();
 }
 
