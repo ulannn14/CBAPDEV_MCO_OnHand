@@ -93,7 +93,7 @@ const profileController = {
 
         } catch (err) {
         console.error('Error fetching profile:', err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).redirect('/');
         }
     },
 
