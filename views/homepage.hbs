@@ -42,7 +42,7 @@
   </section>
 
   <!-- Categories Section (only show for customers) -->
-  {{#unless (eq user.mode 'provider')}}
+  {{#unless (eq sessionUser.mode 'provider')}}
   <section class="categories">
     <h2>Service Categories</h2>
     <div class="category-list">
@@ -59,7 +59,7 @@
 
   <!-- Services or Customer Posts Section -->
   <section class="services-near-you">
-    <h2>{{#if (eq user.mode 'provider')}}Customers Near You{{else}}Services Near You{{/if}}</h2>
+    <h2>{{#if (eq sessionUser.mode 'provider')}}Customers Near You{{else}}Services Near You{{/if}}</h2>
 
     <div class="services-grid">
       {{#if posts.length}}
@@ -67,7 +67,7 @@
           {{> serviceCard this}}
         {{/each}}
       {{else}}
-        <p class="no-posts">No available {{#if (eq user.mode 'provider')}}customer requests{{else}}services{{/if}} near you yet.</p>
+        <p class="no-posts">No available {{#if (eq sessionUser.mode 'provider')}}customer requests{{else}}services{{/if}} near you yet.</p>
       {{/if}}
     </div>
   </section>
@@ -89,19 +89,19 @@
           type="text" 
           id="postTitle" 
           class="popup-input" 
-          placeholder="{{#if (eq user.mode 'provider')}}Enter a short service title (e.g. Reliable Electrician in Makati){{else}}Enter a short title (e.g. Need help fixing a leaky pipe){{/if}}" 
+          placeholder="{{#if (eq sessionUser.mode 'provider')}}Enter a short service title (e.g. Reliable Electrician in Makati){{else}}Enter a short title (e.g. Need help fixing a leaky pipe){{/if}}" 
           required>
 
         {{!-- Description / Main Textarea --}}
         <label class="popup-label">Description:</label>
         <textarea 
-          placeholder="{{#if (eq user.mode 'provider')}}Describe your service...{{else}}What do you need help with?{{/if}}" 
+          placeholder="{{#if (eq sessionUser.mode 'provider')}}Describe your service...{{else}}What do you need help with?{{/if}}" 
           class="post-text" 
           id="postText"
           required></textarea>
 
         {{!-- Customer Fields --}}
-        {{#unless (eq user.mode 'provider')}}
+        {{#unless (eq sessionUser.mode 'provider')}}
           <label class="popup-label">Need:</label>
           <select id="postNeed" class="popup-input" required>
             <option value="">Select Service Type</option>
@@ -172,9 +172,5 @@
       </form>
     </div>
   </div>
-
-
-
-
 </body>
 </html>

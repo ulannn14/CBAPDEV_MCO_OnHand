@@ -1,3 +1,8 @@
+// import module `database` from `../models/db.js`
+const db = require('../models/db.js');
+
+// import module `User` from `../models/UserModel.js`
+const User = require('../models/UserModel.js');
 
 /*
     defines an object which contains functions executed as callback
@@ -32,18 +37,22 @@ const controller = {
     postMode: function (req, res) {
         
         if (!req.session.user) {
-            return res.status(401).json({ success: false, message: "Not logged in" });
+            return res.json({ success: false, error: "Not logged in" });
+        }
+
+        // Customers CANNOT change mode
+        if (req.session.user.type !== "provider") {
+            return res.json({ success: false, error: "Not a provider" });
         }
 
         const { isProvider } = req.body;
 
-        // Update session mode
         req.session.user.mode = isProvider ? "provider" : "customer";
 
-        res.json({ success: true, mode: req.session.user.mode });
+        return res.json({ success: true });
 
     }
-
+    
 }
 
 /*

@@ -11,15 +11,115 @@ const homeController = {
 
       const posts = await homeController.getPosts(loggedInUser);
 
+      console.log(posts.length);
+      console.log(loggedInUser.mode);
+
       res.render('homepage', {
         user: loggedInUser,
-        loggedInUser,
         posts
       });
 
     } catch (err) {
       console.error('Error in getHome:', err);
       res.status(500).render('error');
+    }
+  },
+
+  getSearch: async function (req, res) {
+    try {
+      const loggedInUser = req.session.user;
+      if (!loggedInUser) return res.redirect('/');
+
+      const { service, urgency, minPrice, maxPrice, location } = req.query;
+
+      // If the user didn't provide any search input, go back to home
+      const noInput = !(service && service.trim()) && !(urgency && urgency.trim()) && !minPrice && !maxPrice && !(location && location.trim());
+      if (noInput) return res.redirect('/home');
+
+      // Build DB query similar to getPosts but honoring search params
+      let query = { userId: { $ne: loggedInUser._id } }; // exclude own posts
+
+      // Location preference: explicit search location overrides user city
+      if (location && location.trim()) {
+        const locRegex = new RegExp(location.trim(), 'i');
+        query.location = { $regex: locRegex };
+      } else if (loggedInUser.address?.city) {
+        const cityRegex = new RegExp(loggedInUser.address.city.trim(), 'i');
+        query.location = { $regex: cityRegex };
+      }
+
+      // Post type based on user mode
+      query.postType = loggedInUser.mode === 'customer' ? 'Offering' : 'LookingFor';
+
+      // Service / title / description search
+      if (service && service.trim()) {
+        const s = new RegExp(service.trim(), 'i');
+        query.$or = [
+          { serviceType: { $regex: s } },
+          { title: { $regex: s } },
+          { description: { $regex: s } }
+        ];
+      }
+
+      // Urgency
+      if (urgency && urgency.trim()) {
+        query.levelOfUrgency = { $regex: new RegExp(urgency.trim(), 'i') };
+      }
+
+      // Fetch posts matching the query
+      let postsRaw = await db.findMany(Post, query);
+
+      // Populate user info for posts
+      const userIds = postsRaw.map(p => p.userId);
+      const users = await db.findMany(User, { _id: { $in: userIds } });
+      const usersMap = {};
+      users.forEach(u => { usersMap[u._id.toString()] = u; });
+
+      // Map and filter by price range if provided
+      const minQ = minPrice ? parseInt(minPrice, 10) : null;
+      const maxQ = maxPrice ? parseInt(maxPrice, 10) : null;
+
+      const results = postsRaw.map(p => {
+        const postUser = usersMap[p.userId.toString()] || {};
+        const images = p.sampleWorkImages || [];
+        const imagePost = images[0] || null;
+        const imageGallery = images.length > 1 ? images.slice(1) : [];
+
+        // Parse numeric min/max from stored priceRange string
+        let postMin = 0, postMax = 0;
+        if (p.priceRange) {
+          const parts = p.priceRange.split('-');
+          postMin = parseInt((parts[0] || '').replace(/[^\d]/g, ''), 10) || 0;
+          postMax = parseInt((parts[1] || '').replace(/[^\d]/g, ''), 10) || postMin;
+        }
+
+        return {
+          image: postUser.profilePicture || '/images/default_profile.png',
+          workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
+          jobTitle: p.serviceType || '',
+          location: p.location || '',
+          hours: p.workingHours || 'Not set',
+          title: p.title || '',
+          description: p.description || '',
+          minPrice: postMin,
+          maxPrice: postMax,
+          isOwner: false,
+          urgency: p.levelOfUrgency || null,
+          imagePost,
+          imageGallery
+        };
+      }).filter(item => {
+        // Apply price filtering in JS when min/max search provided
+        if (minQ !== null && item.maxPrice < minQ) return false;
+        if (maxQ !== null && item.minPrice > maxQ) return false;
+        return true;
+      });
+
+      return res.render('search', { user: loggedInUser, results });
+
+    } catch (err) {
+      console.error('Error in getSearch:', err);
+      return res.status(500).send('Internal Server Error');
     }
   },
 

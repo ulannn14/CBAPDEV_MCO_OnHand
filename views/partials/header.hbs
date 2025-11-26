@@ -12,25 +12,30 @@
   </div>
 
   <button id="profileBtn" class="profile-btn" title="Account menu">
-      {{#if loggedInUser.profilePicture}}
-        <img src="{{loggedInUser.profilePicture}}" alt="{{loggedInUser.userName}}'s profile" class="profile-icon">
+      {{#if sessionUser.profilePicture}}
+        <img src="{{sessionUser.profilePicture}}" class="profile-icon">
       {{else}}
-        <img src="/images/default_profile.png" alt="Default profile" class="profile-icon">
+        <img src="/images/default_profile.png" class="profile-icon">
       {{/if}}
   </button>
 </nav>
 
-<!-- Profile Sidebar Dropdown -->
-{{#if loggedInUser}}
+{{#if sessionUser}}
   <div class="profile-sidebar" id="profileSidebar" style="display: none;">
-    <a href="/profile/{{loggedInUser.userName}}">Profile</a>
+    <a href="/profile/{{sessionUser.userName}}">Profile</a>
     <a href="/logout">Log Out</a>
 
-    {{#if (eq loggedInUser.type 'provider')}}
+    {{#if (eq sessionUser.type 'provider')}}
     <div class="toggle">
       Service Provider Mode
       <label class="switch">
-        <input type="checkbox" id="providerToggle" {{#if (eq user.mode 'provider')}}checked{{/if}}>
+        <input 
+          type="checkbox" 
+          id="providerToggle"
+          data-user-type="{{sessionUser.type}}"
+          data-user-mode="{{sessionUser.mode}}"
+          {{#if (eq sessionUser.mode 'provider')}}checked{{/if}}
+        >
         <span class="slider"></span>
       </label>
     </div>

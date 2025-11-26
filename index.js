@@ -35,6 +35,11 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
+app.use(function (req, res, next) {
+    res.locals.sessionUser = req.session.user || null;
+    next();
+});
+
 app.use(express.json());
 
 // parses incoming requests with urlencoded payloads

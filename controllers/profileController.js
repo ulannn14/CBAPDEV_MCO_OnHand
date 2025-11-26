@@ -81,11 +81,8 @@ const profileController = {
         };
         });
 
-        console.log(loggedInUser.userName);
-
         // Render page
         res.render('profile', {
-        loggedInUser,
         user,
         isOwner,
         posts,
@@ -96,7 +93,7 @@ const profileController = {
 
         } catch (err) {
         console.error('Error fetching profile:', err);
-        res.status(500).redirect('/');
+        res.status(500).render('error');
         }
     },
 

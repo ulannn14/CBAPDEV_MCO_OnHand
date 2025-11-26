@@ -97,6 +97,9 @@ app.get('/getCheckPassword', loginController.getCheckPassword);
 */
 app.get('/home', homeController.getHome);
 
+// Search route
+app.get('/search', homeController.getSearch);
+
 /*
     execute function getSuccess()
     defined in object `signupController` in `../controllers/signupController.js`

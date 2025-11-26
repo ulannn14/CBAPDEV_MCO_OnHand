@@ -124,11 +124,8 @@ const signupController = {
 
       if (result) {
         req.session.user = {
-          _id: result._id,
-          userName: result.userName,
-          profilePicture: result.profilePicture || '/images/default_profile.png',
-          type: result.type,
-          mode: result.type
+          ...result.toObject(),      // spread all fields of the DB user
+          mode: result.type === "provider" ? "provider" : "customer"
         };
         res.redirect('/home');
       } else {

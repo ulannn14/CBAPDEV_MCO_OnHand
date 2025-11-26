@@ -1,4 +1,3 @@
-
 // import module `database` from `../models/db.js`
 const db = require('../models/db.js');
 
@@ -23,34 +22,50 @@ const loginController = {
             var userExists = await db.findOne(User, { userName: userName, password: password });
 
             if (userExists) {
+                // Normalize the DB object (works whether it's a mongoose doc or plain object)
+                const dbUser = (typeof userExists.toObject === 'function') ? userExists.toObject() : userExists;
+
+                // Build session.user with chosen fields
                 req.session.user = {
-                    _id: userExists._id,
-                    userName: userExists.userName,
-                    profilePicture: userExists.profilePicture || '/images/default_profile.png',
-                    type: userExists.type,
-                    mode: userExists.type
+                    _id: dbUser._id,
+                    userName: dbUser.userName,
+                    profilePicture: dbUser.profilePicture || '/images/default_profile.png',
+                    type: dbUser.type,
+                    // mode logic: preserve type or map if you have provider/customer distinction
+                    mode: dbUser.type === 'provider' ? 'provider' : dbUser.type
                 };
 
-                // If AJAX / XHR -> respond with JSON
-                if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
-                    return res.json({ success: true, redirect: '/home' });
-                }
+                // Save session to ensure it's persisted before redirecting/responding
+                return req.session.save(err => {
+                    if (err) {
+                        console.error('Session save error:', err);
+                        // If AJAX request, respond with JSON error; otherwise render error page
+                        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+                            return res.status(500).json({ success: false, message: 'Server error. Try again later.' });
+                        }
+                        return res.render('error', { loggedInUser: null });
+                    }
 
-                // normal form submit -> redirect
-                return res.redirect('/home');
+                    // If AJAX / XHR -> respond with JSON
+                    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+                        return res.json({ success: true, redirect: '/home' });
+                    }
+
+                    // normal form submit -> redirect
+                    return res.redirect('/home');
+                });
             } else {
                 // login failed
-                if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
+                if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
                     return res.status(401).json({ success: false, message: 'Wrong username or password.' });
                 }
 
                 // for normal form, render the login page again with an error message
-                // (better than sending a separate error page)
                 return res.render('login', { loggedInUser: null, loginError: 'Wrong username or password.' });
             }
         } catch (err) {
             console.error('postLogin error', err);
-            if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
+            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
                 return res.status(500).json({ success: false, message: 'Server error. Try again later.' });
             }
             return res.render('error', { loggedInUser: null });
@@ -111,7 +126,7 @@ const loginController = {
 };
 
 /*
-    exports the object `signupController` (defined above)
+    exports the object `loginController` (defined above)
     when another script exports from this file
 */
 module.exports = loginController;
