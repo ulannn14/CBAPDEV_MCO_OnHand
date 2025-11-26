@@ -67,12 +67,17 @@
         <div class="working-hours" id="workingHours" style="display: none;">
           <h3><i class="fa-regular fa-clock"></i> Working Hours:</h3>
           <ul>
-            <li>Mon-Fri: 9 AM - 6 PM</li>
-            <li>Sat: 9 AM - 12 NN</li>
+            {{#if user.workingDays}}
+              {{#each user.workingDays}}
+                <li>{{this}}: {{../user.workingHours}}</li>
+              {{/each}}
+            {{else}}
+              <li>Working hours not set</li>
+            {{/if}}
           </ul>
         </div>
-      </div>
 
+      </div>
       <div class="bottom-section">
         <div class="details">
           <h3>Posts</h3>
