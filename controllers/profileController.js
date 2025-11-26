@@ -17,7 +17,7 @@ const profileController = {
 
         // Profile being viewed
         const user = await db.findOne(User, { userName: requestedUsername });
-        if (!user) return res.status(404).send('User not found');
+        if (!user) return res.status(404).render('error');
 
         // Is this the user's own profile?
         const isOwner = loggedInUser.userName === requestedUsername;
@@ -93,7 +93,7 @@ const profileController = {
 
         } catch (err) {
         console.error('Error fetching profile:', err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).redirect('/');
         }
     },
 
