@@ -7,9 +7,10 @@
 // ============================================================
 
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 // Database connection URL
-const url = 'mongodb://localhost:27017/onhand';
+const url = process.env.MONGO_URI;
 
 // Optional connection options
 const options = {
