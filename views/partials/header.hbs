@@ -12,26 +12,28 @@
   </div>
 
   <button id="profileBtn" class="profile-btn" title="Account menu">
-    {{#if user.profilePicture}}
-      <img src="{{user.profilePicture}}" alt="{{user.userName}}'s profile" class="profile-icon">
-    {{else}}
-      <img src="/images/profile_picture.png" alt="Default profile" class="profile-icon">
-    {{/if}}
+      {{#if loggedInUser.profilePicture}}
+        <img src="{{loggedInUser.profilePicture}}" alt="{{loggedInUser.userName}}'s profile" class="profile-icon">
+      {{else}}
+        <img src="/images/default_profile.png" alt="Default profile" class="profile-icon">
+      {{/if}}
   </button>
 </nav>
 
 <!-- Profile Sidebar Dropdown -->
-<div class="profile-sidebar" id="profileSidebar" style="display: none;">
-  <a href="/profile/{{user.userName}}">Profile</a>
-  <a href="/logout">Log Out</a>
+{{#if loggedInUser}}
+  <div class="profile-sidebar" id="profileSidebar" style="display: none;">
+    <a href="/profile/{{loggedInUser.userName}}">Profile</a>
+    <a href="/logout">Log Out</a>
 
-  {{#if (eq user.type 'provider')}}
-  <div class="toggle">
-    Service Provider Mode
-    <label class="switch">
-      <input type="checkbox" id="providerToggle" {{#if (eq user.mode 'provider')}}checked{{/if}}>
-      <span class="slider"></span>
-    </label>
+    {{#if (eq loggedInUser.type 'provider')}}
+    <div class="toggle">
+      Service Provider Mode
+      <label class="switch">
+        <input type="checkbox" id="providerToggle" {{#if (eq user.mode 'provider')}}checked{{/if}}>
+        <span class="slider"></span>
+      </label>
+    </div>
+    {{/if}}
   </div>
-  {{/if}}
-</div>
+{{/if}}
