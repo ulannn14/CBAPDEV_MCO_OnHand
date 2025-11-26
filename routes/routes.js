@@ -87,6 +87,8 @@ app.get('/', controller.getIndex);
 */
 app.post('/login', loginController.postLogin);
 
+app.get('/getCheckUsername', loginController.getCheckUsername);
+
 /*
     execute function getSuccess()
     defined in object `homeController` in `../controllers/homeController.js`

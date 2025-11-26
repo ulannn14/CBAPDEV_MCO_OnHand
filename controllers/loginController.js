@@ -43,6 +43,15 @@ const loginController = {
             defined in `./successController.js`
         */
 
+        // Check password match (simple plaintext comparison here)
+        // If you use bcrypt, replace this with bcrypt.compareSync()
+        if (userExists.password !== password) {
+            return res.render('login', { 
+            errorMessage: 'Incorrect password. Please try again.',
+            userName
+            });
+        }
+
         if (userExists) {
             req.session.user = {
                 _id: userExists._id,
@@ -62,7 +71,7 @@ const loginController = {
         executed when the client sends an HTTP GET request `/getCheckID`
         as defined in `../routes/routes.js`
     */
-    getCheckID: async function (req, res) {
+    getCheckUsername: async function (req, res) {
 
         /*
             when passing values using HTTP GET method
@@ -70,7 +79,7 @@ const loginController = {
             Example url: `http://localhost/getCheckID?idNum=11312345`
             To retrieve the value of parameter `idNum`: `req.query.idNum`
         */
-        var idNum = req.query.idNum;
+        var userName = req.query.userName;
 
         /*
             calls the function findOne()
@@ -79,7 +88,7 @@ const loginController = {
             sends an empty string to the user if there are no match
             otherwise, sends an object containing the `idNum`
         */
-        var result = await db.findOne(User, {idNum: idNum}, 'idNum');
+        var result = await db.findOne(User, {userName: userName}, 'userName');
         res.send(result);
     }
 
