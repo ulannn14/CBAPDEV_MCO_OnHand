@@ -170,7 +170,15 @@ const postUpload = multer({ storage: postStorage });
 
 app.post('/create-post', postUpload.array('images'), homeController.postCreatePost);
 
-app.get('/messages', messageController.getMessages);
+app.get('/messages', messageController.getMessages);     
+
+app.get('/messages/list', messageController.getMessagesList);  
+
+// JSON thread data
+app.get('/messages/thread/:id', messageController.getThread);  
+
+// save new message
+app.post('/messages/thread/:id', messageController.postMessage); 
 
 app.get('/bookings', bookingController.getBookings);
 
