@@ -131,16 +131,18 @@
   </main>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const workingHours = document.getElementById("workingHours");
-    const isProvider = localStorage.getItem("isProvider") === "true";
+    document.addEventListener("DOMContentLoaded", () => {
+      const workingHours = document.getElementById("workingHours");
+      const isProviderLS = localStorage.getItem("isProvider") === "true";
+      const userIsProvider = "{{user.type}}" === "provider"; // backend truth
 
-    if (isProvider && workingHours) {
-      workingHours.style.display = "block";
-    } else if (workingHours) {
-      workingHours.style.display = "none";
-    }
-  });
-  </script>
+      if (userIsProvider && isProviderLS && workingHours) {
+        workingHours.style.display = "block";
+      } else if (workingHours) {
+        workingHours.style.display = "none";
+      }
+    });
+    </script>
+
 </body>
 </html>

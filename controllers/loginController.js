@@ -63,7 +63,7 @@ const loginController = {
             res.redirect('/home');
         }
         else {
-            res.render('error');
+            res.render('error', { loggedInUser: null });
         }
     },
 

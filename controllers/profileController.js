@@ -81,8 +81,11 @@ const profileController = {
         };
         });
 
+        console.log(loggedInUser.userName);
+
         // Render page
         res.render('profile', {
+        loggedInUser,
         user,
         isOwner,
         posts,

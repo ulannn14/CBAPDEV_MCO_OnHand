@@ -132,11 +132,11 @@ const signupController = {
         };
         res.redirect('/home');
       } else {
-        res.status(500).render('error', { message: 'Signup failed.' });
+        res.status(500).render('error', { loggedInUser: null });
       }
     } catch (err) {
       console.error('Signup error:', err);
-      res.status(500).render('error', { message: 'Signup failed.' });
+      res.status(500).render('error', { loggedInUser: null });
     }
   },
 
