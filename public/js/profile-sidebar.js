@@ -20,41 +20,41 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleRow) toggleRow.addEventListener("click", (e) => e.stopPropagation());
   }
 
-  // Service provider mode toggle
-  if (toggle) {
-    // Initialize toggle: use localStorage if exists, otherwise use user type
-    const savedMode = localStorage.getItem("isProvider");
-    if (savedMode !== null) {
-      toggle.checked = savedMode === "true";
-    } else {
-      // Use session user type: if provider, toggle is ON by default
-      toggle.checked = toggle.dataset.userType === "provider";
-      localStorage.setItem("isProvider", toggle.checked);
-    }
+// Service provider mode toggle
+if (toggle) {
 
-    toggle.addEventListener("change", async () => {
-      const newMode = toggle.checked;
-      localStorage.setItem("isProvider", newMode);
+  const savedMode = localStorage.getItem("isProvider");
 
-      try {
-        // Update session mode on server
-        const response = await fetch("/mode", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isProvider: newMode }),
-        });
-
-        const data = await response.json();
-        if (!data.success) throw new Error("Failed to update mode");
-
-        // Reload the current page to reflect new mode
-        window.location.reload();
-      } catch (err) {
-        console.error(err);
-        // Revert toggle if update fails
-        toggle.checked = !newMode;
-        localStorage.setItem("isProvider", !newMode);
-      }
-    });
+  if (savedMode === null) {
+    toggle.checked = true;
+    localStorage.setItem("isProvider", "true");
+  } else {
+    toggle.checked = savedMode === "true";
   }
+
+  toggle.addEventListener("change", async () => {
+    const newMode = toggle.checked;
+    localStorage.setItem("isProvider", newMode);
+
+    try {
+      const response = await fetch("/mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isProvider: newMode }),
+      });
+
+      const data = await response.json();
+      if (!data.success) throw new Error("Failed to update mode");
+
+      window.location.reload();
+
+    } catch (err) {
+      console.error(err);
+      toggle.checked = !newMode;
+      localStorage.setItem("isProvider", !newMode);
+    }
+  });
+}
+
+
 });

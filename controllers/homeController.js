@@ -6,19 +6,20 @@ const homeController = {
 
   getHome: async function (req, res) {
     try {
-      const loggedInUser = req.session.user;
+      const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
       const posts = await homeController.getPosts(loggedInUser);
 
       res.render('homepage', {
         user: loggedInUser,
+        loggedInUser,
         posts
       });
 
     } catch (err) {
       console.error('Error in getHome:', err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).render('error');
     }
   },
 
