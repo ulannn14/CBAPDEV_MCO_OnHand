@@ -16,56 +16,47 @@ const loginController = {
         as defined in `../routes/routes.js`
     */
     postLogin: async function (req, res) {
+        try {
+            var userName = (req.body.userName || '').trim();
+            var password = (req.body.password || '').trim();
 
-        /*
-            when submitting forms using HTTP POST method
-            the values in the input fields are stored in `req.body` object
-            each <input> element is identified using its `name` attribute
-            Example: the value entered in <input type="text" name="fName">
-            can be retrieved using `req.body.fName`
-        */
-        var userName = req.body.userName.trim();
-        var password = req.body.password.trim();
+            var userExists = await db.findOne(User, { userName: userName, password: password });
 
-        /*
-            calls the function insertOne()
-            defined in the `database` object in `../models/db.js`
-            this function adds a document to collection `users`
-        */
-        var userExists = await db.findOne(User, {userName: userName, password: password});
+            if (userExists) {
+                req.session.user = {
+                    _id: userExists._id,
+                    userName: userExists.userName,
+                    profilePicture: userExists.profilePicture || '/images/default_profile.png',
+                    type: userExists.type,
+                    mode: userExists.type
+                };
 
-        /*
-            upon adding a user to the database,
-            redirects the client to `/success` using HTTP GET,
-            defined in `../routes/routes.js`
-            passing values using URL
-            which calls getSuccess() method
-            defined in `./successController.js`
-        */
+                // If AJAX / XHR -> respond with JSON
+                if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
+                    return res.json({ success: true, redirect: '/home' });
+                }
 
-        // Check password match (simple plaintext comparison here)
-        // If you use bcrypt, replace this with bcrypt.compareSync()
-        if (userExists.password !== password) {
-            return res.render('login', { 
-            errorMessage: 'Incorrect password. Please try again.',
-            userName
-            });
-        }
+                // normal form submit -> redirect
+                return res.redirect('/home');
+            } else {
+                // login failed
+                if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
+                    return res.status(401).json({ success: false, message: 'Wrong username or password.' });
+                }
 
-        if (userExists) {
-            req.session.user = {
-                _id: userExists._id,
-                userName: userExists.userName,
-                profilePicture: userExists.profilePicture || '/images/default_profile.png',
-                type: userExists.type,
-                mode: userExists.type
-            };
-            res.redirect('/home');
-        }
-        else {
-            res.render('error', { loggedInUser: null });
+                // for normal form, render the login page again with an error message
+                // (better than sending a separate error page)
+                return res.render('login', { loggedInUser: null, loginError: 'Wrong username or password.' });
+            }
+        } catch (err) {
+            console.error('postLogin error', err);
+            if (req.xhr || req.headers.accept && req.headers.accept.indexOf('application/json') !== -1) {
+                return res.status(500).json({ success: false, message: 'Server error. Try again later.' });
+            }
+            return res.render('error', { loggedInUser: null });
         }
     },
+
 
     /*
         executed when the client sends an HTTP GET request `/getCheckID`
@@ -90,9 +81,34 @@ const loginController = {
         */
         var result = await db.findOne(User, {userName: userName}, 'userName');
         res.send(result);
-    }
+    },
 
-}
+    getCheckPassword: async function (req, res) {
+
+        /*
+            when passing values using HTTP GET method
+            the values are stored in `req.query` object
+            Example url: `http://localhost/getCheckID?idNum=11312345`
+            To retrieve the value of parameter `idNum`: `req.query.idNum`
+        */
+        var userName = req.query.userName;
+        var password = req.query.password;
+
+        /*
+            calls the function findOne()
+            defined in the `database` object in `../models/db.js`
+            searches for a single document based on the model `User`
+            sends an empty string to the user if there are no match
+            otherwise, sends an object containing the `idNum`
+        */
+        var result = await db.findOne(User, {userName: userName, password: password}, 'userName');
+        if(!result) {
+            res.send(false);
+        } else {
+            res.send(result);
+        }
+    }
+};
 
 /*
     exports the object `signupController` (defined above)

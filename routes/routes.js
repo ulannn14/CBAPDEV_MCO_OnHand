@@ -88,6 +88,7 @@ app.get('/', controller.getIndex);
 app.post('/login', loginController.postLogin);
 
 app.get('/getCheckUsername', loginController.getCheckUsername);
+app.get('/getCheckPassword', loginController.getCheckPassword);
 
 /*
     execute function getSuccess()

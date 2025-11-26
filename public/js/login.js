@@ -1,31 +1,72 @@
 $(document).ready(function () {
-    /*
-        attach the event `keyup` to the html element where id = `idNum`
-        this html element is an `<input>` element
-        this event activates when the user releases a key on the keyboard
-    */
+    // Username existence check (keeps your existing behavior)
     $('#username').blur(function () {
-
-        // get the value entered the user in the `<input>` element
-        var userName = $('#username').val();
-
-        /*
-            send an HTTP GET request using JQuery AJAX
-            the first parameter is the path in our server
-            which is defined in `../../routes/routes.js`
-            the server will execute the function getCheckID()
-            defined in `../../controllers/signupController.js`
-            the second parameter passes the variable `idNum`
-            as the value of the field `idNum`
-            to the server
-            the last parameter executes a callback function
-            when the server sent a response
-        */
-        $.get('/getCheckUsername', {userName: userName}, function (result) {
-            if(!result) {
-                $('#username').css('background-color', 'red');   
+        var userName = $('#username').val().trim();
+        if (!userName) return;
+        $.get('/getCheckUsername', { userName: userName }, function (result) {
+            if (!result) {
+                $('#username').css('background-color', '#ffd6d6');
                 $('#login-error').text('Username does not exist.');
+                $('.login-btn').prop('disabled', true);
+            } else {
+                $('#username').css('background-color', '');
+                $('#login-error').text('');
+                $('.login-btn').prop('disabled', false);
             }
+        });
+    });
+
+    // Intercept form submit instead of listening to button click
+    $('#loginForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $btn = $('.login-btn');
+        const userName = $('#username').val().trim();
+        const password = $('#password').val().trim();
+
+        // client-side empty checks
+        if (userName === '' && password === '') {
+            $('#login-error').text((res && res.message) ? res.message : 'Please enter your username and password.');
+            return;
+        }
+        if (userName === '') {
+            $('#login-error').text((res && res.message) ? res.message : 'Please enter your username.');
+            return;
+        }
+        if (password === '') {
+            $('#login-error').text((res && res.message) ? res.message : 'Please enter your password.');
+            return;
+        }
+
+        $('#login-error').text('');
+        $btn.prop('disabled', true).text('Checking...');
+
+        // Send the actual POST to /login (let server handle session)
+        $.ajax({
+            url: '/login',
+            method: 'POST',
+            data: { userName: userName, password: password },
+            dataType: 'json'
+        })
+        .done(function (res) {
+            if (res && res.success) {
+                // If server responded success, redirect browser
+                window.location.href = res.redirect || '/home';
+            } else {
+                // show message from server or default
+                $('#login-error').text((res && res.message) ? res.message : 'Wrong password.');
+                $btn.prop('disabled', false).text('Log In');
+            }
+        })
+        .fail(function (jqXHR) {
+            // fallback: if server returned HTML or error, show generic message
+            let msg = 'An error occurred. Please try again.';
+            try {
+                const json = jqXHR.responseJSON;
+                if (json && json.message) msg = json.message;
+            } catch (err) {}
+            $('#login-error').text(msg);
+            $btn.prop('disabled', false).text('Log In');
         });
     });
 });
