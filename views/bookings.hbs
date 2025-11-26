@@ -30,9 +30,9 @@
   <div class="bookings-container">
     <!-- Tabs -->
     <div class="booking-tabs">
-      <a href="#" class="tab-link active" data-tab="ongoing">Ongoing</a>
-      <a href="#" class="tab-link" data-tab="toRate">To Rate</a>
-      <a href="#" class="tab-link" data-tab="completed">Completed</a>
+      <a href="/bookings/ongoing" class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
+      <a href="/bookings/to-rate" class="{{#if (eq currentTab 'to-rate')}}active{{/if}}">To Rate</a>
+      <a href="/bookings/completed" class="{{#if (eq currentTab 'completed')}}active{{/if}}">Completed</a>
     </div>
 
     <!-- Booking List -->
@@ -90,61 +90,5 @@
     <p class="no-bookings" style="display:none;">No bookings yet.</p>
   </div>
 
-  <script>
-    // tab switching
-    const tabs = document.querySelectorAll(".tab-link");
-    const cards = document.querySelectorAll(".booking-card");
-    const noBookingsMsg = document.querySelector(".no-bookings");
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", e => {
-        e.preventDefault();
-
-        // highlight active tab
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        const tabType = tab.dataset.tab;
-        let visibleCount = 0;
-
-        // show only matching cards
-        cards.forEach(card => {
-          if (card.dataset.status === tabType) {
-            card.style.display = "flex";
-            visibleCount++;
-          } else {
-            card.style.display = "none";
-          }
-        });
-
-        // toggle no-bookings message
-        noBookingsMsg.style.display = visibleCount === 0 ? "block" : "none";
-      });
-    });
-
- 
-    document.querySelector(".tab-link[data-tab='ongoing']").click();
-
-
-    document.querySelectorAll(".rating-stars").forEach(container => {
-      const stars = container.querySelectorAll("i");
-      stars.forEach(star => {
-        star.addEventListener("click", () => {
-          const value = parseInt(star.dataset.value);
-          stars.forEach((s, i) => {
-            if (i < value) {
-              s.classList.add("fa-solid");
-              s.classList.remove("fa-regular");
-              s.style.color = "#fbbf24";
-            } else {
-              s.classList.add("fa-regular");
-              s.classList.remove("fa-solid");
-              s.style.color = "#ccc";
-            }
-          });
-        });
-      });
-    });
-  </script>
 </body>
 </html>

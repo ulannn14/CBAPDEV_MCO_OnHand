@@ -27,7 +27,7 @@ const homeController = {
 
   getSearch: async function (req, res) {
     try {
-      const loggedInUser = req.session.user;
+      const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
       const { service, urgency, minPrice, maxPrice, location } = req.query;

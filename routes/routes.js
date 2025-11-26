@@ -180,7 +180,7 @@ app.get('/messages/thread/:id', messageController.getThread);
 // save new message
 app.post('/messages/thread/:id', messageController.postMessage); 
 
-app.get('/bookings', bookingController.getBookings);
+app.get('/bookings/:status', bookingController.getBookings);
 
 // Logging out
 app.get('/logout', controller.getLogout);
