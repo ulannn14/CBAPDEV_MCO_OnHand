@@ -11,9 +11,11 @@ const homeController = {
 
       const posts = await homeController.getPosts(loggedInUser);
 
+      console.log(posts.length);
+      console.log(loggedInUser.mode);
+
       res.render('homepage', {
         user: loggedInUser,
-        loggedInUser,
         posts
       });
 

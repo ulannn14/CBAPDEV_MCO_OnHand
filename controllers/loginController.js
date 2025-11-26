@@ -45,16 +45,19 @@ const loginController = {
 
         if (userExists) {
             req.session.user = {
-                _id: userExists._id,
-                userName: userExists.userName,
-                profilePicture: userExists.profilePicture || '/images/default_profile.png',
-                type: userExists.type,
-                mode: userExists.type
+                ...userExists.toObject(),      // spread all fields of the DB user
+                mode: userExists.type === "provider" ? "provider" : "customer"
             };
-            res.redirect('/home');
+            req.session.save(err => {
+                if (err) {
+                    console.error("Session save error:", err);
+                    return res.render('error');
+                }
+                res.redirect('/home');
+            });
         }
         else {
-            res.render('error', { loggedInUser: null });
+            res.render('error');
         }
     },
 
