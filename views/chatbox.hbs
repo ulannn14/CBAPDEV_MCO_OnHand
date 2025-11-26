@@ -16,8 +16,8 @@
   {{/if}}
 
   <script src="/js/messages.js" defer></script>
-  <script src="/js/popup.js"></script>
-  <script src="/js/dropdown-profile.js"></script>
+  <script src="/js/popup.js" defer></script>
+  <script src="/js/dropdown-profile.js" defer></script>
   <link rel="icon" href="/images/icon.png" type="image/png">
 </head>
 
@@ -60,6 +60,21 @@
         {{else}}
           <div class="placeholder">Select a conversation to start</div>
         {{/if}}
+      </div>
+
+        <!-- composer: attach, preview, input, send -->
+      <div class="composer">
+        <label class="attach-label" title="Attach image">
+          <input type="file" id="attachFile" accept="image/*" multiple hidden>
+          <i class="fa-solid fa-image attach-icon"></i>
+        </label>
+
+        <!-- preview container (messages.js will create it if not present, but having it here is safer) -->
+        <div id="imagePreview" class="image-preview" aria-live="polite"></div>
+
+        <input id="messageInput" class="message-input" placeholder="Type message here..." autocomplete="off">
+
+        <button id="sendBtn" class="send-btn">Send</button>
       </div>
     </section>
   </main>
