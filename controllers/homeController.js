@@ -1,7 +1,7 @@
 const db = require('../models/db.js');
 const User = require('../models/UserModel.js');
 const Post = require('../models/PostModel.js');
-const Message = require('../models/MessageModel');
+const Message = require('../models/MessageModel.js');
 
 const homeController = {
 
@@ -236,48 +236,67 @@ const homeController = {
         }
     },
 
-    postDeletePost: async function (req, res) {
-  try {
-    if (!req.session.user) {
-      return res.redirect('/'); // or /login
-    }
+   postDeletePost: async function (req, res) {
+    try {
+      if (!req.session.user) {
+        return res.redirect('/'); 
+      }
 
-    const userId = req.session.user._id;
-    const username = req.session.user.userName;   // for redirect back to profile
-    const postId = req.params.id;
+      const userId = req.session.user._id;
+      const username = req.session.user.userName;   
+      const postId = req.params.id;
 
-    console.log('[postDeletePost] user', userId, 'wants to delete post', postId);
+   
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.redirect(`/profile/${username}`);
+      }
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      console.log('[postDeletePost] Post not found');
+      
+      if (String(post.userId) !== String(userId)) {
+        return res.redirect(`/profile/${username}`);
+      }
+
+   
+      const threads = await Message.find({ relatedPost: postId }).lean();
+
+      let hasAcceptedOrBooked = false;
+
+      for (const t of threads) {
+       
+        if (t.relatedBooking) {
+          hasAcceptedOrBooked = true;
+          break;
+        }
+        if (t.status === 'Agreed' || t.status === 'Closed') {
+          hasAcceptedOrBooked = true;
+          break;
+        }
+        const acceptedOffer = (t.messages || []).some(
+          m => m.type === 'offer' && m.accepted
+        );
+        if (acceptedOffer) {
+          hasAcceptedOrBooked = true;
+          break;
+        }
+      }
+
+      if (hasAcceptedOrBooked) {
+        return res.redirect(`/profile/${username}?cannotDelete=booking`);
+      }
+
+ 
+      await Post.deleteOne({ _id: postId });
+
+      await Message.deleteMany({ relatedPost: postId });
+
       return res.redirect(`/profile/${username}`);
+
+    } catch (err) {
+      console.error('Error in postDeletePost:', err);
+      return res.redirect('/home');
     }
-
-    // Only allow deleting own posts (PostModel uses userId)
-    if (String(post.userId) !== String(userId)) {
-      console.log('[postDeletePost] Not owner. post.userId =', post.userId);
-      return res.redirect(`/profile/${username}`);
-    }
-
-    // TODO later: add "if has accepted booking, block delete"
-
-    await Post.deleteOne({ _id: postId });
-    console.log('[postDeletePost] Post deleted');
-
-    // Optional: mark related message threads as "post deleted"
-    await Message.updateMany(
-      { relatedPost: postId },
-      { $set: { postDeleted: true } }
-    );
-
-    return res.redirect(`/profile/${username}`);
-
-  } catch (err) {
-    console.error('Error in postDeletePost:', err);
-    return res.redirect('/home');
   }
-}
 
 };
 

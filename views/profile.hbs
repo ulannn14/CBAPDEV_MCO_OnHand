@@ -98,6 +98,12 @@
 
       </div>
       <div class="bottom-section">
+        {{#if cannotDeleteBooking}}
+          <div class="alert-error">
+            Cannot delete: booking already accepted for this post.
+          </div>
+        {{/if}}
+
         <div class="details">
           <h3>Posts</h3>
           <div class="service-list">
