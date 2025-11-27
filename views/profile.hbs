@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Profile | OnHand</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/profile.css">
   <link rel="stylesheet" href="/css/main.css">
@@ -12,6 +13,7 @@
   <script src="/js/popup.js"></script>
   <script src="/js/dropdown-profile.js"></script>
   <script src="/js/profile-edit.js"></script>
+  <script src="/js/report.js"></script>
   <link rel="icon" href="/images/icon.png" type="image/png">
 </head>
 
@@ -85,7 +87,14 @@
           </div>
         </div>
 
-
+        {{#unless isOwner}}
+          <button 
+            class="report-btn"
+            data-user-id="{{user._id}}"
+          >
+            <i class="fa-solid fa-flag"></i> Report User
+          </button>
+        {{/unless}}
 
       </div>
       <div class="bottom-section">
@@ -142,6 +151,30 @@
           </div>
         </div>
       </div>
+    </div>
+    
+    <div id="reportPopup" class="post-popup" style="display:none;">
+      <div class="popup-content">
+        <h3>Report User</h3>
+        <textarea id="reportReason" class="post-text" placeholder="Describe the issue..." required></textarea>
+        <div class="popup-actions">
+          <button class="btn-cancel" id="cancelReport">Cancel</button>
+          <button class="btn-post" id="submitReport">Submit</button>
+      </div>
+      </div>
+    </div>
+
+    <div id="reportSuccessPopup" class="post-popup" style="display:none;">
+      <div class="popup-content">
+        <h3>Report Submitted</h3>
+        <p>Your report has been successfully sent.</p>
+        <div class="popup-actions">
+          <button class="btn-post" id="successOk">OK</button>
+        </div>
+      </div>
+    </div>
+
+
     </div>
   </main>
 

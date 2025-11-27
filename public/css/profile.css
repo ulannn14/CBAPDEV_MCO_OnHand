@@ -253,7 +253,7 @@ input:checked + .slider:before {
 
 .profile-info-wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* TOP ALIGN */
   gap: 20px;
 }
 
@@ -344,4 +344,34 @@ input:checked + .slider:before {
   font-weight: 500;
   display: inline-block;
   line-height: 1.2;
+}
+
+.report-btn {
+  font: var(--main-font);
+  background: #d9534f; 
+  color: white;
+  border: none;
+  padding: 6px 12px;   /* smaller height */
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  /* keep it compact */
+  width: auto;   
+  height: auto;
+  flex-shrink: 0;       /* prevents weird stretching */
+  align-self: flex-start; /* stops it from matching the height of the row */
+
+  /* right align with no wrapper */
+  margin-left: auto;
+  margin-top: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-btn:hover {
+  background: #c9302c;
 }
