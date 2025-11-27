@@ -55,6 +55,7 @@ $(document).ready(function () {
             } else {
                 // show message from server or default
                 $('#login-error').text((res && res.message) ? res.message : 'Wrong password.');
+                 $('#password').css('background-color', '#ffd6d6');
                 $btn.prop('disabled', false).text('Log In');
             }
         })

@@ -87,8 +87,8 @@ const signupController = {
         `${username}_nbi`
       );
 
-      // Construct user object
-      const newUser = {
+      bcrypt.hash(password, saltRounds, function(err, hash){
+        const newUser = {
           firstName,
           middleName,
           lastName,
@@ -117,7 +117,10 @@ const signupController = {
               workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
               WorkingArea: workingLocation
           })
-      };
+        };
+      });
+
+      // Construct user object
 
       const result = await db.insertOne(User, newUser);
       console.log('User added:', result);

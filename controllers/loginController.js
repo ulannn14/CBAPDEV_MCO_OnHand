@@ -57,11 +57,11 @@ const loginController = {
             } else {
                 // login failed
                 if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
-                    return res.status(401).json({ success: false, message: 'Wrong username or password.' });
+                    return res.status(401).json({ success: false, message: 'Wrong password.' });
                 }
 
                 // for normal form, render the login page again with an error message
-                return res.render('login', { loggedInUser: null, loginError: 'Wrong username or password.' });
+                return res.render('login', { loggedInUser: null, loginError: 'Wrong password.' });
             }
         } catch (err) {
             console.error('postLogin error', err);
