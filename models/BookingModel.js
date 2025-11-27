@@ -8,6 +8,8 @@
 
 const mongoose = require('mongoose');
 
+const serviceTypes = require('../utils/serviceTypes');
+
 const bookingSchema = new mongoose.Schema({
   // Link to the message thread that created this booking
   relatedMessage: {
@@ -23,15 +25,7 @@ const bookingSchema = new mongoose.Schema({
   // Service details
   serviceType: {
     type: String,
-    enum: [
-      'Plumbing',
-      'Electrical',
-      'Cleaning',
-      'Carpentry',
-      'Painting',
-      'Appliance Repair',
-      'General Help'
-    ],
+    enum: serviceTypes,
     required: true
   },
 
