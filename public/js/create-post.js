@@ -1,4 +1,3 @@
-// public/js/create-post.js
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("createPostForm");
   const cancelBtn = document.getElementById("cancelPost");
@@ -6,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const imageInput = document.getElementById("postImages");
   const imagePreview = document.getElementById("imagePreview");
 
-  // Show previews
+  // ---------- Show previews ----------
   imageInput.addEventListener("change", () => {
     imagePreview.innerHTML = "";
     Array.from(imageInput.files).forEach(file => {
@@ -20,14 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Cancel button
+  // ---------- Cancel Button ----------
   cancelBtn.addEventListener("click", () => {
     postPopup.style.display = "none";
     form.reset();
     imagePreview.innerHTML = "";
   });
 
-  // Form submission
+  // ---------- Form Submission ----------
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -38,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("minPrice", document.getElementById("minPrice").value);
     formData.append("maxPrice", document.getElementById("maxPrice").value);
 
-    // Different fields for customer/provider
     if (document.getElementById("postNeed")) {
       formData.append("postType", "LookingFor");
       formData.append("serviceType", document.getElementById("postNeed").value);
@@ -50,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("workingHours", (document.getElementById("postWorkingHours") || {}).value || "");
     }
 
-    // Append images
     Array.from(imageInput.files).forEach(file => {
       formData.append("images", file);
     });
@@ -65,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       if (data.success) {
         alert("Post created successfully!");
-        window.location.reload(); // reload page to show post
+        window.location.reload();
       } else {
         alert("Failed to create post: " + data.message);
       }

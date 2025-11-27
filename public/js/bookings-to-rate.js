@@ -1,4 +1,3 @@
-// rating.js
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".rating-stars").forEach(starContainer => {
 

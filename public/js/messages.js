@@ -94,7 +94,6 @@
       const avatarDiv = document.createElement('div');
       avatarDiv.className = 'convo-avatar';
 
-      // Avatar: if URL, wrap in link to profile
       if (c.avatar && /\.(png|jpe?g|gif|svg)$/i.test(c.avatar)) {
         const link = document.createElement('a');
         link.href = c.username ? `/profile/${encodeURIComponent(c.username)}` : '#';
@@ -105,7 +104,6 @@
         link.appendChild(img);
         avatarDiv.appendChild(link);
       } else {
-        // initials (not linked image)
         if (c.username) {
           const link = document.createElement('a');
           link.href = `/profile/${encodeURIComponent(c.username)}`;
@@ -120,7 +118,6 @@
       const metaDiv = document.createElement('div');
       metaDiv.className = 'convo-meta';
 
-      // name + optional link to profile
       const nameLine = document.createElement('div');
       nameLine.className = 'name-line';
       const nameSpan = document.createElement('span');
@@ -154,11 +151,9 @@
       div.appendChild(avatarDiv);
       div.appendChild(metaDiv);
 
-      // clicking the convo (but not links) opens the thread
       div.addEventListener('click', (ev) => {
-        // if the click originated from a profile link, let the browser navigate
         if (ev.target.closest('.convo-profile-link') || ev.target.classList && ev.target.classList.contains('convo-profile-link')) {
-          return; // do not open conversation when clicking profile link
+          return;
         }
         openConvo(c.id);
       });
@@ -323,15 +318,14 @@ async function saveMessageToServer(threadId, payload) {
     function isOfferHandled(found) {
     if (!activeConvo) return false;
 
-    const hasBooking = !!activeConvo.bookingId; // booking already exists
-    const status = activeConvo.status;          // if you stored it from thread.status
+    const hasBooking = !!activeConvo.bookingId; 
+    const status = activeConvo.status;
 
     const offerHandled = !!(
       found &&
       (found.offer.accepted || found.offer.declined || found.offer.cancelled)
     );
 
-    // If booking exists or thread is already agreed/closed, treat as handled
     const threadHandled = !!(
       hasBooking ||
       status === 'Agreed' ||
@@ -636,7 +630,6 @@ async function saveMessageToServer(threadId, payload) {
         activeConvo.messages.push(msg);
         appendMessage(msg, activeConvo);
 
-        // Disable button so it's obvious it's done
         if (offerComplete) {
           offerComplete.disabled = true;
           offerComplete.textContent = 'Completed';

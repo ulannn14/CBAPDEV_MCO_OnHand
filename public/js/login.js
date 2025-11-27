@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // Username existence check (keeps your existing behavior)
     $('#username').blur(function () {
         var userName = $('#username').val().trim();
         if (!userName) return;
@@ -16,7 +15,6 @@ $(document).ready(function () {
         });
     });
 
-    // Intercept form submit instead of listening to button click
     $('#loginForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -24,7 +22,6 @@ $(document).ready(function () {
         const userName = $('#username').val().trim();
         const password = $('#password').val().trim();
 
-        // client-side empty checks
         if (userName === '' && password === '') {
             $('#login-error').text((res && res.message) ? res.message : 'Please enter your username and password.');
             return;
@@ -41,7 +38,6 @@ $(document).ready(function () {
         $('#login-error').text('');
         $btn.prop('disabled', true).text('Checking...');
 
-        // Send the actual POST to /login (let server handle session)
         $.ajax({
             url: '/login',
             method: 'POST',
@@ -50,17 +46,14 @@ $(document).ready(function () {
         })
         .done(function (res) {
             if (res && res.success) {
-                // If server responded success, redirect browser
                 window.location.href = res.redirect || '/home';
             } else {
-                // show message from server or default
                 $('#login-error').text((res && res.message) ? res.message : 'Wrong password.');
                  $('#password').css('background-color', '#ffd6d6');
                 $btn.prop('disabled', false).text('Log In');
             }
         })
         .fail(function (jqXHR) {
-            // fallback: if server returned HTML or error, show generic message
             let msg = 'An error occurred. Please try again.';
             try {
                 const json = jqXHR.responseJSON;

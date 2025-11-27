@@ -1,5 +1,5 @@
 (function () {
-  const API_ENDPOINT = '/profile/update'; // backend endpoint
+  const API_ENDPOINT = '/profile/update';
 
   function buildControls() {
     const wrap = document.createElement('span');
@@ -31,9 +31,7 @@
 
     let input;
 
-    // -------------------------
-    // CITY-ONLY DROPDOWN
-    // -------------------------
+    // ---------- City-only Dropdown ----------
     if (field === 'location' || field === 'WorkingArea') {
       input = document.createElement('select');
       input.className = 'inline-editor';
@@ -45,7 +43,6 @@
         "Navotas", "Cavite", "Laguna", "Rizal", "Bulacan"
       ];
 
-      // Default placeholder
       const placeholder = document.createElement("option");
       placeholder.value = "";
       placeholder.textContent = "Select City";
@@ -53,7 +50,6 @@
       placeholder.selected = !cities.includes(originalText);
       input.appendChild(placeholder);
 
-      // Add city options
       cities.forEach(city => {
         const opt = document.createElement('option');
         opt.value = city;
@@ -63,7 +59,6 @@
       });
 
     } else {
-      // Default input behavior
       input = isMulti ? document.createElement('textarea') : document.createElement('input');
       if (!isMulti) input.type = 'text';
       input.className = 'inline-editor';
@@ -86,18 +81,15 @@
     input.focus();
     if (!isMulti && input.tagName !== "SELECT") input.select();
 
-    // Save event
     controls.querySelector('.edit-save').addEventListener('click', () => {
       const value = input.tagName === 'SELECT' ? input.value : input.value;
       saveEdit(container, field, id, value, el.tagName.toLowerCase());
     });
 
-    // Cancel event
     controls.querySelector('.edit-cancel').addEventListener('click', () => {
       cancelEdit(container, el);
     });
 
-    // Keyboard shortcuts
     input.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape') {
         ev.preventDefault();
@@ -129,9 +121,7 @@
     cancelBtn.disabled = true;
     saveBtn.textContent = 'Saving...';
 
-    // -------------------------
-    // CITY-ONLY PAYLOAD
-    // -------------------------
+    // ---------- City-only Payload ----------
     let payload = { id, field, value: newValue };
 
     if (field === 'location') {
@@ -161,7 +151,6 @@
       const data = await resp.json();
       if (!data.success) throw new Error(data.error || 'Server error');
 
-      // Update UI
       const newTextNode = document.createElement(originalTag === 'p' ? 'p' : 'span');
       newTextNode.className = 'editable';
       newTextNode.dataset.field = field;
@@ -180,9 +169,7 @@
     }
   }
 
-  // -------------------------
-  // Edit button click handler
-  // -------------------------
+  // ---------- Edit button click handler ----------
   document.addEventListener('click', (ev) => {
     const btn = ev.target.closest('.edit-btn');
     if (!btn) return;

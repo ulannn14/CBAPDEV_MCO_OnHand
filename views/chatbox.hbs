@@ -26,10 +26,8 @@
 <body>
   {{> header}}
 
-  <!-- views/chatbox.hbs -->
   <main class="messages-page">
     <aside class="conversations-col">
-      {{!-- Render conversation list dynamically from server --}}
       <div id="convoList">
         {{#each conversations}}
           <div class="convo-item" data-id="{{this.id}}">
@@ -64,14 +62,12 @@
         {{/if}}
       </div>
 
-        <!-- composer: attach, preview, input, send -->
       <div class="composer">
         <label class="attach-label" title="Attach image">
           <input type="file" id="attachFile" accept="image/*" multiple hidden>
           <i class="fa-solid fa-image attach-icon"></i>
         </label>
 
-        <!-- preview container (messages.js will create it if not present, but having it here is safer) -->
         <div id="imagePreview" class="image-preview" aria-live="polite"></div>
 
         <input id="messageInput" class="message-input" placeholder="Type message here..." autocomplete="off">
