@@ -26,6 +26,21 @@ It aims to make it easier to find trusted help for tasks like plumbing, electric
 
 ---
 
+## Dependencies
+
+* bcrypt
+* dotenv
+* express
+* express-handlebars
+* express-session
+* express-validator
+* hbs
+* mongoose
+* multer
+* nodemon
+
+---
+
 ## Features
 
 * User authentication (login, registration, logout)
