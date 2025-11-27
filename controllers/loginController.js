@@ -18,61 +18,61 @@ const loginController = {
     */
     postLogin: async function (req, res) {
         try {
-            var userName = (req.body.userName || '').trim();
-            var password = (req.body.password || '').trim();
+            const userName = (req.body.userName || "").trim();
+            const password = (req.body.password || "").trim();
 
-            var userExists = await db.findOne(User, { userName: userName, password: password });
+            const user = await db.findOne(User, { userName: userName });
 
-            if (userExists) {
-                // Normalize the DB object (works whether it's a mongoose doc or plain object)
-                const dbUser = (typeof userExists.toObject === 'function') ? userExists.toObject() : userExists;
+            // If user does not exist, return error
+            if (!user) {
+                if (req.xhr) {
+                    return res.status(401).json({ success: false, message: "Username not found." });
+                }
+                return res.render("login", { loggedInUser: null, loginError: "Username not found." });
+            }
 
-                // Build session.user with chosen fields
-                req.session.user = {
-                    _id: dbUser._id,
-                    userName: dbUser.userName,
-                    profilePicture: dbUser.profilePicture || '/images/default_profile.png',
-                    type: dbUser.type,
-                    // mode logic: preserve type or map if you have provider/customer distinction
-                    mode: dbUser.type === 'provider' ? 'provider' : dbUser.type
-                };
+            // hashing comparison
+            const passwordMatch = await bcrypt.compare(password, user.password);
 
-                // Save session to ensure it's persisted before redirecting/responding
-                return req.session.save(err => {
-                    if (err) {
-                        console.error('Session save error:', err);
-                        // If AJAX request, respond with JSON error; otherwise render error page
-                        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
-                            return res.status(500).json({ success: false, message: 'Server error. Try again later.' });
-                        }
-                        return res.render('error', { loggedInUser: null });
-                    }
+            if (!passwordMatch) {
+                if (req.xhr) {
+                    return res.status(401).json({ success: false, message: "Wrong password." });
+                }
+                return res.render("login", { loggedInUser: null, loginError: "Wrong password." });
+            }
 
-                    // If AJAX / XHR -> respond with JSON
-                    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
-                        return res.json({ success: true, redirect: '/home' });
-                    }
+            // if successful, set session user
+            const dbUser = (typeof user.toObject === "function") ? user.toObject() : user;
 
-                    // normal form submit -> redirect
-                    return res.redirect('/home');
-                });
-            } else {
-                // login failed
-                if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
-                    return res.status(401).json({ success: false, message: 'Wrong password.' });
+            req.session.user = {
+                _id: dbUser._id,
+                userName: dbUser.userName,
+                profilePicture: dbUser.profilePicture || "/images/default_profile.png",
+                type: dbUser.type,
+                mode: dbUser.type === "provider" ? "provider" : dbUser.type
+            };
+
+            return req.session.save(err => {
+                if (err) {
+                    console.error("Session save error:", err);
+                    return res.status(500).render("error", { loggedInUser: null });
                 }
 
-                // for normal form, render the login page again with an error message
-                return res.render('login', { loggedInUser: null, loginError: 'Wrong password.' });
-            }
+                if (req.xhr) {
+                    return res.json({ success: true, redirect: "/home" });
+                }
+                return res.redirect("/home");
+            });
+
         } catch (err) {
-            console.error('postLogin error', err);
-            if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
-                return res.status(500).json({ success: false, message: 'Server error. Try again later.' });
+            console.error("postLogin error", err);
+            if (req.xhr) {
+                return res.status(500).json({ success: false, message: "Server error." });
             }
-            return res.render('error', { loggedInUser: null });
+            return res.render("error", { loggedInUser: null });
         }
     },
+
 
 
     /*
