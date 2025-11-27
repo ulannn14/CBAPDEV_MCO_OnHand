@@ -25,6 +25,15 @@ hbs.registerHelper('eq', function (a, b) {
     return a === b;
 });
 
+// Register a custom 'times' helper for Handlebars
+hbs.registerHelper('times', function(n, block) {
+    let accum = '';
+    for (let i = 1; i <= n; i++) {
+        accum += block.fn(i);
+    }
+    return accum;
+});
+
 // sets `/views/partials` as folder containing partial hbs files
 hbs.registerPartials(__dirname + '/views/partials');
 

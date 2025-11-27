@@ -9,7 +9,7 @@ const homeController = {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
-      const posts = await homeController.getPosts(loggedInUser);
+      const posts = await homeController.getPosts(loggedInUser, req.session.user.mode);
 
       console.log(posts.length);
       console.log(loggedInUser.mode);
@@ -27,7 +27,7 @@ const homeController = {
 
   getSearch: async function (req, res) {
     try {
-      const loggedInUser = req.session.user;
+      const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
       const { service, urgency, minPrice, maxPrice, location } = req.query;
@@ -123,7 +123,7 @@ const homeController = {
     }
   },
 
-  getPosts: async function (user) {
+  getPosts: async function (user, mode) {
         try {
         let query = { userId: { $ne: user._id } }; // exclude own posts
 
@@ -133,7 +133,7 @@ const homeController = {
         }
 
         // Determine post type based on mode
-        query.postType = user.mode === 'customer' ? 'Offering' : 'LookingFor';
+        query.postType = mode === 'customer' ? 'Offering' : 'LookingFor';
 
         // Fetch posts using your db helper
         let postsRaw = await db.findMany(Post, query);
