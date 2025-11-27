@@ -1,15 +1,22 @@
+// import module `fs` and `path`
 const fs = require('fs');
 const path = require('path');
+
+// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
+
+// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
+
+// import module `bcrypt`
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 function normalizePath(filePath) {
   if (!filePath) return null;
   return filePath
-    .replace(/^.*public[\\/]/, '/') // remove everything before and including "public/"
-    .replace(/\\/g, '/'); // convert backslashes to forward slashes
+    .replace(/^.*public[\\/]/, '/') 
+    .replace(/\\/g, '/'); 
 }
 
 const signupController = {
@@ -51,12 +58,10 @@ const signupController = {
         : [req.body.workingDays]
       : [];
 
-    // Basic server-side validation (you can expand)
     if (!username || !email || !password) {
       return res.status(400).render('signup', { loggedInUser: null, signupError: 'Username, email and password are required.' });
     }
 
-    // check for existing username/email
     const existing = await db.findOne(User, { userName: username });
     if (existing) {
       return res.status(409).render('signup', { loggedInUser: null, signupError: 'Username already taken.' });
@@ -71,7 +76,6 @@ const signupController = {
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     });
 
-    // Helper to move files out of tmp/
     const saveFile = (file, folder, filename) => {
       if (!file) return null;
       const ext = path.extname(file.originalname);
@@ -102,7 +106,6 @@ const signupController = {
     // Hash password (await style)
     const hash = await bcrypt.hash(password, saltRounds);
 
-    // Build user object (use hashed password)
     const newUser = {
       firstName,
       middleName,
@@ -110,7 +113,7 @@ const signupController = {
       userName: username,
       email,
       phoneNumber: phone,
-      password: hash, // <-- store the hash
+      password: hash, 
       birthday,
       address: {
         houseNumber: homeNumber,
@@ -129,19 +132,16 @@ const signupController = {
         nbiClearance: nbiClearancePath,
         workingDays,
         workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
-        workingArea: workingLocation // normalized
+        workingArea: workingLocation
       })
     };
 
-    // Insert into DB
     const result = await db.insertOne(User, newUser);
     console.log('User added:', result);
 
     if (result) {
-      // Normalize result if it is a mongoose document
       const dbUser = (typeof result.toObject === 'function') ? result.toObject() : result;
 
-      // Set session (never put password in session)
       req.session.user = {
         _id: dbUser._id,
         userName: dbUser.userName,
@@ -150,7 +150,6 @@ const signupController = {
         mode: dbUser.type === 'provider' ? 'provider' : 'customer'
       };
 
-      // Ensure session is saved before redirecting
       return req.session.save(err => {
         if (err) {
           console.error('Session save error:', err);
@@ -167,10 +166,7 @@ const signupController = {
   }
 },
 
-
-  // ----------------------------
-  // AJAX: check if username exists
-  // ----------------------------
+  // ---------- AJAX: check if username exists ----------
   getCheckUsername: async (req, res) => {
     try {
       const username = req.query.value;
@@ -184,9 +180,7 @@ const signupController = {
     }
   },
 
-  // ----------------------------
-  // AJAX: check if email exists
-  // ----------------------------
+  // ---------- AJAX: check if email exists ----------
   getCheckEmail: async (req, res) => {
     try {
       const email = req.query.value;

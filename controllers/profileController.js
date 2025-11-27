@@ -1,6 +1,13 @@
+// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
+
+// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
+
+// import module `database` from `../models/PostModel.js`
 const Post = require('../models/PostModel.js');
+
+// import module `database` from `../models/RatingModel.js`
 const Rating = require('../models/RatingModel.js');
 
 const profileController = {
@@ -22,9 +29,7 @@ const profileController = {
         // Is this the user's own profile?
         const isOwner = loggedInUser.userName === requestedUsername;
 
-        // -------------------------------------------------------
-        // FETCH POSTS CREATED BY PROFILE OWNER (filtered for owner)
-        // -------------------------------------------------------
+        // ---------- FETCH POSTS CREATED BY PROFILE OWNER (filtered for owner) ----------
         let postQuery = { userId: user._id };
 
         // If the logged-in user is viewing their own profile, only show posts
@@ -80,10 +85,7 @@ const profileController = {
         };
         });
 
-
-        // -------------------------------------------------------
-        // FETCH RATINGS WHERE PROFILE OWNER IS TOUSER
-        // -------------------------------------------------------
+        // ---------- FETCH RATINGS WHERE PROFILE OWNER IS TOUSER ----------
         let ratings = await Rating.find({ toUser: user._id })
         .populate('fromUser', 'firstName lastName profilePicture userName')
         .lean();

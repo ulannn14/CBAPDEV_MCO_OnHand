@@ -13,10 +13,8 @@ app.engine('hbs', exphbs.engine({
 app.set('view engine', 'hbs');
 app.set('views', './views');
 
-// static files
 app.use(express.static('public'));
 
-// routes
 app.get('/messages', (req, res) => {
   res.render('pages/chatbox-customer', { title: 'Messages' });
 });

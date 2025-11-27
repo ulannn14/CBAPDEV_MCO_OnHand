@@ -1,4 +1,5 @@
-const Report = require("../models/ReportModel");
+// import module `database` from `../models/db.js`
+const Report = require("../models/ReportModel.js");
 
 module.exports = {
   create: async (req, res) => {

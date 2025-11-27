@@ -4,6 +4,7 @@ const db = require('../models/db.js');
 // import module `User` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
 
+// import module `bcrypt`
 const bcrypt = require('bcrypt');
 
 /*
