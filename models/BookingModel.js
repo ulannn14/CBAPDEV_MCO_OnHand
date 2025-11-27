@@ -45,6 +45,11 @@ const bookingSchema = new mongoose.Schema({
     default: 'Ongoing'
   },
 
+  customerRated: { type: Boolean, default: false },
+  
+  providerRated: { type: Boolean, default: false },
+
+
   // Provider marks this when finished
   completedByProvider: { type: Boolean, default: false },
 
