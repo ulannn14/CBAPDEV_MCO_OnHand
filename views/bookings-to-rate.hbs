@@ -40,7 +40,13 @@
                     <a href="/profile/{{username}}" class="profile-link">{{clientName}}</a>
                   </h3>
                   <div class="need-wrapper">
-                    <p class="need-label">Need:</p>
+                    <p class="need-label">
+                      {{#if (eq ../sessionUser.mode "provider")}}
+                        Looking for:
+                      {{else}}
+                        Offering:
+                      {{/if}}
+                    </p>
                     <span class="service-type">{{serviceType}}</span>
                   </div>
                 </div>
