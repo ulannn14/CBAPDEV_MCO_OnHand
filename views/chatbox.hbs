@@ -108,12 +108,15 @@
             </div>
           </label>
 
-          <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
-            <button type="button" id="offerDecline" class="btn-secondary">Decline</button>
-            <button type="submit" id="offerAccept" class="btn-primary">Accept</button>
-          </div>
+            <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
+              <button type="button" id="offerDecline" class="btn-secondary">Decline</button>
+              <button type="submit" id="offerAccept" class="btn-primary">Accept</button>
+              <button type="button" id="offerComplete" class="btn-primary" style="display:none;">
+                Mark as Complete
+              </button>
+            </div>
+          {{else}}
 
-        {{else}}
           <!-- Customer view -->
           <label>
             Price

@@ -126,8 +126,11 @@
         id: thread._id,
         name: convoMeta.name,
         avatar: convoMeta.avatar,
+        bookingId: thread.relatedBooking || null,   
+        status: thread.status || 'Negotiating',     
         messages: (thread.messages || []).map(m => transformMessage(m, me))
       };
+
       window.__APP.activeConvo = activeConvo;
 
       const area = document.getElementById('messagesArea');
@@ -238,6 +241,8 @@ async function saveMessageToServer(threadId, payload) {
     const offerAccept = document.getElementById('offerAccept');
     const offerNewBtn = document.getElementById('offerNew');  
     const offerSendBtn = document.getElementById('offerSend'); 
+    const offerComplete = document.getElementById('offerComplete');
+
 
     if (!offerModal) return;
 
@@ -338,16 +343,28 @@ async function saveMessageToServer(threadId, payload) {
           offerForm?.reset();
           offerPriceEl?.focus();
         }
-      } else {
-        if (found && offerPriceDisplay) {
-          offerPriceDisplay.textContent = `₱${Number(found.offer.price).toLocaleString()}`;
-          const handled = found.offer.accepted || found.offer.declined || found.offer.cancelled;
-          if (offerAccept) 
-            offerAccept.disabled = handled;
-          if (offerDecline) 
-            offerDecline.disabled = handled;
+    } else {
+      if (found && offerPriceDisplay) {
+        offerPriceDisplay.textContent = `₱${Number(found.offer.price).toLocaleString()}`;
+        const handled = found.offer.accepted || found.offer.declined || found.offer.cancelled;
+        if (offerAccept) 
+          offerAccept.disabled = handled;
+        if (offerDecline) 
+          offerDecline.disabled = handled;
+      }
+
+      if (offerComplete) {
+        const hasBooking = !!(activeConvo && activeConvo.bookingId);
+        if (hasBooking) {
+          offerComplete.style.display = 'inline-flex';
+          offerComplete.disabled = false;
+        } else {
+          offerComplete.style.display = 'none';
         }
       }
+    }
+
+
     }
 
     function closeModal() {
@@ -408,31 +425,41 @@ async function saveMessageToServer(threadId, payload) {
 
     });
 
-    offerAccept?.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const found = findLatestOffer(activeConvo);
-      if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
+    offerAccept?.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    const found = findLatestOffer(activeConvo);
+    if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
 
-      found.offer.accepted = true;
+    found.offer.accepted = true;
 
-      const reply = {
-        from: 'me',
-        type: 'offer-reply',
-        text: 'Offer accepted.',
-        time: new Date().toISOString()
-      };
+    const reply = {
+      from: 'me',
+      type: 'offer-reply',
+      text: 'Offer accepted.',
+      time: new Date().toISOString()
+    };
 
-      saveMessageToServer(activeConvo.id, {
-        type: 'offer-reply',
-        accepted: true,
-        content: reply.text
-      });
-
-      activeConvo.messages.push(reply);
-      appendMessage(reply, activeConvo);
-      updateMakeOfferButtonState();
-      closeModal();
+    const data = await saveMessageToServer(activeConvo.id, {
+      type: 'offer-reply',
+      accepted: true,
+      content: reply.text
     });
+
+    if (!data || !data.success) {
+      console.error('Failed to accept offer on server');
+      return;
+    }
+
+    if (data.relatedBooking) {
+      activeConvo.bookingId = data.relatedBooking;
+    }
+
+    activeConvo.messages.push(reply);
+    appendMessage(reply, activeConvo);
+    updateMakeOfferButtonState();
+    closeModal();
+  });
+
 
 
     offerDecline?.addEventListener('click', (ev) => {
@@ -460,6 +487,46 @@ async function saveMessageToServer(threadId, payload) {
       updateMakeOfferButtonState();
       closeModal();
     });
+
+      offerComplete?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!activeConvo) return;
+
+      try {
+        const res = await fetch(`/messages/thread/${activeConvo.id}/complete-booking`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          console.error('Failed to complete booking:', data.error);
+          return;
+        }
+
+        const msg = {
+          from: 'me',
+          type: 'offer-update',
+          text: 'Booking marked as complete.',
+          time: new Date().toISOString()
+        };
+
+        activeConvo.messages.push(msg);
+        appendMessage(msg, activeConvo);
+
+        // Disable button so it's obvious it's done
+        if (offerComplete) {
+          offerComplete.disabled = true;
+          offerComplete.textContent = 'Completed';
+        }
+
+        closeModal();
+
+      } catch (err) {
+        console.error('Error marking booking complete:', err);
+      }
+    });
+
 
   }
 

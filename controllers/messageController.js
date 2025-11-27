@@ -305,10 +305,10 @@ const messageController = {
         return res.json({
           success: true,
           message: savedMsg,
-          bookingId: thread.relatedBooking || null,
-          bookingStatus: createdBooking ? createdBooking.status : undefined,
+          relatedBooking: thread.relatedBooking || null,
           threadStatus: thread.status
         });
+
 
       } catch (err) {
         console.error('Error in postMessage:', err);
@@ -316,71 +316,64 @@ const messageController = {
       }
     },
 
-    completeBooking: async function (req, res) {
-      try {
-        const loggedInUser = req.session.user;
-        if (!loggedInUser) {
-          return res.status(401).json({ success: false, error: 'Unauthorized' });
+      completeBooking: async function (req, res) {
+        try {
+          if (!req.session.user) {
+            return res.status(401).json({ success: false, error: 'Not logged in' });
+          }
+
+          const userId = req.session.user._id;
+          const threadId = req.params.id;
+
+          // find the thread
+          const thread = await Message.findById(threadId);
+          if (!thread) {
+            return res.status(404).json({ success: false, error: 'Thread not found' });
+          }
+
+          // only provider of this thread can complete
+          if (String(thread.providerId) !== String(userId)) {
+            return res.status(403).json({ success: false, error: 'Only provider can complete booking' });
+          }
+
+          if (!thread.relatedBooking) {
+            return res.status(400).json({ success: false, error: 'No booking linked to this thread' });
+          }
+
+          const booking = await Booking.findById(thread.relatedBooking);
+          if (!booking) {
+            return res.status(404).json({ success: false, error: 'Booking not found' });
+          }
+
+          // Mark booking as done according to your BookingModel
+          booking.status = 'ToRate';               // was 'Ongoing' → now 'Done'
+          booking.completedByProvider = true;
+          booking.dateCompleted = new Date();
+          await booking.save();
+
+          // Optional: close the thread + add system message
+          thread.status = 'Closed';
+          thread.messages.push({
+            sender: userId,
+            content: 'Booking marked as complete.',
+            type: 'offer-update',
+            timestamp: new Date()
+          });
+          await thread.save();
+
+          return res.json({
+            success: true,
+            bookingId: booking._id,
+            bookingStatus: booking.status,
+            threadStatus: thread.status
+          });
+
+        } catch (err) {
+          console.error('Error in completeBooking:', err);
+          return res.status(500).json({ success: false, error: 'Internal Server Error' });
         }
-
-        const userId = loggedInUser._id;
-        const threadId = req.params.id;
-
-        const thread = await Message.findById(threadId);
-        if (!thread) {
-          return res.status(404).json({ success: false, error: 'Thread not found' });
-        }
-
-        const isProvider = String(thread.providerId) === String(userId);
-        if (!isProvider) {
-          return res
-            .status(403)
-            .json({ success: false, error: 'Only provider can complete bookings' });
-        }
-
-        if (!thread.relatedBooking) {
-          return res
-            .status(400)
-            .json({ success: false, error: 'No booking linked to this thread' });
-        }
-
-        const booking = await Booking.findById(thread.relatedBooking);
-        if (!booking) {
-          return res
-            .status(404)
-            .json({ success: false, error: 'Booking not found' });
-        }
-
-        // Mark booking as done according to your schema
-        booking.status = 'Done';              // or 'ToRate' first if you add ratings later
-        booking.completedByProvider = true;
-        booking.dateCompleted = new Date();
-        await booking.save();
-
-        // Close the thread
-        thread.status = 'Closed';
-
-        // Optional: add a chat message to show completion
-        thread.messages.push({
-          sender: userId,
-          content: 'Booking marked as complete.',
-          type: 'offer-update',
-          timestamp: new Date()
-        });
-
-        await thread.save();
-
-        return res.json({
-          success: true,
-          bookingId: booking._id,
-          bookingStatus: booking.status,
-          threadStatus: thread.status
-        });
-      } catch (err) {
-        console.error('Error in completeBooking:', err);
-        return res.status(500).json({ success: false, error: 'Internal Server Error' });
       }
-    }
+
 
 
 };
