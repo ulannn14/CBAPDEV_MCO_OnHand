@@ -161,10 +161,13 @@
 }
 .msg-img { 
   display:block; 
-  max-width:400px; 
+  max-width:220px;  
+  max-height:220px;  
   margin-top:10px; 
   border-radius:8px; 
+  object-fit:contain; 
 }
+
 
 .composer {
   display:flex;
