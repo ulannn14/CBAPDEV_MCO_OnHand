@@ -88,37 +88,43 @@ const messageController = {
 
       const userId = loggedInUser._id;
 
-      const threads = await Message.find({
-        $or: [
-          { customerId: userId },
-          { providerId: userId }
-        ]
-      })
-        .populate('customerId providerId', 'firstName lastName profilePicture')
-        .sort({ lastUpdated: -1 })
-        .lean();
+    const threads = await Message.find({
+      $or: [
+        { customerId: userId },
+        { providerId: userId }
+      ]
+    })
+      .populate('customerId providerId', 'firstName lastName profilePicture')
+      .populate('relatedPost', 'title serviceType')   // 👈 add this
+      .sort({ lastUpdated: -1 })
+      .lean();
 
-      const conversations = threads.map(t => {
-        const isCustomer = String(t.customerId._id) === String(userId);
-        const other = isCustomer ? t.providerId : t.customerId;
+    const conversations = threads.map(t => {
+      const isCustomer = String(t.customerId._id) === String(userId);
+      const other = isCustomer ? t.providerId : t.customerId;
 
-        const lastMsg = t.messages && t.messages.length
-          ? t.messages[t.messages.length - 1]
-          : null;
+      const lastMsg = t.messages && t.messages.length
+        ? t.messages[t.messages.length - 1]
+        : null;
 
-        const lastText = lastMsg
-          ? (lastMsg.type === 'offer'
-              ? `Offer: ₱${lastMsg.price ?? ''}`
-              : (lastMsg.content || ''))
-          : '';
+      const lastText = lastMsg
+        ? (lastMsg.type === 'offer'
+            ? `Offer: ₱${lastMsg.price ?? ''}`
+            : (lastMsg.content || ''))
+        : '';
 
-        return {
-          id: t._id,
-          name: `${other.firstName} ${other.lastName}`,
-          avatar: other.profilePicture || '/images/default_profile.png',
-          last: lastText
-        };
-      });
+      // 👇 use post title or serviceType as the “listing title”
+      const listingTitle =
+        (t.relatedPost && (t.relatedPost.title || t.relatedPost.serviceType)) || '';
+
+      return {
+        id: t._id,
+        name: `${other.firstName} ${other.lastName}`,
+        avatar: other.profilePicture || '/images/default_profile.png',
+        last: lastText,
+        title: listingTitle      
+      };
+    });
 
       return res.json({ success: true, conversations });
 

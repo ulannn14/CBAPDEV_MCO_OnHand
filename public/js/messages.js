@@ -92,7 +92,10 @@
       const metaDiv = document.createElement('div');
       metaDiv.className = 'convo-meta';
       metaDiv.innerHTML = `
-        <div class="name">${c.name}</div>
+        <div class="name-line">
+          <span class="name">${c.name}</span>
+          ${c.title ? `<span class="meta-title"> · ${c.title}</span>` : ''}
+        </div>
         <div class="last">${c.last}</div>
       `;
 

@@ -321,3 +321,25 @@
   background: rgba(0,0,0,0.35);
   z-index: 1200;
 }
+
+.convo-meta .name-line {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.convo-meta .name {
+  font-weight: 600;
+}
+
+.convo-meta .meta-title {
+  font-size: 0.85rem;
+  color: #6b7280; /* muted gray */
+}
+
+.convo-meta .last {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
