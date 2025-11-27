@@ -36,16 +36,19 @@
 
         <label for="phone">Phone Number</label>
         <input type="tel" id="phone" name="phone" class="input-field" required>
+        <span id="phoneError" class="error-msg"></span>
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" class="input-field" required>
+        <span id="passwordError" class="error-msg"></span>
 
         <label for="confirmPassword">Re-enter Password</label>
         <input type="password" id="confirmPassword" name="confirmPassword" class="input-field" required>
-        <span id="passwordError" class="error-msg"></span>
+        <span id="confirmPasswordError" class="error-msg"></span>
 
         <label for="birthday">Birthday</label>
         <input type="date" id="birthday" name="birthday" class="input-field" required>
+        <span id="birthdayError" class="error-msg"></span>
 
         <h3>Address</h3>
         <label for="homeNumber">Home/Unit/Floor Number</label>
@@ -179,7 +182,7 @@
             <input type="file" id="nbiClearance" name="nbiClearance" accept="image/*,application/pdf" class="input-field">
         </div>
 
-        <button type="submit" class="signup-btn">Register</button>
+        <button type="submit" id="signupBtn" class="signup-btn">Register</button>
         </form>
     </div>
 </body>

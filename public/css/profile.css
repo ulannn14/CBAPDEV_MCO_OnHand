@@ -101,6 +101,7 @@ body {
 
 .working-hours {
   display: flex;
+  margin-top: 20px;
   align-items: flex-start; 
   gap: 10px; 
 }
@@ -240,7 +241,7 @@ input:checked + .slider:before {
 
 .profile-header {
   display: flex;
-  align-items: center; 
+  align-items: left; 
   gap: 20px;
 }
 
@@ -248,13 +249,6 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 30px;
-}
-
-.profile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
 }
 
 .profile-info-wrapper {
