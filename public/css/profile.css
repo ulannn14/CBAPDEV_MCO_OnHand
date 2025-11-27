@@ -99,14 +99,15 @@ body {
   padding-left: 40px;
 }
 
-.working-hours {
+
+.profile-working-hours {
   display: flex;
   margin-top: 20px;
-  align-items: flex-start; 
-  gap: 10px; 
+  align-items: flex-start;
+  gap: 10px;
 }
 
-.working-hours h3 {
+.profile-working-hours h3 {
   margin: 0;
   font-size: 1.1rem;
   display: flex;
@@ -114,17 +115,16 @@ body {
   gap: 8px;
 }
 
-.working-hours ul {
+.profile-working-hours ul {
   margin: 0;
   padding: 10px;
   list-style: none;
   font-size: 0.95rem;
 }
 
-.working-hours i {
+.profile-working-hours i {
   color: var(--main-color);
 }
-
 
 .dropdown-menu {
   border: 1px solid var(--border-color);

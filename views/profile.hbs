@@ -64,7 +64,7 @@
         </div>
 
         <!-- Working Hours (hidden by default, shown only in provider mode) -->
-        <div class="working-hours" id="workingHours" style="display: none;">
+        <div class="profile-working-hours" id="profileWorkingHours" style="display: none;">
           <h3><i class="fa-regular fa-clock"></i> Working Hours:</h3>
           <ul>
             {{#if user.workingDays}}
@@ -76,6 +76,7 @@
             {{/if}}
           </ul>
         </div>
+
 
       </div>
       <div class="bottom-section">
@@ -137,9 +138,9 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const workingHours = document.getElementById("workingHours");
+      const workingHours = document.getElementById("profileWorkingHours");
       const isProviderLS = localStorage.getItem("isProvider") === "true";
-      const userIsProvider = "{{user.type}}" === "provider"; // backend truth
+      const userIsProvider = "{{user.type}}" === "provider";
 
       if (userIsProvider && isProviderLS && workingHours) {
         workingHours.style.display = "block";
@@ -147,6 +148,7 @@
         workingHours.style.display = "none";
       }
     });
+
     </script>
 
 </body>
