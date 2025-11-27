@@ -41,7 +41,7 @@ const bookingSchema = new mongoose.Schema({
   // Booking progress status
   status: {
     type: String,
-    enum: ['Ongoing', 'ToRate', 'Completed'],
+    enum: ['Ongoing', 'Done'],
     default: 'Ongoing'
   },
 
