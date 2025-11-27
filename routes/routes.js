@@ -181,6 +181,8 @@ const postUpload = multer({ storage: postStorage });
 
 app.post('/create-post', postUpload.array('images'), homeController.postCreatePost);
 
+app.post('/posts/:id/delete', homeController.postDeletePost);
+
 app.get('/messages', messageController.getMessages);     
 
 app.get('/messages/list', messageController.getMessagesList);  

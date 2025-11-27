@@ -1,10 +1,17 @@
 <div class="service-card">
 
   {{#if isOwner}}
-    <button class="service-delete-btn" data-id="{{_id}}">
-      <i class="fa-solid fa-trash"></i>
-    </button>
-  {{/if}}
+      <form 
+        method="POST" 
+        action="/posts/{{postId}}/delete" 
+        class="delete-post-form"
+        onsubmit="return confirm('Are you sure you want to delete this post?');"
+      >
+        <button type="submit" class="service-delete-btn">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </form>
+    {{/if}}
   
   <div class="card-header">
     <a href="/profile/{{otherUserName}}" class="profile-link">
