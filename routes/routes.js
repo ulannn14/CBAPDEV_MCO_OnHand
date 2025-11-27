@@ -81,13 +81,24 @@ const upload = multer({ dest: 'tmp/' });
 app.get('/', controller.getIndex);
 
 /*
-    execute function getSuccess()
+    execute function postLogin()
     defined in object `loginController` in `../controllers/loginController.js`
     when a client sends an HTTP POST request for `/login`
 */
 app.post('/login', loginController.postLogin);
 
+/*
+    execute function getCheckUsername()
+    defined in object `loginController` in `../controllers/loginController.js`
+    when a client sends an HTTP POST request for `/getCheckUsername`
+*/
 app.get('/getCheckUsername', loginController.getCheckUsername);
+
+/*
+    execute function getCheckPassword()
+    defined in object `loginController` in `../controllers/loginController.js`
+    when a client sends an HTTP POST request for `/getCheckPassword`
+*/
 app.get('/getCheckPassword', loginController.getCheckPassword);
 
 /*

@@ -23,15 +23,39 @@ const profileController = {
         const isOwner = loggedInUser.userName === requestedUsername;
 
         // -------------------------------------------------------
-        // FETCH POSTS CREATED BY PROFILE OWNER
+        // FETCH POSTS CREATED BY PROFILE OWNER (filtered for owner)
         // -------------------------------------------------------
-        const postsRaw = await db.findMany(Post, { userId: user._id });
+        let postQuery = { userId: user._id };
+
+        // If the logged-in user is viewing their own profile, only show posts
+        // matching their current mode:
+        //  - provider -> show Offering
+        //  - customer -> show LookingFor
+        if (req.session.user.mode === 'provider') postQuery.postType = 'Offering';
+        else postQuery.postType = 'LookingFor';
         
+
+        // fetch posts with the constructed query
+        const postsRaw = await db.findMany(Post, postQuery) || [];
+
         // Format posts similar to homepage
         const posts = postsRaw.map(p => {
-        const images = p.sampleWorkImages || [];
+        const images = Array.isArray(p.sampleWorkImages) ? p.sampleWorkImages : [];
         const imagePost = images[0] || null;
         const imageGallery = images.length > 1 ? images.slice(1) : [];
+
+        // safe numeric parsing for priceRange (returns 0 if missing)
+        let minPrice = 0, maxPrice = 0;
+        if (typeof p.priceRange === 'string' && p.priceRange.includes('-')) {
+            const parts = p.priceRange.split('-').map(s => s.replace(/[^\d]/g, '').trim());
+            minPrice = parts[0] ? Number(parts[0]) : 0;
+            maxPrice = parts[1] ? Number(parts[1]) : 0;
+        } else if (typeof p.priceRange === 'string') {
+            // try single value fallback
+            const num = p.priceRange.replace(/[^\d]/g, '');
+            minPrice = num ? Number(num) : 0;
+            maxPrice = minPrice;
+        }
 
         return {
             image: user.profilePicture || '/images/default_profile.png',
@@ -41,14 +65,18 @@ const profileController = {
             hours: p.workingHours || 'Not set',
             title: p.title || '',
             description: p.description || '',
-            minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
-            maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
+            minPrice,
+            maxPrice,
             isOwner, // set based on current user
             urgency: p.levelOfUrgency || null,
             imagePost,
-            imageGallery
+            imageGallery,
+            // include raw postType if you want to inspect in templates
+            postType: p.postType || null,
+            rawPost: p // optional: remove if you don't want full doc in template
         };
         });
+
 
         // -------------------------------------------------------
         // FETCH RATINGS WHERE PROFILE OWNER IS TOUSER

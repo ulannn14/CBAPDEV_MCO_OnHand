@@ -140,12 +140,8 @@ body {
 }
 
 .services-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 24px;
-  margin-top: 20px;
+  column-count: 3;
+  column-gap: 20px;
 }
 
 .service-card {
@@ -160,6 +156,10 @@ body {
   justify-content: flex-start; 
   transition: transform 0.2s, box-shadow 0.2s;
   flex: 0 0 320px;
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .service-card:hover {

@@ -215,7 +215,7 @@ const homeController = {
             title,
             description,
             priceRange: minPrice && maxPrice ? `₱${minPrice} - ₱${maxPrice}` : "",
-            levelOfUrgency: postType === "LookingFor" ? levelOfUrgency : undefined,
+            levelOfUrgency,
             workingHours: postType === "Offering" ? req.body.workingHours || "" : undefined,
             location,
             sampleWorkImages: imagePaths

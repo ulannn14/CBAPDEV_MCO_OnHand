@@ -66,12 +66,17 @@ body {
 }
 
 .service-list {
-  display: flex-start;
-  flex-wrap: wrap;
-  align-items:center;
-  gap: 20px;
-  justify-content: center;
+  column-count: 3;
+  column-gap: 20px;
 }
+
+.service-card {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
 
 .reviews {
   margin-top: 20px;

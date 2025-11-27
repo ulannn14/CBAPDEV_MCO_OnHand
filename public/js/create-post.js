@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       formData.append("postType", "Offering");
       formData.append("serviceType", document.getElementById("postServiceType").value);
+      formData.append("levelOfUrgency", document.getElementById("postUrgency").value);
+      formData.append("workingHours", (document.getElementById("postWorkingHours") || {}).value || "");
     }
 
     // Append images
@@ -56,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("/create-post", {
         method: "POST",
-        body: formData
+        body: formData, 
+        credentials: 'include'
       });
 
       const data = await res.json();
