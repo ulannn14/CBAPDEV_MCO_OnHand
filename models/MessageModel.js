@@ -25,9 +25,25 @@ const messageSchema = new mongoose.Schema({
   // Chat log (all messages between the two users)
   messages: [
     {
-      sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-      content: { type: String, required: true, trim: true },
-      timestamp: { type: Date, default: Date.now }
+      sender:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      content:   { type: String, trim: true },            // text (optional for pure image/offer)
+      timestamp: { type: Date, default: Date.now },
+
+      // type of message (to match your front-end logic)
+      type: {
+        type: String,
+        enum: ['text', 'offer', 'offer-update', 'offer-reply', 'offer-cancel'],
+        default: 'text'
+      },
+
+      // offer-related fields (used when type is 'offer' / 'offer-update' / etc.)
+      price:     { type: Number },
+      accepted:  { type: Boolean, default: false },
+      declined:  { type: Boolean, default: false },
+      cancelled: { type: Boolean, default: false },
+
+      // image attachments (store file URLs or base64 strings)
+      images:    [String]
     }
   ],
 

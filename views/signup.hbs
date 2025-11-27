@@ -58,8 +58,34 @@
         <input type="text" id="barangay" name="barangay" class="input-field" required>
 
         <label for="city">City</label>
-        <input type="text" id="city" name="city" class="input-field" required>
-        
+        <div class="signup-select-wrapper">
+        <select id="city" name="city" class="signup-select" required>
+            <option value="">Select City</option>
+            <option value="Manila">Manila</option>
+            <option value="Quezon City">Quezon City</option>
+            <option value="Makati">Makati</option>
+            <option value="Taguig">Taguig</option>    
+            <option value="Mandaluyong">Mandaluyong</option>
+            <option value="Pasig">Pasig</option>
+            <option value="Pasay">Pasay</option>
+            <option value="Valenzuela">Valenzuela</option>
+            <option value="Caloocan">Caloocan</option>
+            <option value="Las Piñas">Las Piñas</option>
+            <option value="Muntinlupa">Muntinlupa</option>
+            <option value="Parañaque">Parañaque</option>
+            <option value="Marikina">Marikina</option>
+            <option value="San Juan">San Juan</option>
+            <option value="Malabon">Malabon</option>
+            <option value="Navotas">Navotas</option>
+            <option value="Cavite">Cavite</option>
+            <option value="Laguna">Laguna</option>
+            <option value="Rizal">Rizal</option>
+            <option value="Bulacan">Bulacan</option>
+        </select>
+        </div>
+
+
+
         <label for="country">Province</label>
         <input type="text" id="province" name="province" class="input-field" required>
 
@@ -123,7 +149,31 @@
             </div>
 
             <label for="workingLocation">Working Location</label>
-            <input type="text" id="workingLocation" name="workingLocation" class="input-field">
+            <div class="signup-select-wrapper">
+                <select id="workingLocation" name="workingLocation" class="signup-select" required>
+                    <option value="">Select City</option>
+                    <option value="Manila">Manila</option>
+                    <option value="Quezon City">Quezon City</option>
+                    <option value="Makati">Makati</option>
+                    <option value="Taguig">Taguig</option>    
+                    <option value="Mandaluyong">Mandaluyong</option>
+                    <option value="Pasig">Pasig</option>
+                    <option value="Pasay">Pasay</option>
+                    <option value="Valenzuela">Valenzuela</option>
+                    <option value="Caloocan">Caloocan</option>
+                    <option value="Las Piñas">Las Piñas</option>
+                    <option value="Muntinlupa">Muntinlupa</option>
+                    <option value="Parañaque">Parañaque</option>
+                    <option value="Marikina">Marikina</option>
+                    <option value="San Juan">San Juan</option>
+                    <option value="Malabon">Malabon</option>
+                    <option value="Navotas">Navotas</option>
+                    <option value="Cavite">Cavite</option>
+                    <option value="Laguna">Laguna</option>
+                    <option value="Rizal">Rizal</option>
+                    <option value="Bulacan">Bulacan</option>
+                </select>
+            </div>
 
             <label for="nbiClearance">Upload NBI Clearance</label>
             <input type="file" id="nbiClearance" name="nbiClearance" accept="image/*,application/pdf" class="input-field">

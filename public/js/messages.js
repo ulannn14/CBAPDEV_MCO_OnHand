@@ -1,64 +1,53 @@
 (() => {
-  window.APP_ROLE = window.APP_ROLE || 'customer';
+    window.APP_ROLE = window.APP_ROLE || 'customer';
 
-  //wala me masyado alam how to handle client server side for this....
-  // needed elements or data in database, convo id, name, avatar, last message, messages (from, text, time, type, price, accepted, declined)
-  // ---------- Sample Conversations ----------
-  const customerConversations = [
-    {
-      id: 'c1',
-      name: 'Juan Dela Cruz',
-      avatar: '/images/workers/2boy.png',
-      last: 'Sige po.',
-      messages: [
-        { from: 'me', text: 'Hi! Available po kayo bukas?', time: '09:03 AM' },
-        { from: 'them', text: 'Yes po.', time: '09:05 AM' },
-        { from: 'me', text: 'Sige po.', time: '09:07 AM' }
-      ]
-    },
-    {
-      id: 'c2',
-      name: 'Sabrina Carpenter',
-      avatar: '/images/workers/girl.png',
-      last: 'Pwede naman po',
-      messages: [
-        { from: 'me', text: 'Pwede po kayo sa village dito?', time: 'Yesterday' },
-        { from: 'them', text: 'Pwede naman po', time: 'Yesterday' }
-      ]
-    }
-  ];
-
-  const providerConversations = [
-    {
-      id: 'p1',
-      name: 'Juan Dela Cruz (Customer)',
-      avatar: '/images/workers/2boy.png',
-      last: 'Pending offer',
-      messages: [
-        { from: 'them', text: 'Hi! Are you available tomorrow morning?', time: '09:03 AM' },
-        { from: 'them', type: 'offer', price: 10000, text: 'Offer: ₱10,000', accepted: false, declined: false, time: '09:10 AM' },
-        { from: 'them', text: 'Please confirm if you can take this job.', time: '09:11 AM' }
-      ]
-    },
-    {
-      id: 'p2',
-      name: 'Sabrina Carpenter (Customer)',
-      avatar: '/images/workers/girl.png',
-      last: 'Offer accepted',
-      messages: [
-        { from: 'them', text: 'Can you quote me for a 3-room paint job?', time: 'Yesterday' },
-        { from: 'them', type: 'offer', price: 3500, text: 'Offer: ₱3,500', accepted: true, declined: false, time: 'Yesterday' },
-        { from: 'me', type: 'offer-accepted', text: 'Offer accepted.', time: 'Yesterday' }
-      ]
-    }
-  ];
-
-  const conversations = (window.APP_ROLE === 'provider') ? providerConversations : customerConversations;
+  let conversations = [];
+  let activeConvo = null;
 
   window.__APP = window.__APP || {};
   window.__APP.conversations = conversations;
 
-  let activeConvo = null;
+  const ME_ID = window.APP_USER_ID || null;
+
+  async function loadConversations() {
+    try {
+      const res = await fetch('/messages/list');
+      const data = await res.json();
+      if (!data.success) {
+        console.error('Failed to load conversations:', data.error);
+        return;
+      }
+      conversations = data.conversations || [];
+      window.__APP.conversations = conversations;
+      renderConvos();
+
+      if (conversations.length > 0) {
+        const first = conversations[0];
+        document
+          .querySelector(`.convo-item[data-id="${first.id}"]`)
+          ?.classList.add('active');
+        openConvo(first.id);
+      }
+    } catch (err) {
+      console.error('Error loading conversations:', err);
+    }
+  }
+
+  function transformMessage(m, meId) {
+    const isMe = meId && String(m.sender) === String(meId);
+    return {
+      from: isMe ? 'me' : 'them',
+      text: m.content || '',
+      type: m.type,
+      price: m.price,
+      accepted: m.accepted,
+      declined: m.declined,
+      cancelled: m.cancelled,
+      images: m.images || [],
+      time: m.timestamp
+    };
+  }
+
 
   function el(tag, attrs = {}, html = '') {
     const d = document.createElement(tag);
@@ -112,28 +101,49 @@
     });
   }
 
-  function openConvo(id) {
-    const convo = conversations.find(x => x.id === id);
-    if (!convo) return;
-    activeConvo = convo;
-    window.__APP.activeConvo = activeConvo;
+    async function openConvo(id) {
+    const convoMeta = conversations.find(x => x.id === id);
+    if (!convoMeta) return;
 
-    const area = document.getElementById('messagesArea');
-    if (!area) return;
-    area.innerHTML = '';
+    try {
+      const res = await fetch(`/messages/thread/${id}`);
+      const data = await res.json();
+      if (!data.success) {
+        console.error('Failed to load thread:', data.error);
+        return;
+      }
 
-    const tt = document.querySelector('.thread-top');
-    if (tt) {
-      tt.querySelectorAll('.thread-title').forEach(n => n.remove());
-      const title = document.createElement('div');
-      title.className = 'thread-title'; 
-      title.textContent = convo.name || ''; //need ang name sa taas ng message box
-      tt.insertBefore(title, tt.firstChild);
+      const thread = data.thread;
+      const me = data.me || ME_ID;
+
+      activeConvo = {
+        id: thread._id,
+        name: convoMeta.name,
+        avatar: convoMeta.avatar,
+        messages: (thread.messages || []).map(m => transformMessage(m, me))
+      };
+      window.__APP.activeConvo = activeConvo;
+
+      const area = document.getElementById('messagesArea');
+      if (!area) return;
+      area.innerHTML = '';
+
+      const tt = document.querySelector('.thread-top');
+      if (tt) {
+        tt.querySelectorAll('.thread-title').forEach(n => n.remove());
+        const title = document.createElement('div');
+        title.className = 'thread-title';
+        title.textContent = convoMeta.name || '';
+        tt.insertBefore(title, tt.firstChild);
+      }
+
+      activeConvo.messages.forEach(m => appendMessage(m, activeConvo));
+      updateMakeOfferButtonState();
+      area.scrollTop = area.scrollHeight;
+
+    } catch (err) {
+      console.error('Error opening conversation:', err);
     }
-
-    convo.messages.forEach(m => appendMessage(m, convo));
-    updateMakeOfferButtonState();
-    area.scrollTop = area.scrollHeight;
   }
 
   // ---------- Message Box ----------
@@ -418,32 +428,55 @@
       attach.value = '';
     });
 
-    sendBtn?.addEventListener('click', async () => {
+     sendBtn?.addEventListener('click', async () => {
       if (!activeConvo) return alert('Select a conversation first');
       const text = (input?.value || '').trim();
       if (!text && selectedFiles.length === 0) return;
+
       const imageDataURLs = await Promise.all(selectedFiles.map(f => toDataURL(f)));
-      const msg = { from: 'me', text: text || '', images: imageDataURLs, time: new Date().toISOString() };
-      activeConvo.messages.push(msg);
-      appendMessage(msg, activeConvo);
-      input.value = '';
-      selectedFiles.length = 0;
-      renderPreviews();
+
+      try {
+        const res = await fetch(`/messages/thread/${activeConvo.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: text || '',
+            type: 'text',
+            images: imageDataURLs
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          console.error('Failed to send message:', data.error);
+          return;
+        }
+
+        const saved = data.message;
+        const transformed = transformMessage(saved, ME_ID || window.APP_USER_ID);
+
+        activeConvo.messages.push(transformed);
+        appendMessage(transformed, activeConvo);
+
+        input.value = '';
+        selectedFiles.length = 0;
+        renderPreviews();
+
+      } catch (err) {
+        console.error('Error sending message:', err);
+      }
     });
+
 
     input?.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn?.click(); }
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    renderConvos();
+    document.addEventListener('DOMContentLoaded', () => {
+    loadConversations();
     initComposer();
     initOfferModal();
-    if (conversations.length > 0) {
-      const first = conversations[0];
-      document.querySelector(`.convo-item[data-id="${first.id}"]`)?.classList.add('active');
-      openConvo(first.id);
-    }
   });
+
 })();

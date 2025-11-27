@@ -197,5 +197,43 @@ h1 {
     color: red;
     font-size: 0.9em;
   }
+}
 
+.signup-select {
+  width: 100%;
+  padding: 12px 16px; /* match your .input-field */
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #C4C4C4);
+  background-color: #FFFFFF;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  cursor: pointer;
+}
+
+.signup-select:focus {
+  border-color: var(--main-color);
+}
+
+/* wrapper for custom arrow */
+.signup-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* custom dropdown arrow */
+.signup-select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #6b7280;
+  pointer-events: none;
 }
