@@ -1,5 +1,10 @@
+// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
+
+// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
+
+// import module `database` from `../models/PostModel.js`
 const Post = require('../models/PostModel.js');
 const Message = require('../models/MessageModel.js');
 
@@ -46,9 +51,7 @@ const homeController = {
       // Base query: exclude own posts
       let query = { userId: { $ne: loggedInUser._id } };
 
-      // ------------------------------
-      // LOCATION HANDLING
-      // ------------------------------
+      // ---------- LOCATION HANDLING ----------
       if (location && location.trim().length > 0) {
         query.location = { $regex: new RegExp(location.trim(), 'i') };
       }
@@ -56,9 +59,7 @@ const homeController = {
       // Post type based on user mode
       query.postType = req.session.user.mode === 'customer' ? 'Offering' : 'LookingFor';
 
-      // ------------------------------
-      // SERVICE SEARCH (KEYWORD BASED)
-      // ------------------------------
+      // ---------- SERVICE SEARCH (KEYWORD BASED) ----------
       if (service && service.trim()) {
         const keywords = service.trim().split(/\s+/); // split into words
 
@@ -72,9 +73,7 @@ const homeController = {
         }));
       }
 
-      // ------------------------------
-      // URGENCY FILTER
-      // ------------------------------
+      // ---------- URGENCY FILTER ----------
       if (urgency && urgency.trim()) {
         query.levelOfUrgency = { $regex: new RegExp(urgency.trim(), 'i') };
       }

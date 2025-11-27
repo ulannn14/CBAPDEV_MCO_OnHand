@@ -1,14 +1,18 @@
-// controllers/bookingController.js
+// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
+
+// import module `database` from `../models/BookingModel.js`
 const Booking = require('../models/BookingModel.js');
+
+// import module `database` from `../models/RatingModel.js`
 const Rating = require('../models/RatingModel.js');
+
+// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
 
 const bookingController = {
 
-  // ==============================================
-  // GET BOOKINGS
-  // ==============================================
+  // ---------- GET BOOKINGS ----------
   getBookings: async function (req, res) {
     try {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
@@ -102,9 +106,7 @@ const bookingController = {
     }
   },
 
-  // ==============================================
-  // POST RATING
-  // ==============================================
+  // ---------- POST RATING ----------
   postRating: async (req, res) => {
     try {
       const { bookingId, stars, review } = req.body;

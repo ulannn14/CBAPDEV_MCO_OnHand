@@ -51,7 +51,6 @@ $(document).ready(function () {
             setFieldError($('#email'), $('#emailError'), '');
         });
 
-        // helper to update native validity + error text
         function setFieldError($el, $errEl, message) {
             if (message) {
                 $el.get(0).setCustomValidity(message);
@@ -125,8 +124,6 @@ $(document).ready(function () {
         // Phone validation: exactly 11 digits
         $phone.on('input blur', function () {
             const v = $phone.val().replace(/\D/g, ''); // remove non-digit characters
-            // keep digits in the field (optionally)
-            // $phone.val(v);
 
             if (!v) {
                 setFieldError($phone, $phoneError, '');
@@ -139,7 +136,7 @@ $(document).ready(function () {
                 setFieldError($phone, $phoneError, '');
         });
 
-        // Birthday validation: enforce valid date and year <= 2007
+        // Birthday validation
         $birthday.on('change blur input', function () {
             const v = $birthday.val();
 
@@ -147,7 +144,6 @@ $(document).ready(function () {
                 setFieldError($birthday, $birthdayError, '');
             return;
             }
-            // v from input[type=date] is YYYY-MM-DD (in modern browsers)
             const parts = v.split('-');
             if (parts.length !== 3) {
                 setFieldError($birthday, $birthdayError, 'Invalid date.');
@@ -176,13 +172,13 @@ $(document).ready(function () {
             return;
             }
 
-            // Validate real date (e.g., reject 2021-02-30)
+
             const dateObj = new Date(`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`);
             if (isNaN(dateObj.getTime())) {
                 setFieldError($birthday, $birthdayError, 'Invalid date.');
             return;
             }
-            // check components match (avoid auto-correction)
+
             if (dateObj.getUTCFullYear() !== year || (dateObj.getUTCMonth()+1) !== month || dateObj.getUTCDate() !== day) {
                 setFieldError($birthday, $birthdayError, 'Invalid date.');
             return;
@@ -193,22 +189,16 @@ $(document).ready(function () {
 
         if (show) {
             providerFields.show();
-            // enable inputs so they can be submitted
             providerFields.find('input, select, textarea').prop('disabled', false);
-            // add required to visible fields
             $('#workingLocation, #nbiClearance').attr('required', true);
             providerFields.find('input.startTimeHidden, input.endTimeHidden, select').attr('required', true);
-            // ensure workingDays validation is checked
             validateWorkingDays();
-            initTimePickers(providerFields); // initialize time pickers inside provider fields
+            initTimePickers(providerFields);
         } else {
             providerFields.hide();
-            // disable all provider fields so they won't submit
             providerFields.find('input, select, textarea').prop('disabled', true);
-            // remove required attributes
             $('#workingLocation, #nbiClearance').removeAttr('required');
             providerFields.find('input.startTimeHidden, input.endTimeHidden, select').removeAttr('required');
-            // clear custom validity for working days and times
             const wd = providerFields.find('input[name="workingDays"]');
             if (wd.length) wd.get(0).setCustomValidity('');
             providerFields.find('input.startTimeHidden, input.endTimeHidden').each(function () {
@@ -222,7 +212,6 @@ $(document).ready(function () {
         toggleProviderFields($(this).val() === 'yes');
     });
 
-    // initialize toggle on page load
     toggleProviderFields($('input[name="isServiceProvider"]:checked').val() === 'yes');
 
     // ---------- AJAX LIVE VALIDATION ----------
@@ -263,13 +252,11 @@ $(document).ready(function () {
             const ampmSelect = $(this).find('.tp-ampm');
             const hidden = $(this).find('input.startTimeHidden, input.endTimeHidden');
 
-            // populate hours
             if (hourSelect.children().length <= 1) {
                 hourSelect.empty().append('<option value="" disabled selected>Hour</option>');
                 for (let h = 1; h <= 12; h++) hourSelect.append(`<option value="${h}">${h}</option>`);
             }
 
-            // populate minutes
             if (minuteSelect.children().length <= 1) {
                 minuteSelect.empty().append('<option value="" disabled selected>Min</option>');
                 for (let m = 0; m < 60; m++) {
@@ -278,7 +265,6 @@ $(document).ready(function () {
                 }
             }
 
-            // populate AM/PM
             if (ampmSelect.children().length === 0) {
                 ampmSelect.empty().append('<option value="" disabled selected>AM/PM</option>');
                 ampmSelect.append('<option>AM</option><option>PM</option>');
@@ -296,7 +282,6 @@ $(document).ready(function () {
             updateHidden();
         });
 
-        // working days change event
         $(root).find('input[name="workingDays"]').off('change.workingDays').on('change.workingDays', function () {
             validateWorkingDays();
             updateSubmitState();
@@ -319,18 +304,15 @@ $(document).ready(function () {
 
     // ---------- SUBMIT BUTTON STATE ----------
     function updateSubmitState() {
-        // prefer native form validity if there's a form; otherwise fallback to enabling
         const formEl = $('form').get(0);
         if (formEl && typeof formEl.checkValidity === 'function') {
             const ok = formEl.checkValidity();
             $('#signupBtn').prop('disabled', !ok);
         } else {
-            // if no form found, just enable
             $('#signupBtn').prop('disabled', false);
         }
     }
 
-    // initialize time pickers on page load if provider
     if ($('input[name="isServiceProvider"]:checked').val() === 'yes') {
         initTimePickers($('#serviceProviderFields'));
     }
