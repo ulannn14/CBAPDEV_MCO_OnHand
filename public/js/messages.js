@@ -152,6 +152,28 @@
     }
   }
 
+async function saveMessageToServer(threadId, payload) {
+  try {
+    const res = await fetch(`/messages/thread/${threadId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      console.error('Failed to save message:', data.error);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Failed to save message", err);
+    return null;
+  }
+}
+
+
+
   // ---------- Message Box ----------
   function appendMessage(m, convoRef) {
     const area = document.getElementById('messagesArea');
@@ -256,11 +278,25 @@
           found.offer.price = newPrice;
           found.offer.time = new Date().toISOString();
           found.offer.text = `Offer: ₱${Number(newPrice).toLocaleString()}`;
-          const updateMsg = { from: 'me', type: 'offer-update', text: `Offer updated: ₱${Number(newPrice).toLocaleString()}`, time: new Date().toISOString() };
+
+          const updateMsg = {
+            from: 'me',
+            type: 'offer-update',
+            text: `Offer updated: ₱${Number(newPrice).toLocaleString()}`,
+            time: new Date().toISOString()
+          };
+
+          saveMessageToServer(activeConvo.id, {
+            type: 'offer-update',
+            price: Number(newPrice),
+            content: updateMsg.text
+          });
+
           activeConvo.messages.push(updateMsg);
           appendMessage(updateMsg, activeConvo);
           updateMakeOfferButtonState();
           closeModal();
+
         };
       }
     }
@@ -347,36 +383,84 @@
       }
 
       const price = offerPriceEl ? offerPriceEl.value : '';
-      const msg = { from: 'me', type: 'offer', price, text: `Offer: ₱${Number(price).toLocaleString()}`, accepted: false, declined: false, cancelled: false, time: new Date().toISOString() };
+
+      const msg = {
+        from: 'me',
+        type: 'offer',
+        price,
+        text: `Offer: ₱${Number(price).toLocaleString()}`,
+        accepted: false,
+        declined: false,
+        cancelled: false,
+        time: new Date().toISOString()
+      };
+
+      saveMessageToServer(activeConvo.id, {
+        type: 'offer',
+        price: Number(price),
+        content: msg.text
+      });
+
       activeConvo.messages.push(msg);
       appendMessage(msg, activeConvo);
       updateMakeOfferButtonState();
       closeModal();
+
     });
 
     offerAccept?.addEventListener('click', (ev) => {
       ev.preventDefault();
       const found = findLatestOffer(activeConvo);
       if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
+
       found.offer.accepted = true;
-      const reply = { from: 'me', type: 'offer-reply', text: 'Offer accepted.', time: new Date().toISOString() };
+
+      const reply = {
+        from: 'me',
+        type: 'offer-reply',
+        text: 'Offer accepted.',
+        time: new Date().toISOString()
+      };
+
+      saveMessageToServer(activeConvo.id, {
+        type: 'offer-reply',
+        accepted: true,
+        content: reply.text
+      });
+
       activeConvo.messages.push(reply);
       appendMessage(reply, activeConvo);
       updateMakeOfferButtonState();
       closeModal();
     });
 
+
     offerDecline?.addEventListener('click', (ev) => {
       ev.preventDefault();
       const found = findLatestOffer(activeConvo);
       if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
+
       found.offer.declined = true;
-      const reply = { from: 'me', type: 'offer-reply', text: 'Offer declined.', time: new Date().toISOString() };
+
+      const reply = {
+        from: 'me',
+        type: 'offer-reply',
+        text: 'Offer declined.',
+        time: new Date().toISOString()
+      };
+
+      saveMessageToServer(activeConvo.id, {
+        type: 'offer-reply',
+        declined: true,
+        content: reply.text
+      });
+
       activeConvo.messages.push(reply);
       appendMessage(reply, activeConvo);
       updateMakeOfferButtonState();
       closeModal();
     });
+
   }
 
 
