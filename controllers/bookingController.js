@@ -1,3 +1,4 @@
+// controllers/bookingController.js
 const User = require('../models/UserModel.js');
 const Booking = require('../models/BookingModel.js');
 const Rating = require('../models/RatingModel.js');
@@ -5,68 +6,91 @@ const db = require('../models/db.js');
 
 const bookingController = {
 
-  getBookings: async (req, res) => {
+  // ==============================================
+  // GET BOOKINGS
+  // ==============================================
+  getBookings: async function (req, res) {
     try {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
-      const statusParam = req.params.status; // ongoing, to-rate, completed
-      let dbStatus = null;
+      const statusParam = req.params.status; // ongoing | to-rate | completed
+      const mode = req.session.user.mode;   // "customer" or "provider"
 
+      // Map statusParam → DB status
+      let dbStatus = null;
       if (statusParam === "ongoing") dbStatus = "Ongoing";
-      else if (statusParam === "to-rate") dbStatus = "ToRate";
-      else if (statusParam === "completed") dbStatus = "Completed";
+      else if (statusParam === "to-rate") dbStatus = "Done";        // ALL done bookings land here first
+      else if (statusParam === "completed") dbStatus = "Done";
       else return res.redirect("/bookings/ongoing");
 
-      // Fetch all bookings for this user (regardless of their personal rated status)
+      // Mode-based filtering
+      const userFilter =
+        mode === "provider"
+          ? { providerId: loggedInUser._id }
+          : { customerId: loggedInUser._id };
+
+      // Fetch bookings where user matches AND correct status
       const bookings = await Booking.find({
-        $or: [
-          { customerId: loggedInUser._id },
-          { providerId: loggedInUser._id }
-        ]
+        ...userFilter,
+        status: dbStatus
       })
         .populate("customerId")
         .populate("providerId")
         .lean();
 
-      // Map bookings for HBS
-      const mappedBookings = bookings.map(b => {
-        const isCustomer = b.customerId._id.toString() === loggedInUser._id.toString();
-        const otherUser = isCustomer ? b.providerId : b.customerId;
+      // Fetch all ratings made BY the current user
+      const userRatings = await Rating.find({ fromUser: loggedInUser._id }).lean();
 
-        // Determine user-specific status
-        let statusForUser = b.status.toLowerCase();
-        if (b.status === "ToRate") {
-          // If current user has already rated, show as completed
-          if ((isCustomer && b.customerRated) || (!isCustomer && b.providerRated)) {
-            statusForUser = "completed";
-          }
-        }
-
-        return {
-          bookingId: b._id,
-          clientName: `${otherUser.firstName} ${otherUser.lastName}`,
-          image: otherUser.profilePicture || "/images/default_profile.png",
-          serviceType: b.serviceType,
-          location: otherUser.address?.city || "N/A",
-          price: b.price,
-          status: statusForUser,
-          rating: 0,              // you can fetch ratings separately if needed
-          remainingStars: 5
-        };
+      // Convert to map: bookingId → rating
+      const ratingMap = {};
+      userRatings.forEach(r => {
+        ratingMap[r.relatedBooking.toString()] = r.stars;
       });
 
-      // Filter by requested tab
-      const filteredBookings = mappedBookings.filter(b => b.status === statusParam);
+      // Build display data
+      const mappedBookings = bookings
+        .map(b => {
+          const isCustomer = b.customerId._id.toString() === loggedInUser._id.toString();
+          const otherUser = isCustomer ? b.providerId : b.customerId;
 
-      // Select HBS
+          // Has the current user already rated?
+          const hasUserRated = isCustomer ? b.customerRated : b.providerRated;
+
+          // Tab-specific logic:
+          // -----------------------
+          // TO-RATE tab → show only if user has NOT rated yet
+          if (statusParam === "to-rate" && hasUserRated) return null;
+
+          // COMPLETED tab → show only if user HAS rated
+          if (statusParam === "completed" && !hasUserRated) return null;
+
+          // Determine current user's rating for display
+          const starsGiven = ratingMap[b._id.toString()] || null;
+
+          return {
+            bookingId: b._id,
+            clientName: `${otherUser.firstName} ${otherUser.lastName}`,
+            image: otherUser.profilePicture || "/images/default_profile.png",
+            serviceType: b.serviceType,
+            location: otherUser.address?.city || "N/A",
+            price: b.price,
+
+            // For completed tab
+            rating: starsGiven,
+            remainingStars: starsGiven ? 5 - starsGiven : 5
+          };
+        })
+        .filter(Boolean); // remove nulls
+
+      // Select correct view
       let viewName = "bookings";
       if (statusParam === "to-rate") viewName = "bookings-to-rate";
       if (statusParam === "completed") viewName = "bookings-completed";
 
       return res.render(viewName, {
         user: loggedInUser,
-        bookings: filteredBookings,
+        bookings: mappedBookings,
         currentTab: statusParam
       });
 
@@ -76,43 +100,68 @@ const bookingController = {
     }
   },
 
+  // ==============================================
+  // POST RATING
+  // ==============================================
   postRating: async (req, res) => {
     try {
       const { bookingId, stars, review } = req.body;
-      if (!bookingId || !stars) return res.status(400).send('Booking ID and rating stars are required.');
+
+      if (!bookingId || !stars) {
+        return res.status(400).send("Booking ID and rating stars are required.");
+      }
 
       const loggedInUserId = req.session.user._id;
-      const booking = await Booking.findById(bookingId).populate('customerId providerId');
-      if (!booking) return res.status(404).send('Booking not found.');
+
+      const booking = await Booking.findById(bookingId).populate(
+        "customerId providerId"
+      );
+
+      if (!booking) return res.status(404).send("Booking not found.");
 
       const isCustomer = booking.customerId._id.toString() === loggedInUserId.toString();
 
-      // Create one-sided rating
+      const toUserId = isCustomer
+        ? booking.providerId._id
+        : booking.customerId._id;
+
+      const starsValue = parseInt(stars);
+      if (isNaN(starsValue) || starsValue < 1 || starsValue > 5) {
+        return res.status(400).send("Invalid star rating.");
+      }
+
+      // Create rating
       await Rating.create({
         fromUser: loggedInUserId,
-        toUser: isCustomer ? booking.providerId._id : booking.customerId._id,
+        toUser: toUserId,
         relatedBooking: booking._id,
-        stars: parseInt(stars),
+        stars: starsValue,
         review: review || ""
       });
 
-      // Update the user-rated flag
-      if (isCustomer) booking.customerRated = true;
-      else booking.providerRated = true;
+      // Update rating flags
+      if (isCustomer) {
+        booking.customerRated = true;
+      } else {
+        booking.providerRated = true;
+      }
 
-      // If both have rated, mark as Completed
+      // If provider already marked done, set booking.status Done
+      booking.status = "Done";
+
+      // If BOTH rated → set final completion timestamp
       if (booking.customerRated && booking.providerRated) {
-        booking.status = "Completed";
         booking.dateCompleted = new Date();
       }
 
       await booking.save();
 
-      res.redirect('/bookings/completed');
+      // After rating, always redirect to completed (user's view handles logic)
+      res.redirect("/bookings/completed");
 
     } catch (err) {
       console.error("Error posting rating:", err);
-      res.status(500).render('error');
+      res.status(500).render("error");
     }
   }
 
