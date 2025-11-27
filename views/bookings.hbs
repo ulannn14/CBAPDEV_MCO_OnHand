@@ -10,46 +10,46 @@
   <link rel="icon" href="/images/icon.png" type="image/png">
 
   <style>
-    .ongoing-highlight {
-      border: 2px solid var(--main-color);
-      box-shadow: 0 0 10px rgba(21, 62, 144, 0.3);
-    }
-
-    .no-bookings {
-      text-align: center;
-      font-size: 1.1rem;
-      color: #666;
-      padding: 60px 0;
+    /* Disable star interactions */
+    .stars-disabled i {
+      pointer-events: none;
+      cursor: default;
+      transition: none !important;
     }
   </style>
+
 </head>
 
 <body>
   {{> header}}
 
   <div class="bookings-container">
-    <!-- Tabs -->
     <div class="booking-tabs">
       <a href="/bookings/ongoing" class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
       <a href="/bookings/to-rate" class="{{#if (eq currentTab 'to-rate')}}active{{/if}}">To Rate</a>
       <a href="/bookings/completed" class="{{#if (eq currentTab 'completed')}}active{{/if}}">Completed</a>
     </div>
 
-    <!-- Booking List -->
     <div class="booking-list">
-      {{#each bookings}}
-        <div class="booking-card {{#if (eq status 'ongoing')}}ongoing-highlight{{/if}}" data-status="{{status}}">
+
+      {{!-- If no bookings --}}
+      {{#if bookings.length}}
+        {{!-- Loop bookings --}}
+        {{#each bookings}}
+        <div class="booking-card">
           <div class="booking-left">
             <div class="profile-row">
               <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
               <div class="booking-info">
                 <h3 class="client-name">{{clientName}}</h3>
+
                 <div class="need-wrapper">
                   <p class="need-label">Need:</p>
                   <span class="service-type">{{serviceType}}</span>
                 </div>
               </div>
             </div>
+
             <hr class="divider">
             <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
           </div>
@@ -62,33 +62,22 @@
               <p class="price">₱{{price}}</p>
             </div>
 
-            {{!-- Status display --}}
-            {{#if (eq status 'ongoing')}}
-              <div class="stars">
-                {{#times 5}}<i class="fa-regular fa-star"></i>{{/times}}
-              </div>
-              <p class="status">Ongoing booking</p>
+            {{!-- Static disabled stars for ongoing --}}
+            <div class="stars stars-disabled">
+              {{#times 5}}<i class="fa-regular fa-star"></i>{{/times}}
+            </div>
 
-            {{else if (eq status 'toRate')}}
-              <div class="stars rating-stars">
-                {{#times 5}}<i class="fa-regular fa-star" data-value="{{this}}"></i>{{/times}}
-              </div>
-              <p class="status">Click to rate this service</p>
-
-            {{else if (eq status 'completed')}}
-              <div class="stars static-stars">
-                {{#times rating}}<i class="fa-solid fa-star"></i>{{/times}}
-                {{#times remainingStars}}<i class="fa-regular fa-star"></i>{{/times}}
-              </div>
-              <p class="status completed">Booking completed successfully</p>
-            {{/if}}
+            <p class="status">Ongoing booking</p>
           </div>
         </div>
-      {{/each}}
+        {{/each}}
+
+      {{!-- IF EMPTY --}}
+      {{else}}
+        <p class="no-bookings-message">No ongoing bookings</p>
+      {{/if}}
+
     </div>
-
-    <p class="no-bookings" style="display:none;">No bookings yet.</p>
   </div>
-
 </body>
 </html>

@@ -184,6 +184,8 @@ app.get('/start-thread', messageController.startThread);
 
 app.get('/bookings/:status', bookingController.getBookings);
 
+app.post('/postRating', bookingController.postRating);
+
 // Logging out
 app.get('/logout', controller.getLogout);
 
