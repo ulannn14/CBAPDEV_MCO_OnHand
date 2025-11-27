@@ -108,6 +108,9 @@ const homeController = {
         }
 
         return {
+          postId: p._id,
+          otherUserId: postUser._id,           // helpful for start-thread form
+          otherUserName: postUser.userName, 
           image: postUser.profilePicture || '/images/default_profile.png',
           workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
           jobTitle: p.serviceType || '',
@@ -167,6 +170,7 @@ const homeController = {
       
             postId: p._id,          // id of the post
             otherUserId: postUser._id, // id of the owner of this post
+            otherUserName: postUser.userName,
 
             image: postUser.profilePicture || '/images/default_profile.png',
             workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),

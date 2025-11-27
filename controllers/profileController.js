@@ -58,6 +58,9 @@ const profileController = {
         }
 
         return {
+            postId: p._id,
+            otherUserId: user._id,
+            otherUserName: user.userName,
             image: user.profilePicture || '/images/default_profile.png',
             workerName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
             jobTitle: p.serviceType || '',

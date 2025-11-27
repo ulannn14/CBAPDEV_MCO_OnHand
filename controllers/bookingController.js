@@ -71,6 +71,8 @@ const bookingController = {
           return {
             bookingId: b._id,
             clientName: `${otherUser.firstName} ${otherUser.lastName}`,
+            username: otherUser.userName || otherUser.userNameString || '', // <-- ensure this matches your DB field
+            otherUserId: otherUser._id,
             image: otherUser.profilePicture || "/images/default_profile.png",
             serviceType: b.serviceType,
             location: otherUser.address?.city || "N/A",

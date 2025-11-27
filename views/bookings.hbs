@@ -39,9 +39,13 @@
         <div class="booking-card">
           <div class="booking-left">
             <div class="profile-row">
-              <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
+              <a href="/profile/{{username}}" class="profile-link" aria-label="View profile of {{clientName}}">
+                <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
+              </a>
               <div class="booking-info">
-                <h3 class="client-name">{{clientName}}</h3>
+                <h3 class="client-name">
+                  <a href="/profile/{{username}}" class="profile-link">{{clientName}}</a>
+                </h3>
 
                 <div class="need-wrapper">
                   <p class="need-label">Need:</p>

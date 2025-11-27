@@ -108,10 +108,12 @@ const messageController = {
         }
 
         const threads = await Message.find(threadFilter)
-          .populate('customerId providerId', 'firstName lastName profilePicture')
-          .populate('relatedPost', 'title serviceType')
-          .sort({ lastUpdated: -1 })
-          .lean();
+        .populate('customerId providerId', 'firstName lastName profilePicture userName')
+        .populate('relatedPost', 'title serviceType')
+        .sort({ lastUpdated: -1 })
+        .lean();
+
+
 
         const conversations = threads.map(t => {
           const isCustomer = String(t.customerId._id) === String(userId);
@@ -133,11 +135,13 @@ const messageController = {
           return {
             id: t._id,
             name: `${other.firstName} ${other.lastName}`,
+            username: other.userName || '',              // <-- new
             avatar: other.profilePicture || '/images/default_profile.png',
             last: lastText,
             title: listingTitle,
             myRole: isCustomer ? 'customer' : 'provider'
           };
+
         });
 
         return res.json({ success: true, conversations });

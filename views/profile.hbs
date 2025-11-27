@@ -124,9 +124,13 @@
             {{#each reviews}}
               <div class="review-card">
                 <div class="review-top">
-                  <img src="{{reviewerAvatar}}" alt="Reviewer" class="review-avatar">
+                  <a href="/profile/{{reviewerUsername}}" class="reviewer-link" aria-label="View profile of {{reviewerName}}">
+                    <img src="{{reviewerAvatar}}" alt="{{reviewerName}}" class="review-avatar">
+                  </a>
                   <div class="reviewer-details">
-                    <h4 class="reviewer-name">{{reviewerName}}</h4>
+                    <h4 class="reviewer-name">
+                      <a href="/profile/{{reviewerUsername}}" class="reviewer-link">{{reviewerName}}</a>
+                    </h4>
 
                     <div class="review-stars">
                       {{stars}}

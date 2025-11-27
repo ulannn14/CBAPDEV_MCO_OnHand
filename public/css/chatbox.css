@@ -287,28 +287,6 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
-  .messages-page { 
-    grid-template-columns: 1fr; 
-    height: auto; 
-  }
-  .conversations-col { 
-    order:2; 
-    border-right: none; 
-    border-top: 4px solid var(--mh-black); 
-    height: 200px; 
-  }
-  .thread-col { 
-    order:1; 
-  }
-  .messages-area { 
-    padding: 20px; 
-  }
-  .header-search input { 
-    max-width: 280px; 
-  }
-}
-
 #offerModal {
   display: none !important; 
 }
@@ -337,7 +315,7 @@
 
 .convo-meta .meta-title {
   font-size: 0.85rem;
-  color: #6b7280; /* muted gray */
+  color: #6b7280;
 }
 
 .convo-meta .last {
@@ -360,4 +338,42 @@ button:disabled {
 .thread-title-service {
   font-weight: 400; 
   opacity: 0.8;    
+}
+
+.convo-profile-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+.convo-profile-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.name-link {
+  font-weight: 700; 
+}
+
+@media (max-width: 900px) {
+  .messages-page { 
+    grid-template-columns: 1fr; 
+    height: auto; 
+  }
+  .conversations-col { 
+    order:2; 
+    border-right: none; 
+    border-top: 4px solid var(--mh-black); 
+    height: 200px; 
+  }
+  .thread-col { 
+    order:1; 
+  }
+  .messages-area { 
+    padding: 20px; 
+  }
+  .header-search input { 
+    max-width: 280px; 
+  }
 }

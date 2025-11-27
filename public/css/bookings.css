@@ -59,7 +59,6 @@ body {
   flex: 1;
 }
 
-/* Profile Row */
 .profile-row {
   display: flex;
   align-items: center;
@@ -251,6 +250,18 @@ body {
 .cancel-btn:hover {
   background-color: #e5e7eb;
 }
+
+.profile-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.profile-link img {
+  display: block;
+}
+.client-name .profile-link { font-weight: 600; }
+
 
 @media (max-width: 900px) {
   .booking-card {

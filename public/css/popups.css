@@ -25,8 +25,8 @@
   padding: 25px 30px;
   width: 90%;
   max-width: 420px;
-  max-height: 90vh; /* prevents popup from overflowing vertically */
-  overflow-y: auto; /* allows scroll if it gets too long */
+  max-height: 90vh; 
+  overflow-y: auto; 
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 

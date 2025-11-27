@@ -200,18 +200,17 @@ body {
   background: #122f7b;
 }
 
-/* === Profile Dropdown: Floats on Right === */
 .profile-sidebar {
-  position: fixed;              /* keep it floating */
-  top: 80px;                    /* slightly below header */
-  right: 40px;                  /* align to the right edge */
+  position: fixed;
+  top: 80px; 
+  right: 40px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   padding: 12px 0;
   width: 220px;
   z-index: 1500;
-  display: none;                /* controlled by JS */
+  display: none;
   flex-direction: column;
   animation: fadeSlide 0.25s ease;
 }
@@ -245,7 +244,6 @@ body {
   margin-top: 5px;
 }
 
-/* Toggle switch */
 .switch {
   position: relative;
   display: inline-block;

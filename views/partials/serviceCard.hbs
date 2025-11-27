@@ -7,12 +7,18 @@
   {{/if}}
   
   <div class="card-header">
-    <img src="{{image}}" alt="{{workerName}}" class="profile-pic">
+    <a href="/profile/{{otherUserName}}" class="profile-link">
+      <img src="{{image}}" alt="{{workerName}}" class="profile-pic">
+    </a>
+
     <div class="worker-info">
-      <h3 class="worker-name">{{workerName}}</h3>
+      <h3 class="worker-name">
+        <a href="/profile/{{otherUserName}}" class="profile-link">{{workerName}}</a>
+      </h3>
       <span class="worker-job">{{jobTitle}}</span>
     </div>
   </div>
+
 
   <div class="card-body">
     <div class="card-row">

@@ -94,30 +94,78 @@
       const avatarDiv = document.createElement('div');
       avatarDiv.className = 'convo-avatar';
 
+      // Avatar: if URL, wrap in link to profile
       if (c.avatar && /\.(png|jpe?g|gif|svg)$/i.test(c.avatar)) {
+        const link = document.createElement('a');
+        link.href = c.username ? `/profile/${encodeURIComponent(c.username)}` : '#';
+        link.className = 'convo-profile-link';
         const img = document.createElement('img');
         img.src = c.avatar;
         img.alt = `${c.name} avatar`;
-        avatarDiv.appendChild(img);
+        link.appendChild(img);
+        avatarDiv.appendChild(link);
       } else {
-        avatarDiv.textContent = c.name ? c.name.charAt(0).toUpperCase() : '';
+        // initials (not linked image)
+        if (c.username) {
+          const link = document.createElement('a');
+          link.href = `/profile/${encodeURIComponent(c.username)}`;
+          link.className = 'convo-profile-link';
+          link.textContent = c.name ? c.name.charAt(0).toUpperCase() : '';
+          avatarDiv.appendChild(link);
+        } else {
+          avatarDiv.textContent = c.name ? c.name.charAt(0).toUpperCase() : '';
+        }
       }
 
       const metaDiv = document.createElement('div');
       metaDiv.className = 'convo-meta';
-      metaDiv.innerHTML = `
-        <div class="name-line">
-          <span class="name">${c.name}</span>
-          ${c.title ? `<span class="meta-title"> · ${c.title}</span>` : ''}
-        </div>
-        <div class="last">${c.last}</div>
-      `;
+
+      // name + optional link to profile
+      const nameLine = document.createElement('div');
+      nameLine.className = 'name-line';
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'name';
+      if (c.username) {
+        const nameLink = document.createElement('a');
+        nameLink.href = `/profile/${encodeURIComponent(c.username)}`;
+        nameLink.className = 'convo-profile-link name-link';
+        nameLink.textContent = c.name || '';
+        nameSpan.appendChild(nameLink);
+      } else {
+        nameSpan.textContent = c.name || '';
+      }
+
+      nameLine.appendChild(nameSpan);
+
+      if (c.title) {
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'meta-title';
+        titleSpan.textContent = ` · ${c.title}`;
+        nameLine.appendChild(titleSpan);
+      }
+
+      const lastDiv = document.createElement('div');
+      lastDiv.className = 'last';
+      lastDiv.textContent = c.last || '';
+
+      metaDiv.appendChild(nameLine);
+      metaDiv.appendChild(lastDiv);
 
       div.appendChild(avatarDiv);
       div.appendChild(metaDiv);
-      div.addEventListener('click', () => openConvo(c.id));
+
+      // clicking the convo (but not links) opens the thread
+      div.addEventListener('click', (ev) => {
+        // if the click originated from a profile link, let the browser navigate
+        if (ev.target.closest('.convo-profile-link') || ev.target.classList && ev.target.classList.contains('convo-profile-link')) {
+          return; // do not open conversation when clicking profile link
+        }
+        openConvo(c.id);
+      });
+
       list.appendChild(div);
     });
+
   }
 
 

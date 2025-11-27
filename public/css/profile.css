@@ -262,7 +262,7 @@ input:checked + .slider:before {
 
 .profile-info-wrapper {
   display: flex;
-  align-items: flex-start; /* TOP ALIGN */
+  align-items: flex-start;
   gap: 20px;
 }
 
@@ -360,19 +360,17 @@ input:checked + .slider:before {
   background: #d9534f; 
   color: white;
   border: none;
-  padding: 6px 12px;   /* smaller height */
+  padding: 6px 12px;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s ease;
 
-  /* keep it compact */
   width: auto;   
   height: auto;
-  flex-shrink: 0;       /* prevents weird stretching */
-  align-self: flex-start; /* stops it from matching the height of the row */
+  flex-shrink: 0;
+  align-self: flex-start;
 
-  /* right align with no wrapper */
   margin-left: auto;
   margin-top: 0;
 
@@ -383,4 +381,27 @@ input:checked + .slider:before {
 
 .report-btn:hover {
   background: #c9302c;
+}
+
+.review-card .reviewer-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-card .reviewer-link img {
+  display: block;
+  border-radius: 50%;
+}
+
+.review-card .reviewer-name a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.review-card .reviewer-name a:hover {
+  text-decoration: underline;
 }
