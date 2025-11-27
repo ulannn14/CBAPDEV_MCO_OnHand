@@ -317,4 +317,8 @@ $(document).ready(function () {
         initTimePickers($('#serviceProviderFields'));
     }
 
+    $('#signupForm').on('input change', 'input, select, textarea', function () {
+    updateSubmitState();
+});
+
 });
