@@ -345,13 +345,11 @@ const messageController = {
             return res.status(404).json({ success: false, error: 'Booking not found' });
           }
 
-          // Mark booking as done according to your BookingModel
-          booking.status = 'ToRate';               // was 'Ongoing' → now 'Done'
+          booking.status = 'ToRate';              
           booking.completedByProvider = true;
           booking.dateCompleted = new Date();
           await booking.save();
 
-          // Optional: close the thread + add system message
           thread.status = 'Closed';
           thread.messages.push({
             sender: userId,

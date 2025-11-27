@@ -21,6 +21,19 @@
       window.__APP.conversations = conversations;
       renderConvos();
 
+      let defaultThread = window.DEFAULT_THREAD_ID;
+
+      if (defaultThread) {
+        const exists = conversations.find(c => c.id === defaultThread);
+        if (exists) {
+          document
+            .querySelector(`.convo-item[data-id="${defaultThread}"]`)
+            ?.classList.add('active');
+          openConvo(defaultThread);
+          return;
+        }
+      }
+
       if (conversations.length > 0) {
         const first = conversations[0];
         document
@@ -28,6 +41,7 @@
           ?.classList.add('active');
         openConvo(first.id);
       }
+
     } catch (err) {
       console.error('Error loading conversations:', err);
     }
@@ -140,12 +154,24 @@
       const tt = document.querySelector('.thread-top');
       if (tt) {
         tt.querySelectorAll('.thread-title').forEach(n => n.remove());
-        const title = document.createElement('div');
-        title.className = 'thread-title';
-        title.textContent = convoMeta.name || '';
-        tt.insertBefore(title, tt.firstChild);
-      }
 
+        const wrapper = document.createElement('div');
+        wrapper.className = 'thread-title';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'thread-title-name';
+        nameSpan.textContent = convoMeta.name || '';
+
+        const serviceSpan = document.createElement('span');
+        serviceSpan.className = 'thread-title-service';
+        serviceSpan.textContent = convoMeta.title ? ` · ${convoMeta.title}` : '';
+
+        wrapper.appendChild(nameSpan);
+        wrapper.appendChild(serviceSpan);
+
+        tt.insertBefore(wrapper, tt.firstChild);
+      }
+      
       activeConvo.messages.forEach(m => appendMessage(m, activeConvo));
       updateMakeOfferButtonState();
       area.scrollTop = area.scrollHeight;
@@ -246,6 +272,27 @@ async function saveMessageToServer(threadId, payload) {
 
     if (!offerModal) return;
 
+    function isOfferHandled(found) {
+    if (!activeConvo) return false;
+
+    const hasBooking = !!activeConvo.bookingId; // booking already exists
+    const status = activeConvo.status;          // if you stored it from thread.status
+
+    const offerHandled = !!(
+      found &&
+      (found.offer.accepted || found.offer.declined || found.offer.cancelled)
+    );
+
+    // If booking exists or thread is already agreed/closed, treat as handled
+    const threadHandled = !!(
+      hasBooking ||
+      status === 'Agreed' ||
+      status === 'Closed'
+    );
+
+    return offerHandled || threadHandled;
+  }
+
     function enterCustomerUpdateMode(foundOfferObj) {
       if (offerNewBtn) offerNewBtn.textContent = 'Cancel Offer';
       if (offerSendBtn) offerSendBtn.textContent = 'Update Offer';
@@ -332,37 +379,58 @@ async function saveMessageToServer(threadId, payload) {
       offerModal.removeAttribute('hidden');
       offerModal.setAttribute('aria-hidden', 'false');
       document.documentElement.style.overflow = 'hidden';
-
       const found = findLatestOffer(activeConvo);
 
-      if (window.APP_ROLE === 'customer') {
-        if (found && found.offer.from === 'me' && !found.offer.accepted && !found.offer.declined && !found.offer.cancelled) {
-          enterCustomerUpdateMode(found.offer);
-        } else {
-          enterCustomerNewMode();
-          offerForm?.reset();
-          offerPriceEl?.focus();
-        }
-    } else {
-      if (found && offerPriceDisplay) {
-        offerPriceDisplay.textContent = `₱${Number(found.offer.price).toLocaleString()}`;
-        const handled = found.offer.accepted || found.offer.declined || found.offer.cancelled;
-        if (offerAccept) 
-          offerAccept.disabled = handled;
-        if (offerDecline) 
-          offerDecline.disabled = handled;
-      }
+        if (window.APP_ROLE === 'customer') {
+          const handled = isOfferHandled(found);
 
-      if (offerComplete) {
-        const hasBooking = !!(activeConvo && activeConvo.bookingId);
-        if (hasBooking) {
-          offerComplete.style.display = 'inline-flex';
-          offerComplete.disabled = false;
-        } else {
-          offerComplete.style.display = 'none';
+          if (handled) {
+        
+            if (offerNewBtn) {
+              offerNewBtn.disabled = true;
+              offerNewBtn.classList.add('disabled-button');
+              offerNewBtn.textContent = 'Offer finalized';
+            }
+            if (offerSendBtn) {
+              offerSendBtn.disabled = true;
+              offerSendBtn.classList.add('disabled-button');
+            }
+            if (offerPriceEl) {
+              offerPriceEl.disabled = true;
+            }
+            return; 
+          }
+
+          if (found && found.offer.from === 'me' &&
+              !found.offer.accepted && !found.offer.declined && !found.offer.cancelled) {
+            enterCustomerUpdateMode(found.offer);
+          } else {
+            enterCustomerNewMode();
+            offerForm?.reset();
+            offerPriceEl?.focus();
+          }
+      } else {
+        if (found && offerPriceDisplay) {
+          offerPriceDisplay.textContent = `₱${Number(found.offer.price).toLocaleString()}`;
+        }
+
+        const handled = isOfferHandled(found);
+
+        if (offerAccept) {
+          offerAccept.disabled = handled;
+          offerAccept.classList.toggle('disabled-button', handled);
+        }
+        if (offerDecline) {
+          offerDecline.disabled = handled;
+          offerDecline.classList.toggle('disabled-button', handled);
+        }
+
+
+        if (offerComplete) {
+          const canComplete = !!(activeConvo && activeConvo.bookingId);
+          offerComplete.style.display = canComplete ? 'inline-flex' : 'none';
         }
       }
-    }
 
 
     }
@@ -387,6 +455,12 @@ async function saveMessageToServer(threadId, payload) {
       ev.preventDefault();
       if (!activeConvo) return closeModal();
       const found = findLatestOffer(activeConvo);
+
+      if (isOfferHandled(found)) {
+        closeModal();
+        return;
+      }
+
       if (window.APP_ROLE === 'customer' && found && found.offer.from === 'me' && !found.offer.accepted && !found.offer.declined && !found.offer.cancelled) {
         const newPrice = offerPriceEl ? offerPriceEl.value : found.offer.price;
         found.offer.price = newPrice;
@@ -429,7 +503,7 @@ async function saveMessageToServer(threadId, payload) {
     ev.preventDefault();
     const found = findLatestOffer(activeConvo);
     if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
-
+    if (!found || isOfferHandled(found)) return;
     found.offer.accepted = true;
 
     const reply = {
@@ -466,7 +540,7 @@ async function saveMessageToServer(threadId, payload) {
       ev.preventDefault();
       const found = findLatestOffer(activeConvo);
       if (!found || found.offer.accepted || found.offer.declined || found.offer.cancelled) return;
-
+      if (!found || isOfferHandled(found)) return;
       found.offer.declined = true;
 
       const reply = {

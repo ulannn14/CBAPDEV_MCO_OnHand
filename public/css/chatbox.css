@@ -343,3 +343,18 @@
   margin-top: 2px;
 }
 
+.disabled-button,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.thread-title {
+  font-size: 18px;
+  font-weight: 700; 
+}
+
+.thread-title-service {
+  font-weight: 400; 
+  opacity: 0.8;    
+}
