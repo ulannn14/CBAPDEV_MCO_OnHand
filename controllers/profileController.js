@@ -115,6 +115,9 @@ const profileController = {
             user.address.city = city;
             user.address.province = province;
 
+        } else if (field === 'WorkingArea') {
+            user.WorkingArea = value;
+
         } else if (field === 'email') {
             user.email = value;
 

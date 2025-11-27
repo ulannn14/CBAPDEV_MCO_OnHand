@@ -34,7 +34,7 @@
     // -------------------------
     // CITY-ONLY DROPDOWN
     // -------------------------
-    if (field === 'location') {
+    if (field === 'location' || field === 'WorkingArea') {
       input = document.createElement('select');
       input.className = 'inline-editor';
 
@@ -139,6 +139,12 @@
         id,
         field: 'location',
         value: { city: newValue }
+      };
+    } else if (field === 'WorkingArea') {
+      payload = {
+        id, 
+        field: 'WorkingArea',
+        value: newValue
       };
     }
 

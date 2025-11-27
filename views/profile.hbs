@@ -65,17 +65,26 @@
 
         <!-- Working Hours (hidden by default, shown only in provider mode) -->
         <div class="profile-working-hours" id="profileWorkingHours" style="display: none;">
-          <h3><i class="fa-regular fa-clock"></i> Working Hours:</h3>
-          <ul>
-            {{#if user.workingDays}}
-              {{#each user.workingDays}}
-                <li>{{this}}: {{../user.workingHours}}</li>
-              {{/each}}
-            {{else}}
-              <li>Working hours not set</li>
+          <h3>Working Details</h3>
+
+          <div class="working-area-row meta-row">
+            <i class="fa-solid fa-location-dot"></i>
+            <span class="editable" data-field="WorkingArea" data-id="{{user.id}}">
+              {{#if user.WorkingArea}}{{user.WorkingArea}}{{else}}Working area not set{{/if}}
+            </span>
+            {{#if isOwner}}
+              <button class="edit-btn" aria-label="Edit working area"><i class="fa-solid fa-pen-to-square"></i></button>
             {{/if}}
-          </ul>
+          </div>
+
+          <div class="working-hours-row meta-row">
+            <i class="fa-regular fa-clock"></i>
+            <span class="editable" data-field="workingHours" data-id="{{user.id}}">
+              {{#if user.workingHours}}{{user.workingHours}}{{else}}Working hours not set{{/if}}
+            </span>
+          </div>
         </div>
+
 
 
       </div>
