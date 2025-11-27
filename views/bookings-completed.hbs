@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Bookings | OnHand</title>
+
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/bookings.css">
   <link rel="stylesheet" href="/css/completed.css">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="/js/dropdown-profile.js"></script>
   <link rel="icon" href="/images/icon.png" type="image/png">
 
   <style>
+    /* Static (non-clickable) stars */
     .static-stars {
       display: flex;
       gap: 8px;
@@ -20,6 +23,11 @@
     .static-stars i {
       font-size: 1.5rem;
       color: #facc15;
+      cursor: default !important;
+    }
+
+    .static-stars i.fa-solid {
+      text-shadow: 0 0 4px rgba(251, 191, 36, 0.5);
     }
 
     .status.completed {
@@ -28,8 +36,19 @@
       margin-top: 6px;
     }
 
-    .static-stars i.fa-solid {
-      text-shadow: 0 0 4px rgba(251, 191, 36, 0.5);
+    /* Centered "no bookings" message */
+    .no-bookings-message {
+      text-align: center;
+      font-size: 1.4rem;
+      color: #6b7280;
+      margin-top: 40px;
+    }
+
+    .booking-list.empty {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
     }
   </style>
 </head>
@@ -38,49 +57,67 @@
   {{> header}}
 
   <div class="bookings-container">
+
+    <!-- Tabs -->
     <div class="booking-tabs">
-      <a href="/bookings/ongoing" class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
-      <a href="/bookings/to-rate" class="{{#if (eq currentTab 'to-rate')}}active{{/if}}">To Rate</a>
+      <a href="/bookings/ongoing"   class="{{#if (eq currentTab 'ongoing')}}active{{/if}}">Ongoing</a>
+      <a href="/bookings/to-rate"   class="{{#if (eq currentTab 'to-rate')}}active{{/if}}">To Rate</a>
       <a href="/bookings/completed" class="{{#if (eq currentTab 'completed')}}active{{/if}}">Completed</a>
     </div>
 
-    <div class="booking-list">
-      {{#each bookings}}
-      <div class="booking-card">
-        <div class="booking-left">
-          <div class="profile-row">
-            <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
-            <div class="booking-info">
-              <h3 class="client-name">{{clientName}}</h3>
-              <div class="need-wrapper">
-                <p class="need-label">Need:</p>
-                <span class="service-type">{{serviceType}}</span>
+    <!-- Booking list -->
+    <div class="booking-list {{#unless bookings.length}}empty{{/unless}}">
+
+      {{#if bookings.length}}
+
+        {{#each bookings}}
+        <div class="booking-card">
+
+          <div class="booking-left">
+            <div class="profile-row">
+              <img src="{{image}}" alt="{{clientName}}" class="profile-pic">
+
+              <div class="booking-info">
+                <h3 class="client-name">{{clientName}}</h3>
+
+                <div class="need-wrapper">
+                  <p class="need-label">Need:</p>
+                  <span class="service-type">{{serviceType}}</span>
+                </div>
               </div>
             </div>
+
+            <hr class="divider">
+            <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
           </div>
 
-          <hr class="divider">
-          <p class="location"><i class="fa-solid fa-location-dot"></i> {{location}}</p>
+          <div class="divider-vertical"></div>
+
+          <div class="booking-right">
+            <div class="agreed-price">
+              <strong>Agreed Price:</strong>
+              <p class="price">₱{{price}}</p>
+            </div>
+
+            <!-- Static stars (final rating) -->
+            <div class="static-stars">
+              {{#times rating}}<i class="fa-solid fa-star"></i>{{/times}}
+              {{#times remainingStars}}<i class="fa-regular fa-star"></i>{{/times}}
+            </div>
+
+            <p class="status completed">Booking completed successfully</p>
+          </div>
+
         </div>
+        {{/each}}
 
-        <div class="divider-vertical"></div>
+      {{else}}
+        <p class="no-bookings-message">No completed bookings</p>
+      {{/if}}
 
-        <div class="booking-right">
-          <div class="agreed-price">
-            <strong>Agreed Price:</strong>
-            <p class="price">₱{{price}}</p>
-          </div>
-
-          <div class="stars static-stars">
-            {{#times rating}}<i class="fa-solid fa-star"></i>{{/times}}
-            {{#times remainingStars}}<i class="fa-regular fa-star"></i>{{/times}}
-          </div>
-
-          <p class="status completed">Booking completed successfully</p>
-        </div>
-      </div>
-      {{/each}}
     </div>
+
   </div>
+
 </body>
 </html>
