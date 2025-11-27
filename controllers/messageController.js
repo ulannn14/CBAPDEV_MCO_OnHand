@@ -79,7 +79,7 @@ const messageController = {
   },
 
   // NEW: JSON list of conversations for sidebar
-  getMessagesList: async function (req, res) {
+    getMessagesList: async function (req, res) {
     try {
       const loggedInUser = req.session.user;
       if (!loggedInUser) {
@@ -87,44 +87,49 @@ const messageController = {
       }
 
       const userId = loggedInUser._id;
+      const currentMode = loggedInUser.mode || 'customer'; // 'customer' or 'provider'
 
-    const threads = await Message.find({
-      $or: [
-        { customerId: userId },
-        { providerId: userId }
-      ]
-    })
-      .populate('customerId providerId', 'firstName lastName profilePicture')
-      .populate('relatedPost', 'title serviceType')   // 👈 add this
-      .sort({ lastUpdated: -1 })
-      .lean();
+      // 👉 Filter threads based on current mode
+      let threadFilter;
+      if (currentMode === 'provider') {
+        // Service Provider mode: show customers who messaged me as provider
+        threadFilter = { providerId: userId };
+      } else {
+        // Customer mode: show providers I messaged
+        threadFilter = { customerId: userId };
+      }
 
-    const conversations = threads.map(t => {
-      const isCustomer = String(t.customerId._id) === String(userId);
-      const other = isCustomer ? t.providerId : t.customerId;
+      const threads = await Message.find(threadFilter)
+        .populate('customerId providerId', 'firstName lastName profilePicture')
+        .populate('relatedPost', 'title serviceType')
+        .sort({ lastUpdated: -1 })
+        .lean();
 
-      const lastMsg = t.messages && t.messages.length
-        ? t.messages[t.messages.length - 1]
-        : null;
+      const conversations = threads.map(t => {
+        const isCustomer = String(t.customerId._id) === String(userId);
+        const other = isCustomer ? t.providerId : t.customerId;
 
-      const lastText = lastMsg
-        ? (lastMsg.type === 'offer'
-            ? `Offer: ₱${lastMsg.price ?? ''}`
-            : (lastMsg.content || ''))
-        : '';
+        const lastMsg = t.messages && t.messages.length
+          ? t.messages[t.messages.length - 1]
+          : null;
 
-      // 👇 use post title or serviceType as the “listing title”
-      const listingTitle =
-        (t.relatedPost && (t.relatedPost.title || t.relatedPost.serviceType)) || '';
+        const lastText = lastMsg
+          ? (lastMsg.type === 'offer'
+              ? `Offer: ₱${lastMsg.price ?? ''}`
+              : (lastMsg.content || ''))
+          : '';
 
-      return {
-        id: t._id,
-        name: `${other.firstName} ${other.lastName}`,
-        avatar: other.profilePicture || '/images/default_profile.png',
-        last: lastText,
-        title: listingTitle      
-      };
-    });
+        const listingTitle =
+          (t.relatedPost && (t.relatedPost.title || t.relatedPost.serviceType)) || '';
+
+        return {
+          id: t._id,
+          name: `${other.firstName} ${other.lastName}`,
+          avatar: other.profilePicture || '/images/default_profile.png',
+          last: lastText,
+          title: listingTitle
+        };
+      });
 
       return res.json({ success: true, conversations });
 
@@ -133,6 +138,7 @@ const messageController = {
       return res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   },
+
 
   // NEW: one specific thread + all messages
   getThread: async function (req, res) {
