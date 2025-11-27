@@ -31,7 +31,6 @@
       </select>
 
       <input type="text" name="minPrice" placeholder="Min ₱" class="search-input price">
-      <input type="text" name="maxPrice" placeholder="Max ₱" class="search-input price">
 
       <select name="location" class="search-select">
         <option value="">Location</option>
@@ -172,12 +171,28 @@
           </select>
 
           <label class="popup-label">Location:</label>
-          <input 
-            type="text" 
-            id="postLocation" 
-            class="popup-input" 
-            placeholder="Enter your city or area" 
-            required>
+          <select id="postLocation" class="popup-input" required>
+            <option value="" disabled selected>Select your location</option>
+            <option>Manila</option>
+            <option>Quezon City</option>
+            <option>Makati</option>
+            <option>Taguig</option>
+            <option>Pasig</option>
+            <option>Marikina</option>
+            <option>Pasay</option>
+            <option>Mandaluyong</option>
+            <option>San Juan</option>
+            <option>Parañaque</option>
+            <option>Las Piñas</option>
+            <option>Valenzuela</option>
+            <option>Caloocan</option>
+            <option>Malabon</option>
+            <option>Navotas</option>
+            <option>Cavite</option>
+            <option>Laguna</option>
+            <option>Rizal</option>
+            <option>Bulacan</option>
+          </select>
 
         {{!-- Provider Fields --}}
         {{else}}
@@ -192,12 +207,29 @@
           </select>
 
           <label class="popup-label">Location:</label>
-          <input 
-            type="text" 
-            id="postLocation" 
-            class="popup-input" 
-            placeholder="Enter your service area"
-            required>
+          <select id="postLocation" class="popup-input" required>
+            <option value="" disabled selected>Select Service area</option>
+            <option>Manila</option>
+            <option>Quezon City</option>
+            <option>Makati</option>
+            <option>Taguig</option>
+            <option>Pasig</option>
+            <option>Marikina</option>
+            <option>Pasay</option>
+            <option>Mandaluyong</option>
+            <option>San Juan</option>
+            <option>Parañaque</option>
+            <option>Las Piñas</option>
+            <option>Valenzuela</option>
+            <option>Caloocan</option>
+            <option>Malabon</option>
+            <option>Navotas</option>
+            <option>Cavite</option>
+            <option>Laguna</option>
+            <option>Rizal</option>
+            <option>Bulacan</option>
+          </select>
+
         {{/unless}}
 
         {{!-- Price Range --}}
