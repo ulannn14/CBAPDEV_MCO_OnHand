@@ -1,4 +1,11 @@
 <div class="service-card">
+
+  {{#if isOwner}}
+    <button class="service-delete-btn" data-id="{{_id}}">
+      <i class="fa-solid fa-trash"></i>
+    </button>
+  {{/if}}
+  
   <div class="card-header">
     <img src="{{image}}" alt="{{workerName}}" class="profile-pic">
     <div class="worker-info">
