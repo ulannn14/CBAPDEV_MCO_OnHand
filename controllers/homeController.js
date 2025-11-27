@@ -149,28 +149,33 @@ const homeController = {
 
         // Map posts to format for serviceCard
         const posts = postsRaw.map(p => {
-            const postUser = usersMap[p.userId.toString()] || {};
+        const postUser = usersMap[p.userId.toString()] || {};
 
-            const images = p.sampleWorkImages || [];
-            const imagePost = images[0] || null;
-            const imageGallery = images.length > 1 ? images.slice(1) : [];
+        const images = p.sampleWorkImages || [];
+        const imagePost = images[0] || null;
+        const imageGallery = images.length > 1 ? images.slice(1) : [];
 
-            return {
-                image: postUser.profilePicture || '/images/default_profile.png',
-                workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
-                jobTitle: p.serviceType || '',
-                location: p.location || '',
-                hours: p.workingHours || 'Not set',
-                title: p.title || '',
-                description: p.description || '',
-                minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
-                maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
-                isOwner: false,
-                urgency: p.levelOfUrgency || null,
-                imagePost,
-                imageGallery
-            };
-        });
+        return {
+      
+            postId: p._id,          // id of the post
+            otherUserId: postUser._id, // id of the owner of this post
+
+            image: postUser.profilePicture || '/images/default_profile.png',
+            workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
+            jobTitle: p.serviceType || '',
+            location: p.location || '',
+            hours: p.workingHours || 'Not set',
+            title: p.title || '',
+            description: p.description || '',
+            minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
+            maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
+            isOwner: false,
+            urgency: p.levelOfUrgency || null,
+            imagePost,
+            imageGallery
+        };
+    });
+
 
         return posts;
 

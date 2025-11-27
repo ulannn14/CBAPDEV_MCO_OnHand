@@ -67,24 +67,26 @@
   }
 
   // ---------- Convos Sidebar ----------
-  function renderConvos() {
-    const list = document.getElementById('convoList'); //retrieve list of conversations from database
-    if (!list) return; 
+    function renderConvos() {
+    const list = document.getElementById('convoList');
+    if (!list) return;
     list.innerHTML = '';
+
     conversations.forEach(c => {
       const div = document.createElement('div');
       div.className = 'convo-item';
-      div.dataset.id = c.id; //set id
+      div.dataset.id = c.id;
 
       const avatarDiv = document.createElement('div');
-      avatarDiv.className = 'convo-avatar'; //set avatar
-      if (c.avatar && c.avatar.endsWith('.png')) {
+      avatarDiv.className = 'convo-avatar';
+
+      if (c.avatar && /\.(png|jpe?g|gif|svg)$/i.test(c.avatar)) {
         const img = document.createElement('img');
         img.src = c.avatar;
         img.alt = `${c.name} avatar`;
         avatarDiv.appendChild(img);
       } else {
-        avatarDiv.textContent = c.avatar || '';
+        avatarDiv.textContent = c.name ? c.name.charAt(0).toUpperCase() : '';
       }
 
       const metaDiv = document.createElement('div');
@@ -96,10 +98,11 @@
 
       div.appendChild(avatarDiv);
       div.appendChild(metaDiv);
-      div.addEventListener('click', () => openConvo(c.id)); //open convo by using id
+      div.addEventListener('click', () => openConvo(c.id));
       list.appendChild(div);
     });
   }
+
 
     async function openConvo(id) {
     const convoMeta = conversations.find(x => x.id === id);

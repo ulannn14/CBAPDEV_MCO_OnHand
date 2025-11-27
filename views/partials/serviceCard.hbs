@@ -61,8 +61,14 @@
   </div>
   {{!-- dont show button if own profile --}}
   {{#unless isOwner}}
-    <button class="message-btn">
-      Message / Make Offer <i class="fa-solid fa-arrow-right"></i>
-    </button>
+    <form method="GET" action="/start-thread">
+      <input type="hidden" name="postId" value="{{postId}}">
+      <input type="hidden" name="otherId" value="{{otherUserId}}">
+      
+      <button type="submit" class="message-btn">
+        Message / Make Offer <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </form>
   {{/unless}}
+
 </div>

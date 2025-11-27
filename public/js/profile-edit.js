@@ -4,14 +4,17 @@
   function buildControls() {
     const wrap = document.createElement('span');
     wrap.className = 'edit-controls';
+
     const save = document.createElement('button');
     save.type = 'button';
     save.className = 'edit-save';
     save.textContent = 'Save';
+
     const cancel = document.createElement('button');
     cancel.type = 'button';
     cancel.className = 'edit-cancel';
     cancel.textContent = 'Cancel';
+
     wrap.appendChild(save);
     wrap.appendChild(cancel);
     return wrap;
@@ -25,13 +28,51 @@
     const field = el.dataset.field || '';
     const id = el.dataset.id || '';
     const isMulti = el.tagName.toLowerCase() === 'p' || el.classList.contains('multiline');
-    const input = isMulti ? document.createElement('textarea') : document.createElement('input');
-    if (!isMulti) input.type = 'text';
-    input.className = 'inline-editor';
-    input.value = originalText;
-    input.setAttribute('aria-label', 'Edit ' + field);
 
-    if (!isMulti) input.size = Math.max(Math.min(originalText.length + 5, 60), 10);
+    let input;
+
+    // -------------------------
+    // CITY-ONLY DROPDOWN
+    // -------------------------
+    if (field === 'location') {
+      input = document.createElement('select');
+      input.className = 'inline-editor';
+
+      const cities = [
+        "Manila", "Quezon City", "Makati", "Taguig", "Mandaluyong",
+        "Pasig", "Pasay", "Valenzuela", "Caloocan", "Las Piñas",
+        "Muntinlupa", "Parañaque", "Marikina", "San Juan", "Malabon",
+        "Navotas", "Cavite", "Laguna", "Rizal", "Bulacan"
+      ];
+
+      // Default placeholder
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Select City";
+      placeholder.disabled = true;
+      placeholder.selected = !cities.includes(originalText);
+      input.appendChild(placeholder);
+
+      // Add city options
+      cities.forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        if (originalText === city) opt.selected = true;
+        input.appendChild(opt);
+      });
+
+    } else {
+      // Default input behavior
+      input = isMulti ? document.createElement('textarea') : document.createElement('input');
+      if (!isMulti) input.type = 'text';
+      input.className = 'inline-editor';
+      input.value = originalText;
+
+      if (!isMulti) {
+        input.size = Math.max(Math.min(originalText.length + 5, 60), 10);
+      }
+    }
 
     const controls = buildControls();
 
@@ -43,20 +84,25 @@
     el.parentNode.replaceChild(container, el);
 
     input.focus();
-    if (!isMulti) input.select();
+    if (!isMulti && input.tagName !== "SELECT") input.select();
 
+    // Save event
     controls.querySelector('.edit-save').addEventListener('click', () => {
-      saveEdit(container, field, id, input.value, el.tagName.toLowerCase());
+      const value = input.tagName === 'SELECT' ? input.value : input.value;
+      saveEdit(container, field, id, value, el.tagName.toLowerCase());
     });
+
+    // Cancel event
     controls.querySelector('.edit-cancel').addEventListener('click', () => {
       cancelEdit(container, el);
     });
 
+    // Keyboard shortcuts
     input.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape') {
         ev.preventDefault();
         cancelEdit(container, el);
-      } else if (ev.key === 'Enter' && !isMulti) {
+      } else if (ev.key === 'Enter' && !isMulti && input.tagName !== "SELECT") {
         ev.preventDefault();
         saveEdit(container, field, id, input.value, el.tagName.toLowerCase());
       }
@@ -83,14 +129,16 @@
     cancelBtn.disabled = true;
     saveBtn.textContent = 'Saving...';
 
-    // Parse city/province if editing the location
+    // -------------------------
+    // CITY-ONLY PAYLOAD
+    // -------------------------
     let payload = { id, field, value: newValue };
+
     if (field === 'location') {
-      const [city, province] = newValue.split(',').map(s => s.trim());
       payload = {
         id,
         field: 'location',
-        value: { city: city || '', province: province || '' }
+        value: { city: newValue }
       };
     }
 
@@ -107,13 +155,14 @@
       const data = await resp.json();
       if (!data.success) throw new Error(data.error || 'Server error');
 
-      // Update UI text
+      // Update UI
       const newTextNode = document.createElement(originalTag === 'p' ? 'p' : 'span');
       newTextNode.className = 'editable';
       newTextNode.dataset.field = field;
       newTextNode.dataset.id = id;
       newTextNode.textContent = newValue;
       newTextNode.dataset.editing = 'false';
+
       container.parentNode.replaceChild(newTextNode, container);
 
     } catch (err) {
@@ -125,6 +174,9 @@
     }
   }
 
+  // -------------------------
+  // Edit button click handler
+  // -------------------------
   document.addEventListener('click', (ev) => {
     const btn = ev.target.closest('.edit-btn');
     if (!btn) return;
