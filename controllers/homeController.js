@@ -33,35 +33,48 @@ const homeController = {
       const { service, urgency, minPrice, maxPrice, location } = req.query;
 
       // If the user didn't provide any search input, go back to home
-      const noInput = !(service && service.trim()) && !(urgency && urgency.trim()) && !minPrice && !maxPrice && !(location && location.trim());
+      const noInput =
+        !(service && service.trim()) &&
+        !(urgency && urgency.trim()) &&
+        !minPrice &&
+        !maxPrice &&
+        !(location && location.trim());
       if (noInput) return res.redirect('/home');
 
-      // Build DB query similar to getPosts but honoring search params
-      let query = { userId: { $ne: loggedInUser._id } }; // exclude own posts
+      // Base query: exclude own posts
+      let query = { userId: { $ne: loggedInUser._id } };
 
-      // Location preference: explicit search location overrides user city
-      if (location && location.trim()) {
-        const locRegex = new RegExp(location.trim(), 'i');
-        query.location = { $regex: locRegex };
+      // ------------------------------
+      // LOCATION HANDLING
+      // ------------------------------
+      if (location && location.trim().length > 0) {
+        query.location = { $regex: new RegExp(location.trim(), 'i') };
       } else if (loggedInUser.address?.city) {
-        const cityRegex = new RegExp(loggedInUser.address.city.trim(), 'i');
-        query.location = { $regex: cityRegex };
+        query.location = { $regex: new RegExp(loggedInUser.address.city.trim(), 'i') };
       }
 
       // Post type based on user mode
       query.postType = loggedInUser.mode === 'customer' ? 'Offering' : 'LookingFor';
 
-      // Service / title / description search
+      // ------------------------------
+      // SERVICE SEARCH (KEYWORD BASED)
+      // ------------------------------
       if (service && service.trim()) {
-        const s = new RegExp(service.trim(), 'i');
-        query.$or = [
-          { serviceType: { $regex: s } },
-          { title: { $regex: s } },
-          { description: { $regex: s } }
-        ];
+        const keywords = service.trim().split(/\s+/); // split into words
+
+        // Each keyword must match at least one of these fields
+        query.$and = keywords.map(word => ({
+          $or: [
+            { serviceType: { $regex: new RegExp(word, 'i') } },
+            { title: { $regex: new RegExp(word, 'i') } },
+            { description: { $regex: new RegExp(word, 'i') } }
+          ]
+        }));
       }
 
-      // Urgency
+      // ------------------------------
+      // URGENCY FILTER
+      // ------------------------------
       if (urgency && urgency.trim()) {
         query.levelOfUrgency = { $regex: new RegExp(urgency.trim(), 'i') };
       }
@@ -75,7 +88,7 @@ const homeController = {
       const usersMap = {};
       users.forEach(u => { usersMap[u._id.toString()] = u; });
 
-      // Map and filter by price range if provided
+      // Price filtering
       const minQ = minPrice ? parseInt(minPrice, 10) : null;
       const maxQ = maxPrice ? parseInt(maxPrice, 10) : null;
 
@@ -85,7 +98,7 @@ const homeController = {
         const imagePost = images[0] || null;
         const imageGallery = images.length > 1 ? images.slice(1) : [];
 
-        // Parse numeric min/max from stored priceRange string
+        // Parse numeric price range
         let postMin = 0, postMax = 0;
         if (p.priceRange) {
           const parts = p.priceRange.split('-');
@@ -109,7 +122,6 @@ const homeController = {
           imageGallery
         };
       }).filter(item => {
-        // Apply price filtering in JS when min/max search provided
         if (minQ !== null && item.maxPrice < minQ) return false;
         if (maxQ !== null && item.minPrice > maxQ) return false;
         return true;
@@ -126,11 +138,6 @@ const homeController = {
   getPosts: async function (user, mode) {
         try {
         let query = { userId: { $ne: user._id } }; // exclude own posts
-
-        if (user.address?.city) {
-            const cityRegex = new RegExp(user.address.city.trim(), 'i');
-            query.location = { $regex: cityRegex };
-        }
 
         // Determine post type based on mode
         query.postType = mode === 'customer' ? 'Offering' : 'LookingFor';

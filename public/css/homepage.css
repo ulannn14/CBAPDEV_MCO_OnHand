@@ -95,6 +95,7 @@ body {
 }
 
 .category {
+  display: block;                /* make whole card clickable */
   width: 153px;
   text-align: center;
   background: white;
@@ -102,7 +103,11 @@ body {
   box-shadow: 0 1px 6px rgba(0,0,0,0.08);
   transition: transform 0.2s ease;
   overflow: hidden;
+
+  text-decoration: none !important;   /* remove underline */
+  color: inherit !important;          /* keep text color */
 }
+
 
 .category img {
   width: 100%;
@@ -119,7 +124,8 @@ body {
 }
 
 .category:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px); /* your hover effect */
+  text-decoration: none;       /* remove underline on hover too */
 }
 
 .services-near-you {
