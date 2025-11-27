@@ -121,7 +121,7 @@ const profileController = {
         posts,
         reviews: formattedRatings,
         ratingAverage, // <-- send calculated average
-        currentPage: 'profile'
+        currentPage: 'profile',
         cannotDeleteBooking: req.query.cannotDelete === 'booking'
         });
 
