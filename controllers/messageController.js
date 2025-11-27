@@ -1,6 +1,7 @@
 // controllers/messageController.js
 const User = require('../models/UserModel.js');
 const Message = require('../models/MessageModel.js');
+const Post = require('../models/PostModel.js');
 const db = require('../models/db.js');
 
 const messageController = {
@@ -11,13 +12,69 @@ const messageController = {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
+      const threadId = req.query.thread || null; 
+
       res.render('chatbox', {
-        user: loggedInUser
+        user: loggedInUser,
+        threadId
       });
 
     } catch (err) {
       console.error('Error in getMessage:', err);
       res.status(500).send('Internal Server Error');
+    }
+  },
+
+  startThread: async function (req, res) {
+    try {
+      const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
+      if (!loggedInUser) return res.redirect('/');
+
+      const { postId, otherId } = req.query;
+      if (!postId || !otherId) {
+        return res.redirect('/messages');
+      }
+
+      // Optional: ensure post exists
+      const post = await db.findOne(Post, { _id: postId });
+      if (!post) {
+        return res.redirect('/messages');
+      }
+
+      // Decide who is customer and provider based on loggedInUser.mode
+      let customerId, providerId;
+
+      if (loggedInUser.mode === 'customer') {
+        customerId = loggedInUser._id;
+        providerId = otherId;
+      } else {
+        providerId = loggedInUser._id;
+        customerId = otherId;
+      }
+
+      // Look for an existing thread for this pair + post
+      let thread = await Message.findOne({
+        customerId,
+        providerId,
+        relatedPost: postId
+      });
+
+      // If none, create a new one
+      if (!thread) {
+        thread = await Message.create({
+          customerId,
+          providerId,
+          relatedPost: postId,
+          messages: []
+        });
+      }
+
+      // Redirect to messages page with thread id
+      return res.redirect(`/messages?thread=${thread._id}`);
+
+    } catch (err) {
+      console.error('Error in startThread:', err);
+      return res.redirect('/messages');
     }
   },
 
