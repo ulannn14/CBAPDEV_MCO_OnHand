@@ -9,6 +9,8 @@
 
 const mongoose = require('mongoose');
 
+const serviceTypes = require('../utils/serviceTypes');
+
 const postSchema = new mongoose.Schema({
   // The user who created the post
   userId: {
@@ -27,15 +29,7 @@ const postSchema = new mongoose.Schema({
   // The category of service (7 main categories)
   serviceType: {
     type: String,
-    enum: [
-      'Plumbing',
-      'Electrical',
-      'Cleaning',
-      'Carpentry',
-      'Painting',
-      'Appliance Repair',
-      'General Help'
-    ],
+    enum: serviceTypes,
     required: true
   },
 
