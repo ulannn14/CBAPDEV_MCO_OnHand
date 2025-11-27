@@ -4,6 +4,8 @@ const db = require('../models/db.js');
 // import module `User` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
 
+const bcrypt = require('bcrypt');
+
 /*
     defines an object which contains functions executed as callback
     when a client requests for `login` paths in the server
