@@ -12,7 +12,7 @@ const homeController = {
       const posts = await homeController.getPosts(loggedInUser, req.session.user.mode);
 
       console.log(posts.length);
-      console.log(loggedInUser.mode);
+      console.log(req.session.user.mode);
 
       res.render('homepage', {
         user: loggedInUser,
@@ -26,6 +26,7 @@ const homeController = {
   },
 
   getSearch: async function (req, res) {
+
     try {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
@@ -49,12 +50,10 @@ const homeController = {
       // ------------------------------
       if (location && location.trim().length > 0) {
         query.location = { $regex: new RegExp(location.trim(), 'i') };
-      } else if (loggedInUser.address?.city) {
-        query.location = { $regex: new RegExp(loggedInUser.address.city.trim(), 'i') };
       }
 
       // Post type based on user mode
-      query.postType = loggedInUser.mode === 'customer' ? 'Offering' : 'LookingFor';
+      query.postType = req.session.user.mode === 'customer' ? 'Offering' : 'LookingFor';
 
       // ------------------------------
       // SERVICE SEARCH (KEYWORD BASED)
@@ -81,6 +80,8 @@ const homeController = {
 
       // Fetch posts matching the query
       let postsRaw = await db.findMany(Post, query);
+      console.log("SEARCH QUERY = ", JSON.stringify(query, null, 2));
+
 
       // Populate user info for posts
       const userIds = postsRaw.map(p => p.userId);
