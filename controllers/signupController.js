@@ -1,17 +1,14 @@
-// import module `fs` and `path`
+// Import required modules
 const fs = require('fs');
 const path = require('path');
-
-// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
-
-// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
-
-// import module `bcrypt`
 const bcrypt = require('bcrypt');
+
+// Define saltRounds for password hashing
 const saltRounds = 10;
 
+// -----------------------------------------------------------------idk para san to
 function normalizePath(filePath) {
   if (!filePath) return null;
   return filePath
@@ -19,14 +16,17 @@ function normalizePath(filePath) {
     .replace(/\\/g, '/'); 
 }
 
+// -- SIGNUP CONTROLLER -- 
 const signupController = {
 
+  // ---------- GET SIGNUP ----------
   getSignup: (req, res) => {
     res.render('signup', {
       weekdays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     });
   },
 
+  // ---------- POST SIGNUP ----------
   postSignup: async (req, res) => {
   try {
     const {
@@ -166,33 +166,52 @@ const signupController = {
   }
 },
 
-  // ---------- AJAX: check if username exists ----------
+  // ---------- GET CHECK USERNAME ----------
   getCheckUsername: async (req, res) => {
+
     try {
+
+      // Get username from query
       const username = req.query.value;
       if (!username) return res.json({ exists: false });
 
+      // Fetch user from database
       const user = await db.findOne(User, { userName: username });
       res.json({ exists: !!user });
+
     } catch (err) {
+
+      // Error handling
       console.error('Username check error:', err);
       res.status(500).json({ exists: false });
+    
     }
+
   },
 
-  // ---------- AJAX: check if email exists ----------
+  // ---------- GET CHECK EMAIL ----------
   getCheckEmail: async (req, res) => {
+    
     try {
+    
+      // Get email from query
       const email = req.query.value;
       if (!email) return res.json({ exists: false });
 
+      // Fetch user from database
       const user = await db.findOne(User, { email });
       res.json({ exists: !!user });
+    
     } catch (err) {
+
+      // Error handling
       console.error('Email check error:', err);
       res.status(500).json({ exists: false });
+
     }
+
   }
+
 };
 
 module.exports = signupController;

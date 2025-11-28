@@ -14,7 +14,7 @@ const loginController = {
             const userName = (req.body.userName || "").trim();
             const password = (req.body.password || "").trim();
 
-            // Fetch user from database
+            // Fetch user from the database
             const user = await db.findOne(User, { userName: userName });
 
             // If user does not exist, return error
@@ -97,7 +97,7 @@ const loginController = {
         }
 
     }
-    
+
 };
 
 // Export object 'loginController'
