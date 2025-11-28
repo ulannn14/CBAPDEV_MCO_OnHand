@@ -318,7 +318,7 @@ $(document).ready(function () {
     }
 
     $('#signupForm').on('input change', 'input, select, textarea', function () {
-    updateSubmitState();
-});
+        updateSubmitState();
+    });
 
 });
