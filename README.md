@@ -5,9 +5,8 @@
 OnHand is a web application that connects customers with verified service providers for household and repair services.
 It aims to make it easier to find trusted help for tasks like plumbing, electrical repair, and cleaning — all in one platform.
 
-**GitHub:** https://github.com/ulannn14/CBAPDEV_MCO_OnHand
-
-**Render:** https://cbapdev-mco-onhand.onrender.com/ 
+* **GitHub:** https://github.com/ulannn14/CBAPDEV_MCO_OnHand
+* **Render:** https://cbapdev-mco-onhand.onrender.com/ 
 
 ---
 
