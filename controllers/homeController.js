@@ -3,6 +3,7 @@ const db = require('../models/db.js');
 const User = require('../models/UserModel.js');
 const Post = require('../models/PostModel.js');
 const Message = require('../models/MessageModel.js');
+const Booking = require('../models/BookingModel.js');
 
 // -- HOME CONTROLLER --
 const homeController = {
@@ -83,16 +84,72 @@ const homeController = {
         query.levelOfUrgency = { $regex: new RegExp(urgency.trim(), 'i') };
       }
 
-      // Fetch posts matching the query
+      // Fetch posts based on query
       let postsRaw = await db.findMany(Post, query);
-      console.log("SEARCH QUERY = ", JSON.stringify(query, null, 2));
 
+      // 🔹 Filter out posts with a completed booking (status = "Done")
+      const visiblePostsRaw = [];
+      for (const p of postsRaw) {
+        // find any thread for this post
+        const thread = await Message.findOne({ relatedPost: p._id }).lean();
 
-      // Populate user info for posts
-      const userIds = postsRaw.map(p => p.userId);
+        // no thread at all → definitely still visible
+        if (!thread || !thread.relatedBooking) {
+          visiblePostsRaw.push(p);
+          continue;
+        }
+
+        // there is a booking linked → check its status
+        const booking = await Booking.findById(thread.relatedBooking).lean();
+
+        // if no booking found OR booking is not Done → still show
+        if (!booking || booking.status !== 'Done') {
+          visiblePostsRaw.push(p);
+          continue;
+        }
+
+        // if booking.status === "Done" → do NOT push → post hidden from homepage
+      }
+
+      // Get creators of posts
+      const userIds = visiblePostsRaw.map(p => p.userId);
       const users = await db.findMany(User, { _id: { $in: userIds } });
+
+      // Match users to posts they created
       const usersMap = {};
-      users.forEach(u => { usersMap[u._id.toString()] = u; });
+      users.forEach(u => {
+        usersMap[u._id.toString()] = u;
+      });
+
+      // Build display data
+      const posts = visiblePostsRaw.map(p => {
+        const postUser = usersMap[p.userId.toString()] || {};
+
+        const images = p.sampleWorkImages || [];
+        const imagePost = images[0] || null;
+        const imageGallery = images.length > 1 ? images.slice(1) : [];
+
+        return {
+          postId: p._id,
+          otherUserId: postUser._id,
+          otherUserName: postUser.userName,
+
+          image: postUser.profilePicture || '/images/default_profile.png',
+          workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
+          jobTitle: p.serviceType || '',
+          location: p.location || '',
+          hours: p.workingHours || 'Not set',
+          title: p.title || '',
+          description: p.description || '',
+          minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
+          maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
+          isOwner: false,
+          urgency: p.levelOfUrgency || null,
+          imagePost,
+          imageGallery
+        };
+      });
+
 
       // Price filtering
       const minQ = minPrice ? parseInt(minPrice, 10) : null;
