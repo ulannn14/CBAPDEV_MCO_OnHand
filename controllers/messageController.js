@@ -1,18 +1,11 @@
-// import module `database` from `../models/UserModel.js`
+// Import required modules
 const User = require('../models/UserModel.js');
-
-// import module `database` from `../models/MessageModel.js`
 const Message = require('../models/MessageModel.js');
-
-// import module `database` from `../models/PostModel.js`
 const Post = require('../models/PostModel.js');
-
-// import module `database` from `../models/BookingModel.js`
 const Booking = require('../models/BookingModel.js');
-
-// import module `database` from `../models/db.js`
 const db = require('../models/db.js');
 
+// -- MESSAGE CONTROLLER --
 const messageController = {
 
   // RENDER CHATBOX PAGE (existing)

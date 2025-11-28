@@ -16,10 +16,10 @@ const homeController = {
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
-      // Gets posts for display
+      // Get posts for display
       const posts = await homeController.getPosts(loggedInUser, req.session.user.mode);
 
-      // Renders homepage
+      // Render homepage
       res.render('homepage', {
         user: loggedInUser,
         posts
@@ -39,12 +39,15 @@ const homeController = {
   getSearch: async function (req, res) {
 
     try {
+
+      // Get session user
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
+      // Get all fields from query
       const { service, urgency, minPrice, maxPrice, location } = req.query;
 
-      // If the user didn't provide any search input, go back to home
+      // Go back to home if all fields are empty
       const noInput =
         !(service && service.trim()) &&
         !(urgency && urgency.trim()) &&
@@ -53,18 +56,18 @@ const homeController = {
         !(location && location.trim());
       if (noInput) return res.redirect('/home');
 
-      // Base query: exclude own posts
+      // Exclude user's own post from query
       let query = { userId: { $ne: loggedInUser._id } };
 
-      // ---------- LOCATION HANDLING ----------
+      // Add location to query
       if (location && location.trim().length > 0) {
         query.location = { $regex: new RegExp(location.trim(), 'i') };
       }
 
-      // Post type based on user mode
+      // Add the type of posts to display to query
       query.postType = req.session.user.mode === 'customer' ? 'Offering' : 'LookingFor';
 
-      // ---------- SERVICE SEARCH (KEYWORD BASED) ----------
+      // Parse service field and add it to query
       if (service && service.trim()) {
         const keywords = service.trim().split(/\s+/); // split into words
 
@@ -78,7 +81,7 @@ const homeController = {
         }));
       }
 
-      // ---------- URGENCY FILTER ----------
+      // Add urgency to query
       if (urgency && urgency.trim()) {
         query.levelOfUrgency = { $regex: new RegExp(urgency.trim(), 'i') };
       }
@@ -94,10 +97,11 @@ const homeController = {
       const usersMap = {};
       users.forEach(u => { usersMap[u._id.toString()] = u; });
 
-      // Price filtering
+      // Filter prices
       const minQ = minPrice ? parseInt(minPrice, 10) : null;
       const maxQ = maxPrice ? parseInt(maxPrice, 10) : null;
 
+      // Build display data
       const results = postsRaw.map(p => {
         const postUser = usersMap[p.userId.toString()] || {};
         const images = p.sampleWorkImages || [];
@@ -114,7 +118,7 @@ const homeController = {
 
         return {
           postId: p._id,
-          otherUserId: postUser._id,           // helpful for start-thread form
+          otherUserId: postUser._id,
           otherUserName: postUser.userName, 
           image: postUser.profilePicture || '/images/default_profile.png',
           workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
@@ -139,9 +143,13 @@ const homeController = {
       return res.render('search', { user: loggedInUser, results });
 
     } catch (err) {
+
+      // Error handling
       console.error('Error in getSearch:', err);
       return res.status(500).send('Internal Server Error');
+
     }
+
   },
 
   // ---------- GET POSTS ----------
@@ -262,31 +270,35 @@ const homeController = {
 
   // ---------- POST DELETE POST ----------
   postDeletePost: async function (req, res) {
+
     try {
+
+      // Check if user is logged in
       if (!req.session.user) {
         return res.redirect('/'); 
       }
 
+      // Get session user information
       const userId = req.session.user._id;
       const username = req.session.user.userName;   
       const postId = req.params.id;
 
-   
+      // Fetch post from the database
       const post = await Post.findById(postId);
       if (!post) {
         return res.redirect(`/profile/${username}`);
       }
 
-      
+      // Check if session user is the post creator
       if (String(post.userId) !== String(userId)) {
         return res.redirect(`/profile/${username}`);
       }
 
-   
+      // Get message threads related to post
       const threads = await Message.find({ relatedPost: postId }).lean();
 
+      // Flag if any of the message threads contain a booking
       let hasAcceptedOrBooked = false;
-
       for (const t of threads) {
        
         if (t.relatedBooking) {
@@ -306,6 +318,7 @@ const homeController = {
         }
       }
 
+      // If booking exists, post cannot
       if (hasAcceptedOrBooked) {
         return res.redirect(`/profile/${username}?cannotDelete=booking`);
       }

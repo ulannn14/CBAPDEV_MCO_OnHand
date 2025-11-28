@@ -69,13 +69,12 @@ const profileController = {
                     description: p.description || '',
                     minPrice,
                     maxPrice,
-                    isOwner, // set based on current user
+                    isOwner, 
                     urgency: p.levelOfUrgency || null,
                     imagePost,
                     imageGallery,
-                    // include raw postType if you want to inspect in templates
                     postType: p.postType || null,
-                    rawPost: p // optional: remove if you don't want full doc in template
+                    rawPost: p
                 };
             });
 

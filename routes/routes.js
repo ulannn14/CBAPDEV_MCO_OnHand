@@ -158,7 +158,7 @@ app.post('/postRating', bookingController.postRating);
 app.get('/logout', controller.getLogout);
 
 // Route for HTTP POST request for '/report'
-app.post('/report', reportController.create);
+app.post('/report', reportController.postReport);
 
 // Export object 'app'
 module.exports = app;

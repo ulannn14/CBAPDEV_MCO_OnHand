@@ -8,6 +8,7 @@ const loginController = {
 
     // ---------- POST LOGIN ----------
     postLogin: async function (req, res) {
+        
         try {
 
             // Get username and password from body

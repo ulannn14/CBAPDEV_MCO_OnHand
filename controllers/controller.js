@@ -4,7 +4,7 @@ const controller = {
     // ---------- GET INDEX ----------
     getIndex: function (req, res) {
 
-        // render `../views/index.hbs`
+        // render index
         res.render('index');
 
     },
