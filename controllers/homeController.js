@@ -206,8 +206,6 @@ const homeController = {
     }
   },
 
-<<<<<<< Updated upstream
-=======
     // ---------- GET SEARCH ----------
     getSearch: async function (req, res) {
       try {
@@ -416,9 +414,6 @@ const homeController = {
       }
     },
 
-
-
->>>>>>> Stashed changes
   // ---------- POST CREATE POST ----------
   postCreatePost: async function (req, res) {
     try {
