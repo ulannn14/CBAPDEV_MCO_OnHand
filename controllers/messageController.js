@@ -357,7 +357,7 @@ const messageController = {
             return res.status(404).json({ success: false, error: 'Booking not found' });
           }
 
-          booking.status = 'ToRate';              
+          booking.status = 'Done';              
           booking.completedByProvider = true;
           booking.dateCompleted = new Date();
           await booking.save();

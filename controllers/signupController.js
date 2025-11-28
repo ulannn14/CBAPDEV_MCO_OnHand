@@ -132,7 +132,7 @@ const signupController = {
         nbiClearance: nbiClearancePath,
         workingDays,
         workingHours: startTime && endTime ? `${startTime} - ${endTime}` : null,
-        workingArea: workingLocation
+        WorkingArea: workingLocation
       })
     };
 
