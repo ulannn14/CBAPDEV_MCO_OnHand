@@ -143,10 +143,10 @@ app.get('/messages/thread/:id', messageController.getThread);
 app.post('/messages/thread/:id', messageController.postMessage); 
 
 // Route for HTTP POST request for '/messages/thread/:id/complete-booking'
-app.post('/messages/thread/:id/complete-booking', messageController.completeBooking);
+app.post('/messages/thread/:id/complete-booking', messageController.postCompleteBooking);
 
 // Route for HTTP GET request for '/start-thread'
-app.get('/start-thread', messageController.startThread);
+app.get('/start-thread', messageController.getStartThread);
 
 // Route for HTTP GET request for '/bookings/:status'
 app.get('/bookings/:status', bookingController.getBookings);

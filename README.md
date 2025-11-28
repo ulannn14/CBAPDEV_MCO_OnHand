@@ -53,7 +53,7 @@ It aims to make it easier to find trusted help for tasks like plumbing, electric
 * Chat system for negotiation between users
 * Booking tracking (Ongoing, To Rate, Done)
 * Rating and report system after transactions
-* Search, filter, and sort (by location, service, urgency, etc.)
+* Search and filter (by location, service, urgency, etc.)
 
 ---
 
