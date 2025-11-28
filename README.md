@@ -126,3 +126,13 @@ app listening at port 9090
 
 Then open your browser and go to:
 **[http://localhost:9090/](http://localhost:9090/)**
+
+## Test Users / View Sample Data
+
+You may log in using these accounts to see sample data across the website.
+* username: gwyeigh, password: 1234
+* username: mackenlhy, password: 1234
+* username: lncrlsbrt, password: 1234
+* username: aloisuh, password: 1234
+* username: juandelacruz, password: password!11
+* username: arianagrande, password: arianagrande1!
