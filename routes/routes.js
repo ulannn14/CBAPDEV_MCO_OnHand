@@ -12,6 +12,7 @@ const signupController = require('../controllers/signupController.js');
 const profileController = require('../controllers/profileController.js');
 const messageController = require('../controllers/messageController.js');
 const bookingController = require('../controllers/bookingController.js');
+const reportController = require('../controllers/reportController.js');
 
 // Declaration of application/router
 const app = express();
@@ -155,6 +156,9 @@ app.post('/postRating', bookingController.postRating);
 
 // Route for HTTP GET request for '/logout'
 app.get('/logout', controller.getLogout);
+
+// Route for HTTP POST request for '/report'
+app.post('/report', reportController.create);
 
 // Export object 'app'
 module.exports = app;

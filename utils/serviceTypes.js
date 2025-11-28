@@ -6,7 +6,7 @@ const serviceTypes = [
   "Structural Repairs",
   "Pest Control",
   "HVAC / Appliance Breakdown",
-  "Locksmith Services"
+  "Locksmith"
 ];
 
 module.exports = serviceTypes;
