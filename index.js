@@ -20,12 +20,12 @@ const port = 9090;
 // set `hbs` as view engine
 app.set('view engine', 'hbs');
 
-// Register a custom 'eq' helper for Handlebars
+// registers a custom 'eq' helper for Handlebars
 hbs.registerHelper('eq', function (a, b) {
     return a === b;
 });
 
-// Register a custom 'times' helper for Handlebars
+// registers a custom 'times' helper for Handlebars
 hbs.registerHelper('times', function(n, block) {
     let accum = '';
     for (let i = 1; i <= n; i++) {
@@ -37,18 +37,21 @@ hbs.registerHelper('times', function(n, block) {
 // sets `/views/partials` as folder containing partial hbs files
 hbs.registerPartials(__dirname + '/views/partials');
 
+// sets up user session handling
 app.use(session({
-    secret: 'onhand-secretkey',      // replace with a strong secret
+    secret: 'onhand-secretkey',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
+// makes session user available in all views
 app.use(function (req, res, next) {
     res.locals.sessionUser = req.session.user || null;
     next();
 });
 
+// enables server to parse JSON request bodies
 app.use(express.json());
 
 // parses incoming requests with urlencoded payloads

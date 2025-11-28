@@ -1,36 +1,41 @@
-// import module `database` from `../models/db.js`
+// Import required modules
 const db = require('../models/db.js');
-
-// import module `database` from `../models/UserModel.js`
 const User = require('../models/UserModel.js');
-
-// import module `database` from `../models/PostModel.js`
 const Post = require('../models/PostModel.js');
 const Message = require('../models/MessageModel.js');
 
+// -- HOME CONTROLLER --
 const homeController = {
 
+  // ---------- GET HOME ----------
   getHome: async function (req, res) {
+
     try {
+    
+      // Get session user
       const loggedInUser = await db.findOne(User, { _id: req.session.user._id });
       if (!loggedInUser) return res.redirect('/');
 
+      // Gets posts for display
       const posts = await homeController.getPosts(loggedInUser, req.session.user.mode);
 
-      console.log(posts.length);
-      console.log(req.session.user.mode);
-
+      // Renders homepage
       res.render('homepage', {
         user: loggedInUser,
         posts
       });
 
     } catch (err) {
+
+      // Error handling
       console.error('Error in getHome:', err);
+      
       res.status(500).render('error');
     }
+
   },
 
+  // ---------- GET SEARCH ----------
   getSearch: async function (req, res) {
 
     try {
@@ -139,103 +144,124 @@ const homeController = {
     }
   },
 
+  // ---------- GET POSTS ----------
   getPosts: async function (user, mode) {
-        try {
-        let query = { userId: { $ne: user._id } }; // exclude own posts
 
-        // Determine post type based on mode
-        query.postType = mode === 'customer' ? 'Offering' : 'LookingFor';
+    try {
 
-        // Fetch posts using your db helper
-        let postsRaw = await db.findMany(Post, query);
+      // Exclude user's own posts from query
+      let query = { userId: { $ne: user._id } };
 
-        // Manually populate user info for each post
-        const userIds = postsRaw.map(p => p.userId);
-        const users = await db.findMany(User, { _id: { $in: userIds } });
+      // Determine post type based on mode
+      query.postType = mode === 'customer' ? 'Offering' : 'LookingFor';
 
-        const usersMap = {};
-        users.forEach(u => {
-            usersMap[u._id.toString()] = u;
-        });
+      // Fetch posts based on query
+      let postsRaw = await db.findMany(Post, query);
 
-        // Map posts to format for serviceCard
-        const posts = postsRaw.map(p => {
+      // Get creators of posts
+      const userIds = postsRaw.map(p => p.userId);
+      const users = await db.findMany(User, { _id: { $in: userIds } });
+
+      // Match users to posts they created
+      const usersMap = {};
+      users.forEach(u => {
+        usersMap[u._id.toString()] = u;
+      });
+
+      // Build display data
+      const posts = postsRaw.map(p => {
+
+        // Gets user id of post creator
         const postUser = usersMap[p.userId.toString()] || {};
 
+        // Gets image paths required for display
         const images = p.sampleWorkImages || [];
         const imagePost = images[0] || null;
         const imageGallery = images.length > 1 ? images.slice(1) : [];
 
         return {
-      
-            postId: p._id,          // id of the post
-            otherUserId: postUser._id, // id of the owner of this post
-            otherUserName: postUser.userName,
+          postId: p._id,
+          otherUserId: postUser._id,
+          otherUserName: postUser.userName,
 
-            image: postUser.profilePicture || '/images/default_profile.png',
-            workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
-            jobTitle: p.serviceType || '',
-            location: p.location || '',
-            hours: p.workingHours || 'Not set',
-            title: p.title || '',
-            description: p.description || '',
-            minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
-            maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
-            isOwner: false,
-            urgency: p.levelOfUrgency || null,
-            imagePost,
-            imageGallery
+          image: postUser.profilePicture || '/images/default_profile.png',
+          workerName: `${postUser.firstName || ''} ${postUser.lastName || ''}`.trim(),
+          jobTitle: p.serviceType || '',
+          location: p.location || '',
+          hours: p.workingHours || 'Not set',
+          title: p.title || '',
+          description: p.description || '',
+          minPrice: p.priceRange ? p.priceRange.split('-')[0].replace(/[^\d]/g,'') : 0,
+          maxPrice: p.priceRange ? p.priceRange.split('-')[1]?.replace(/[^\d]/g,'') : 0,
+          isOwner: false,
+          urgency: p.levelOfUrgency || null,
+          imagePost,
+          imageGallery
         };
-    });
 
+      });
 
-        return posts;
+      return posts;
 
-        } catch (err) {
-        console.error('Error in getPosts:', err);
-        return [];
-        }
-    },
+    } catch (err) {
 
-    postCreatePost: async function (req, res) {
-        try {
-        const user = req.session.user;
-        if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+      // Failure to get posts
+      console.error('Error in getPosts:', err);
+      return [];
 
-        const { title, description, location, minPrice, maxPrice, postType, serviceType, levelOfUrgency } = req.body;
+    }
+  
+  },
 
-        // Handle images
-        const imagePaths = [];
-        if (req.files && req.files.length > 0) {
-            req.files.forEach(file => {
-            imagePaths.push(`/uploads/posts/${file.filename}`);
-            });
-        }
+  // ---------- POST CREATE POST ----------
+  postCreatePost: async function (req, res) {
+    try {
 
-        const newPost = new Post({
-            userId: user._id,
-            postType,
-            serviceType,
-            title,
-            description,
-            priceRange: minPrice && maxPrice ? `₱${minPrice} - ₱${maxPrice}` : "",
-            levelOfUrgency,
-            workingHours: postType === "Offering" ? req.body.workingHours || "" : undefined,
-            location,
-            sampleWorkImages: imagePaths
-        });
+      // Get session user
+      const user = req.session.user;
+      if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-        await newPost.save();
+      // Get required information from body
+      const { title, description, location, minPrice, maxPrice, postType, serviceType, levelOfUrgency } = req.body;
 
-        return res.json({ success: true, post: newPost });
+      // Handle image upload
+      const imagePaths = [];
+      if (req.files && req.files.length > 0) {
+          req.files.forEach(file => {
+          imagePaths.push(`/uploads/posts/${file.filename}`);
+          });
+      }
 
-        } catch (err) {
-        console.error("Error creating post:", err);
-        return res.status(500).json({ success: false, message: "Internal Server Error" });
-        }
-    },
+      // Build post object
+      const newPost = new Post({
+          userId: user._id,
+          postType,
+          serviceType,
+          title,
+          description,
+          priceRange: minPrice && maxPrice ? `₱${minPrice} - ₱${maxPrice}` : "",
+          levelOfUrgency,
+          workingHours: postType === "Offering" ? req.body.workingHours || "" : undefined,
+          location,
+          sampleWorkImages: imagePaths
+      });
 
-   postDeletePost: async function (req, res) {
+      // Save post to the database
+      await newPost.save();
+
+      return res.json({ success: true, post: newPost });
+
+    } catch (err) {
+
+      // Failure to create post
+      console.error("Error creating post:", err);
+      return res.status(500).json({ success: false, message: "Internal Server Error" });
+
+    }
+  },
+
+  // ---------- POST DELETE POST ----------
+  postDeletePost: async function (req, res) {
     try {
       if (!req.session.user) {
         return res.redirect('/'); 
@@ -299,4 +325,5 @@ const homeController = {
 
 };
 
+// Export object 'homeController'
 module.exports = homeController;

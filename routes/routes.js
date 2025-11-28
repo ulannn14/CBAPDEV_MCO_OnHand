@@ -1,40 +1,22 @@
-
-// import module `express`
+// Import required modules
 const express = require('express');
-
-// import module 'mutler'
 const multer = require('multer');
-
-// import module 'path'
 const path = require('path');
-
-// import module 'fs'
 const fs = require('fs');
 
-// import module `controller` from `../controllers/controller.js`
+// Import required controllers
 const controller = require('../controllers/controller.js');
-
-// import module `loginController` from `../controllers/loginController.js`
 const loginController = require('../controllers/loginController.js');
-
-// import module `homeController` from `../controllers/homeController.js`
 const homeController = require('../controllers/homeController.js');
-
-// import module `signupController` from `../controllers/signupController.js`
 const signupController = require('../controllers/signupController.js');
-
-// import module `profileController` from `../controllers/profileController.js`
 const profileController = require('../controllers/profileController.js');
-
-// import module `messageController` from `../controllers/messageController.js`
 const messageController = require('../controllers/messageController.js');
-
-// import module `bookingController` from `../controllers/bookingController.js`
 const bookingController = require('../controllers/bookingController.js');
 
+// Declaration of application/router
 const app = express();
 
-// Configure multer storage
+// Configure multer storage for file uploads upon signup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const username = req.body.username || 'guest';
@@ -62,6 +44,7 @@ const storage = multer.diskStorage({
     cb(null, basePath);
   },
 
+  // Builds filename based on file type
   filename: function (req, file, cb) {
     const username = req.body.username || 'guest';
     const ext = path.extname(file.originalname);
@@ -71,59 +54,31 @@ const storage = multer.diskStorage({
   }
 });
 
+// Assign destination for file uploads in signup page
 const upload = multer({ dest: 'tmp/' });
 
-/*
-    execute function getIndex()
-    defined in object `controller` in `../controllers/controller.js`
-    when a client sends an HTTP GET request for `/`
-*/
+// Route for HTTP GET request for '/'
 app.get('/', controller.getIndex);
 
-/*
-    execute function postLogin()
-    defined in object `loginController` in `../controllers/loginController.js`
-    when a client sends an HTTP POST request for `/login`
-*/
+// Route for HTTP POST request for '/login'
 app.post('/login', loginController.postLogin);
 
-/*
-    execute function getCheckUsername()
-    defined in object `loginController` in `../controllers/loginController.js`
-    when a client sends an HTTP POST request for `/getCheckUsername`
-*/
+// Route for HTTP GET request for '/getCheckUsername'
 app.get('/getCheckUsername', loginController.getCheckUsername);
 
-/*
-    execute function getCheckPassword()
-    defined in object `loginController` in `../controllers/loginController.js`
-    when a client sends an HTTP POST request for `/getCheckPassword`
-*/
+// Route for HTTP GET request for '/getCheckPassword'
 app.get('/getCheckPassword', loginController.getCheckPassword);
 
-/*
-    execute function getSuccess()
-    defined in object `homeController` in `../controllers/homeController.js`
-    when a client sends an HTTP GET request for `/home`
-*/
+// Route for HTTP GET request for '/home'
 app.get('/home', homeController.getHome);
 
-// Search route
+// Route for HTTP GET request for '/search'
 app.get('/search', homeController.getSearch);
 
-/*
-    execute function getSuccess()
-    defined in object `signupController` in `../controllers/signupController.js`
-    when a client sends an HTTP GET request for `/signup`
-*/
+// Route for HTTP GET request for '/signup'
 app.get('/signup', signupController.getSignup);
 
-/*
-    execute function getSuccess()
-    defined in object `signupController` in `../controllers/signupController.js`
-    when a client sends an HTTP POST request for `/signup`
-    uses multer upload fields
-*/
+// Route for HTTP POST request for '/signup'
 app.post(
   '/signup',
   upload.fields([
@@ -134,34 +89,22 @@ app.post(
   signupController.postSignup
 );
 
-// Check if username exists
+// Route for HTTP POST request for '/checkUsername'
 app.get('/checkUsername', signupController.getCheckUsername);
 
-// Check if email exists
+// Route for HTTP POST request for '/CheckEmail'
 app.get('/checkEmail', signupController.getCheckEmail);
 
-/*
-    execute function getProfile()
-    defined in object `profileController` in `../controllers/profileController.js`
-    when a client sends an HTTP GET request for `/profile/:username`
-    where `username` is a parameter
-*/
+// Route for HTTP GET request for '/profile/:username'
 app.get('/profile/:username', profileController.getProfile);
 
-/*
-    execute function getProfile()
-    defined in object `profileController` in `../controllers/profileController.js`
-    when a client sends an HTTP POST request for `/profile/update`
-*/
+// Route for HTTP POST request for '/profile/update'
 app.post('/profile/update', profileController.postUpdate);
 
-/*
-    execute function getProfile()
-    defined in object `controller` in `../controllers/controller.js`
-    when a client sends an HTTP POST request for `/mode`
-*/
+// Route for HTTP POST request for '/mode'
 app.post('/mode', controller.postMode);
 
+// Configure mutler storage for file uploads when creating posts
 const postStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const basePath = path.join(__dirname, '../public/uploads/posts');
@@ -177,35 +120,41 @@ const postStorage = multer.diskStorage({
   }
 });
 
+// Assign destination for file uploads when creating a post
 const postUpload = multer({ storage: postStorage });
 
+// Route for HTTP POST request for '/create-post'
 app.post('/create-post', postUpload.array('images'), homeController.postCreatePost);
 
+// Route for HTTP POST request for '/posts/:id/delete'
 app.post('/posts/:id/delete', homeController.postDeletePost);
 
+// Route for HTTP GET request for '/messages'
 app.get('/messages', messageController.getMessages);     
 
+// Route for HTTP GET request for '/messages/list'
 app.get('/messages/list', messageController.getMessagesList);  
 
-// JSON thread data
+// Route for HTTP GET request for '/messages/thread/:id'
 app.get('/messages/thread/:id', messageController.getThread);  
 
-// save new message
+// Route for HTTP POST request for '/messages/thread/:id'
 app.post('/messages/thread/:id', messageController.postMessage); 
 
+// Route for HTTP POST request for '/messages/thread/:id/complete-booking'
 app.post('/messages/thread/:id/complete-booking', messageController.completeBooking);
 
+// Route for HTTP GET request for '/start-thread'
 app.get('/start-thread', messageController.startThread);
 
+// Route for HTTP GET request for '/bookings/:status'
 app.get('/bookings/:status', bookingController.getBookings);
 
+// Route for HTTP POST request for '/postRating'
 app.post('/postRating', bookingController.postRating);
 
-// Logging out
+// Route for HTTP GET request for '/logout'
 app.get('/logout', controller.getLogout);
 
-/*
-    exports the object `app` (defined above)
-    when another script exports from this file
-*/
+// Export object 'app'
 module.exports = app;

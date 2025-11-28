@@ -39,8 +39,8 @@ const bookingSchema = new mongoose.Schema({
     default: 'Ongoing'
   },
 
+  // Rating status
   customerRated: { type: Boolean, default: false },
-  
   providerRated: { type: Boolean, default: false },
 
 
