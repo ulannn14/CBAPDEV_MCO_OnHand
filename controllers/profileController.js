@@ -32,8 +32,13 @@ const profileController = {
             let postQuery = { userId: user._id };
 
             // Add post type to query based on session user's mode
-            if (req.session.user.mode === 'provider') postQuery.postType = 'Offering';
-            else postQuery.postType = 'LookingFor';
+            if (isOwner) {
+                if (req.session.user.mode === 'provider') postQuery.postType = 'Offering';
+                else postQuery.postType = 'LookingFor';
+            } else {
+                if (req.session.user.mode === 'provider') postQuery.postType = 'LookingFor';
+                else postQuery.postType = 'Offering';
+            }
             
             // Fetch posts using the query
             const postsRaw = await db.findMany(Post, postQuery) || [];
@@ -113,7 +118,7 @@ const profileController = {
             isOwner,
             posts,
             reviews: formattedRatings,
-            ratingAverage, // <-- send calculated average
+            ratingAverage,
             currentPage: 'profile',
             cannotDeleteBooking: req.query.cannotDelete === 'booking'
             });

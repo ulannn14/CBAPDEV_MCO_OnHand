@@ -189,17 +189,29 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const workingHours = document.getElementById("profileWorkingHours");
-      const isProviderLS = localStorage.getItem("isProvider") === "true";
-      const userIsProvider = "{{user.type}}" === "provider";
 
-      if (userIsProvider && isProviderLS && workingHours) {
-        workingHours.style.display = "block";
-      } else if (workingHours) {
-        workingHours.style.display = "none";
+      // Inject server values AS STRINGS
+      const isProvider = "{{sessionUser.mode}}" === "provider";
+      const isOwner = "{{user.userName}}" === "{{sessionUser.userName}}";
+      const isCustomer = "{{user.type}}" === "customer";
+
+      if (isOwner) {
+        // Owner view
+        if (isProvider) {
+          workingHours.style.display = "block";
+        } else {
+          workingHours.style.display = "none";
+        }
+      } else {
+        // Visitor view (show opposite)
+        if (isProvider) {
+          workingHours.style.display = "none";
+        } else if (!isCustomer) {
+          workingHours.style.display = "block";
+        }
       }
     });
-
-    </script>
+  </script>
 
 </body>
 </html>
