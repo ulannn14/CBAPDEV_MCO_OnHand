@@ -141,5 +141,4 @@ You may log in using these accounts to see sample data across the website.
 * username: aloisuh, password: 1234
 * username: juandelacruz, password: password!11
 * username: arianagrande, password: arianagrande1!
-
 ```
