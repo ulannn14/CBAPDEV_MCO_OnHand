@@ -7,7 +7,7 @@
 
 const db = require('./models/db');
 const User = require('./models/UserModel');
-const Post = require('./models/PostModel');
+const Post = require('./models/postModel');
 const Message = require('./models/MessageModel');
 const Booking = require('./models/BookingModel');
 const Rating = require('./models/RatingModel');

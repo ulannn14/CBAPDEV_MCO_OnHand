@@ -1,7 +1,7 @@
 // Import required modules
 const User = require('../models/UserModel.js');
 const Message = require('../models/MessageModel.js');
-const Post = require('../models/PostModel.js');
+const Post = require('../models/postModel.js');
 const Booking = require('../models/BookingModel.js');
 const db = require('../models/db.js');
 

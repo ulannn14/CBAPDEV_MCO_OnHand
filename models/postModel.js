@@ -1,5 +1,5 @@
 // ============================================================
-// PostModel.js
+// postModel.js
 // ============================================================
 // This schema represents posts made by both customers and providers.
 // - Customers post when they're looking for services (LookingFor)
