@@ -1,52 +1,44 @@
-// import module `database` from `../models/db.js`
-const db = require('../models/db.js');
-
-// import module `User` from `../models/UserModel.js`
-const User = require('../models/UserModel.js');
-
-/*
-    defines an object which contains functions executed as callback
-    when a client requests for `index` paths in the server
-*/
+// -- CONTROLLER --
 const controller = {
 
-    /*
-        executed when the client sends an HTTP GET request `/`
-        as defined in `../routes/routes.js`
-    */
+    // ---------- GET INDEX ----------
     getIndex: function (req, res) {
 
         // render `../views/index.hbs`
         res.render('index');
+
     },
 
-    /*
-        executed when the client sends an HTTP GET request `/`
-        as defined in `../routes/routes.js`
-    */
+    // ---------- GET LOGOUT ----------
     getLogout: function (req, res) {
+
+        // destroy session user
         req.session.destroy(err => {
             if (err) {
                 console.error("Error destroying session:", err);
             }
-            res.redirect('/'); // redirect to index after logout
+            res.redirect('/');      // redirect to index after logout
         });
         
     },
 
+    // ---------- POST MODE ----------
     postMode: function (req, res) {
         
+        // checks if session user exists
         if (!req.session.user) {
             return res.json({ success: false, error: "Not logged in" });
         }
 
-        // Customers CANNOT change mode
+        // ensures that customers cannot change their mode
         if (req.session.user.type !== "provider") {
             return res.json({ success: false, error: "Not a provider" });
         }
 
+        // gets mode from the body
         const { isProvider } = req.body;
 
+        // toggles the user's mode
         req.session.user.mode = isProvider ? "provider" : "customer";
 
         return res.json({ success: true });
@@ -55,8 +47,5 @@ const controller = {
     
 }
 
-/*
-    exports the object `controller` (defined above)
-    when another script exports from this file
-*/
+// Export object 'controller'
 module.exports = controller;

@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/bookings.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="/js/dropdown-profile.js"></script>
+
   <link rel="icon" href="/images/icon.png" type="image/png">
 
   <style>
@@ -47,7 +47,13 @@
                 </h3>
 
                 <div class="need-wrapper">
-                  <p class="need-label">Need:</p>
+                  <p class="need-label">
+                    {{#if (eq ../sessionUser.mode "provider")}}
+                      Looking for:
+                    {{else}}
+                      Offering:
+                    {{/if}}
+                  </p>
                   <span class="service-type">{{serviceType}}</span>
                 </div>
               </div>

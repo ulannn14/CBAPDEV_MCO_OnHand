@@ -21,31 +21,36 @@
       window.__APP.conversations = conversations;
       renderConvos();
 
-      let defaultThread = window.DEFAULT_THREAD_ID;
+      if (conversations.length === 0) return;
 
-      if (defaultThread) {
-        const exists = conversations.find(c => c.id === defaultThread);
-        if (exists) {
-          document
-            .querySelector(`.convo-item[data-id="${defaultThread}"]`)
-            ?.classList.add('active');
-          openConvo(defaultThread);
-          return;
+      const initId = window.INIT_THREAD_ID || null;
+
+      // default to first convo
+      let initial = conversations[0];
+
+      if (initId) {
+        const found = conversations.find(
+          c => String(c.id) === String(initId)
+        );
+        if (found) {
+          initial = found;
         }
       }
 
-      if (conversations.length > 0) {
-        const first = conversations[0];
-        document
-          .querySelector(`.convo-item[data-id="${first.id}"]`)
-          ?.classList.add('active');
-        openConvo(first.id);
+      const item = document.querySelector(`.convo-item[data-id="${initial.id}"]`);
+      if (item) {
+        item.classList.add('active');
+        // optional: make sure it's visible in the sidebar
+        item.scrollIntoView({ block: 'nearest' });
       }
+
+      openConvo(initial.id);
 
     } catch (err) {
       console.error('Error loading conversations:', err);
     }
   }
+
 
   function transformMessage(m, meId) {
     const isMe = meId && String(m.sender) === String(meId);
